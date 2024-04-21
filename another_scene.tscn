@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c0nm7hebv5kuq"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Label" type="Label" parent="."]
+offset_left = 578.0
+offset_top = 211.0
+offset_right = 785.0
+offset_bottom = 234.0
+text = "Welcome to another Scene"

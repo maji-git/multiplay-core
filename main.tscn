@@ -1,0 +1,194 @@
+[gd_scene load_steps=10 format=3 uid="uid://yx2r3bxi0kfc"]
+
+[ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_ubvtg"]
+[ext_resource type="PackedScene" uid="uid://lw18orwsroqc" path="res://test_player.tscn" id="2_d01oj"]
+[ext_resource type="FontFile" uid="uid://up2o2ylbi16n" path="res://addons/MultiplayCore/fonts/VictorMono-Medium.ttf" id="3_gnyvh"]
+[ext_resource type="Texture2D" uid="uid://dupc3co7kupa3" path="res://addons/MultiplayCore/icons/MultiPlayCore.svg" id="3_ohkmv"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/debug_ui/MultiPlayDebugUI.gd" id="4_u3wo5"]
+[ext_resource type="Script" path="res://TestScriptz.gd" id="6_kqkof"]
+
+[sub_resource type="Theme" id="Theme_jkq4t"]
+default_font = ExtResource("3_gnyvh")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r1q81"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0, 0, 0, 0.247059)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.188235)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0jls2"]
+size = Vector2(1174, 23)
+
+[node name="MultiPlay" type="Node2D"]
+
+[node name="MultiplayCore" type="Node" parent="."]
+script = ExtResource("1_ubvtg")
+player_scene = ExtResource("2_d01oj")
+swap_input_action = "swap"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="MultiplayCore"]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MultiplayCore/CanvasLayer"]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 324.0
+offset_bottom = 476.0
+theme = SubResource("Theme_jkq4t")
+theme_override_constants/separation = 12
+
+[node name="DebugUI" type="PanelContainer" parent="MultiplayCore/CanvasLayer/HBoxContainer" node_paths=PackedStringArray("mpc", "connect_address", "payload_input")]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_r1q81")
+script = ExtResource("4_u3wo5")
+mpc = NodePath("../../..")
+connect_address = NodePath("VBoxContainer/HBoxContainer2/ConnectAddress")
+payload_input = NodePath("VBoxContainer/TextEdit")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+texture = ExtResource("3_ohkmv")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "MultiPlay Core"
+
+[node name="Control" type="Control" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+text = "X"
+
+[node name="HSeparator" type="HSeparator" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Online"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Host"
+
+[node name="HostAct" type="Button" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Host + Act Client"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Connect" type="Button" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Connect"
+
+[node name="ConnectAddress" type="LineEdit" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ws://localhost:4200"
+placeholder_text = "URL..."
+caret_blink = true
+
+[node name="Label5" type="Label" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "JSON Handshake Payload"
+
+[node name="TextEdit" type="TextEdit" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "{
+
+}"
+placeholder_text = "JSON Data..."
+caret_blink = true
+
+[node name="HSeparator2" type="HSeparator" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "One Screen"
+
+[node name="OneScreen" type="Button" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+text = "Start One Screen"
+
+[node name="HSeparator3" type="HSeparator" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Swap"
+
+[node name="Swap" type="Button" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+text = "Start Swap"
+
+[node name="Label7" type="Label" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Solo"
+
+[node name="Solo" type="Button" parent="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer"]
+layout_mode = 2
+text = "Start Solo"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(-24, 602)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(577, 1.5)
+shape = SubResource("RectangleShape2D_0jls2")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="test" type="Node2D" parent="."]
+script = ExtResource("6_kqkof")
+
+[connection signal="player_connected" from="MultiplayCore" to="test" method="_on_multiplay_core_player_connected"]
+[connection signal="player_disconnected" from="MultiplayCore" to="test" method="_on_multiplay_core_player_disconnected"]
+[connection signal="pressed" from="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer/Host" to="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI" method="_on_host_pressed"]
+[connection signal="pressed" from="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer/HostAct" to="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI" method="_on_host_act_pressed"]
+[connection signal="pressed" from="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer2/Connect" to="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI" method="_on_connect_pressed"]
+[connection signal="text_changed" from="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/HBoxContainer2/ConnectAddress" to="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI" method="_on_connect_address_text_changed"]
+[connection signal="pressed" from="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/OneScreen" to="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI" method="_on_one_screen_pressed"]
+[connection signal="pressed" from="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/Swap" to="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI" method="_on_swap_pressed"]
+[connection signal="pressed" from="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI/VBoxContainer/Solo" to="MultiplayCore/CanvasLayer/HBoxContainer/DebugUI" method="_on_solo_pressed"]

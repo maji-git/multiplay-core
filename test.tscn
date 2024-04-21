@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://8i3k2b5jk3vw"]
+
+[ext_resource type="PackedScene" uid="uid://yx2r3bxi0kfc" path="res://main.tscn" id="1_mcddd"]
+
+[node name="test" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 0
+offset_right = 520.0
+offset_bottom = 654.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(520, 654)
+size_2d_override_stretch = true
+render_target_update_mode = 4
+
+[node name="MultiPlay" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_mcddd")]
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="."]
+layout_mode = 0
+offset_left = 554.0
+offset_right = 1074.0
+offset_bottom = 654.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer2"]
+handle_input_locally = false
+size = Vector2i(520, 654)
+size_2d_override_stretch = true
+render_target_update_mode = 4
+
+[node name="MultiPlay" parent="SubViewportContainer2/SubViewport" instance=ExtResource("1_mcddd")]

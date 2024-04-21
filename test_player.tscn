@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://lw18orwsroqc"]
+
+[ext_resource type="Script" path="res://PlayerMovement.gd" id="1_t1inl"]
+[ext_resource type="Texture2D" uid="uid://c8wdrl1etp8wy" path="res://icon.svg" id="2_wyjoy"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_vjo3q"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ff620"]
+height = 50.0
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+position = Vector2(119, 158)
+script = ExtResource("1_t1inl")
+
+[node name="Icon" type="Sprite2D" parent="."]
+scale = Vector2(0.395, 0.395)
+texture = ExtResource("2_wyjoy")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_vjo3q")
+
+[node name="playingThis" type="Label" parent="."]
+visible = false
+offset_left = -42.0
+offset_top = -57.0
+offset_right = 45.0
+offset_bottom = -34.0
+text = "playing this"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_ff620")
+one_way_collision = true
