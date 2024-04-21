@@ -1,0 +1,167 @@
+[gd_scene load_steps=6 format=3 uid="uid://c86556b4br8c4"]
+
+[ext_resource type="FontFile" uid="uid://up2o2ylbi16n" path="res://addons/MultiplayCore/fonts/VictorMono-Medium.ttf" id="1_p1im6"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/debug_ui/MultiPlayDebugUI.gd" id="2_wn6yf"]
+[ext_resource type="Texture2D" uid="uid://dupc3co7kupa3" path="res://addons/MultiplayCore/icons/MultiPlayCore.svg" id="3_vbxjx"]
+
+[sub_resource type="Theme" id="Theme_jkq4t"]
+default_font = ExtResource("1_p1im6")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r1q81"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0, 0, 0, 0.247059)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.188235)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="DebugUI" type="CanvasLayer"]
+
+[node name="Layout" type="HBoxContainer" parent="."]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 324.0
+offset_bottom = 476.0
+theme = SubResource("Theme_jkq4t")
+theme_override_constants/separation = 12
+
+[node name="BootUI" type="PanelContainer" parent="Layout" node_paths=PackedStringArray("connect_address", "payload_input")]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_r1q81")
+script = ExtResource("2_wn6yf")
+connect_address = NodePath("VBoxContainer/HBoxContainer2/ConnectAddress")
+payload_input = NodePath("VBoxContainer/TextEdit")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Layout/BootUI"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Layout/BootUI/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+texture = ExtResource("3_vbxjx")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Layout/BootUI/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "MultiPlay Core"
+
+[node name="Control" type="Control" parent="Layout/BootUI/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Close" type="Button" parent="Layout/BootUI/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+text = "X"
+
+[node name="HSeparator" type="HSeparator" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Layout/BootUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Online"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="Layout/BootUI/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Host"
+
+[node name="HostAct" type="Button" parent="Layout/BootUI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Host + Act Client"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Connect" type="Button" parent="Layout/BootUI/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Connect"
+
+[node name="ConnectAddress" type="LineEdit" parent="Layout/BootUI/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ws://localhost:4200"
+placeholder_text = "URL..."
+caret_blink = true
+
+[node name="Label5" type="Label" parent="Layout/BootUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "JSON Handshake Payload"
+
+[node name="TextEdit" type="TextEdit" parent="Layout/BootUI/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "{
+
+}"
+placeholder_text = "JSON Data..."
+caret_blink = true
+
+[node name="HSeparator2" type="HSeparator" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Layout/BootUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "One Screen"
+
+[node name="OneScreen" type="Button" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+text = "Start One Screen"
+
+[node name="HSeparator3" type="HSeparator" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="Layout/BootUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Swap"
+
+[node name="Swap" type="Button" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+text = "Start Swap"
+
+[node name="Label7" type="Label" parent="Layout/BootUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Solo"
+
+[node name="Solo" type="Button" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+text = "Start Solo"
+
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer3/Close" to="Layout/BootUI" method="_on_close_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer/Host" to="Layout/BootUI" method="_on_host_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer/HostAct" to="Layout/BootUI" method="_on_host_act_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer2/Connect" to="Layout/BootUI" method="_on_connect_pressed"]
+[connection signal="text_changed" from="Layout/BootUI/VBoxContainer/HBoxContainer2/ConnectAddress" to="Layout/BootUI" method="_on_connect_address_text_changed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/OneScreen" to="Layout/BootUI" method="_on_one_screen_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/Swap" to="Layout/BootUI" method="_on_swap_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/Solo" to="Layout/BootUI" method="_on_solo_pressed"]

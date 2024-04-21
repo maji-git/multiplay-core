@@ -2,11 +2,11 @@ extends Node2D
 
 @onready var mpc: MultiPlayCore = get_node("../MultiplayCore")
 
-var oz = false
+var oz = 1
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	mpc.PlayMode.OneScreen
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -15,11 +15,10 @@ func _process(delta):
 
 
 func _on_multiplay_core_player_connected(player):
-	if oz:
+	if oz == 0:
+		mpc.load_scene("res://another_scene.tscn")
 		return
-	oz = true
-	#mpc.load_scene("res://another_scene.tscn")
-	
+	oz = oz - 1
 
-func _on_multiplay_core_player_disconnected(player):
-	pass # Replace with function body.
+func _on_multiplay_core_player_disconnected(player: MPPlayer):
+	print(player.player_id, " disconnected")

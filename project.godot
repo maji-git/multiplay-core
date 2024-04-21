@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 MPIO="*res://addons/MultiplayCore/MPIO.gd"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/MultiplayCore/plugin.cfg")
+
 [input]
 
 left={
