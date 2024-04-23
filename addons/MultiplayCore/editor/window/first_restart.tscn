@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dbpf25oec1ecs"]
+
+[node name="Window" type="ConfirmationDialog"]
+title = "MultiPlay"
+size = Vector2i(640, 100)
+visible = true
+ok_button_text = "Save + Restart"
+dialog_text = "Welcome to MultiPlay Core! MultiPlay Core requires a restart to finish initializing."
+cancel_button_text = "I'll do it later"

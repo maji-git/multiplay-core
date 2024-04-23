@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3 uid="uid://dn2ag67h6kg0u"]
+
+[ext_resource type="Texture2D" uid="uid://c01w42px0l5kw" path="res://addons/MultiplayCore/icons/icon.svg" id="1_flh7u"]
+
+[node name="WelcomePopup" type="Window"]
+title = "Welcome!"
+initial_position = 2
+size = Vector2i(400, 350)
+
+[node name="Panel" type="Panel" parent="."]
+self_modulate = Color(0.74902, 0.74902, 0.74902, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+offset_left = 15.0
+offset_right = 385.0
+offset_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+texture = ExtResource("1_flh7u")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Welcome to MultiPlay Core!"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Thank you for checking out on MultiPlay Core! MultiPlay Core is still in alpha, so expect bugs ahead!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="LinkButton" type="LinkButton" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Open Documentation"
+uri = "https://mpc.himaji.xyz/docs/"
+
+[node name="LinkButton2" type="LinkButton" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Get Support"
+uri = "https://mpc.himaji.xyz/docs/get-support/"
+
+[node name="Close" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Close"
+
+[connection signal="close_requested" from="." to="." method="set_visible" binds= [false]]
+[connection signal="pressed" from="Panel/VBoxContainer/Close" to="." method="set_visible" binds= [false]]
