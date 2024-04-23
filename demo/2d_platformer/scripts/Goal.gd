@@ -17,4 +17,3 @@ func _body_entered(body: Node2D):
 	
 	if body.is_in_group("player"):
 		MPIO.mpc.load_scene(scene_to_load)
-		MPIO.mpc.players.respawn_node_all()

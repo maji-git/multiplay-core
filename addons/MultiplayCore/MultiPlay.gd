@@ -213,10 +213,6 @@ func _presetup_nodes():
 
 func _setup_nodes():
 	_plr_spawner.spawn_path = players.get_path()
-	_plr_spawner.spawned.connect(_debug_node_spawned)
-
-func _debug_node_spawned(node: Node):
-	MPIO.logdata("NODE SPAWND: " + str(node.name))
 
 ## Start online mode as host
 func start_online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}):
@@ -240,7 +236,7 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 		online_peer = WebSocketMultiplayerPeer.new()
 		online_peer.create_server(port);
 	
-	print("Starting server at port ", port)
+	MPIO.logdata("Starting server at port " + str(port))
 	
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.peer_connected.connect(_network_player_connected)
@@ -298,7 +294,6 @@ func _net_broadcast_remove_player(peer_id: int):
 
 func _player_spawned(data):
 	MPIO.plr_id = multiplayer.get_unique_id()
-	MPIO.logdata("player spawning " + str(data.player_id))
 	var player = preload("res://addons/MultiplayCore/scenes/multiplay_player.tscn").instantiate()
 	player.name = str(data.player_id)
 	player.player_id = data.player_id
@@ -381,16 +376,12 @@ func _join_handshake(handshake_data, credentials_data):
 @rpc("any_peer", "call_local", "reliable")
 func _internal_recv_net_data(data):
 	MPIO.plr_id = multiplayer.get_unique_id()
-	MPIO.logdata("Data received")
 	
 	_net_data = data
 	if _net_data.current_scene_path != "":
 		_net_load_scene(_net_data.current_scene_path)
-	
-	MPIO.logdata("Sending Join Handshake")
 
 func _client_connected():
-	MPIO.logdata("Connected")
 	rpc_id(1, "_join_handshake", _join_handshake_data, _join_credentials_data)
 
 func _client_disconnected():

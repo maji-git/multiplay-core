@@ -168,7 +168,6 @@ func kick(reason: String = ""):
 
 ## Respawn player node, Server only.
 func respawn_node():
-	print("respawn get")
 	rpc("_net_despawn")
 	rpc("_net_spawn_node")
 
@@ -204,10 +203,8 @@ func _net_despawn():
 
 @rpc("any_peer", "call_local")
 func _net_spawn_node():
-	print("rpc spawn got")
 	if !_check_if_net_from_id(1):
 		return
-	print("despawning")
 	if player_node and is_instance_valid(player_node):
 		MPIO.logwarn("spawn_node: Player node already exists. Free it first with despawn_node or use respawn_node")
 		return
