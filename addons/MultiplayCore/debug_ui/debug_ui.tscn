@@ -6,6 +6,7 @@
 
 [sub_resource type="Theme" id="Theme_jkq4t"]
 default_font = ExtResource("1_p1im6")
+default_font_size = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r1q81"]
 content_margin_left = 12.0
@@ -26,21 +27,25 @@ corner_radius_bottom_left = 4
 [node name="DebugUI" type="CanvasLayer"]
 
 [node name="Layout" type="HBoxContainer" parent="."]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 324.0
-offset_bottom = 476.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 316.0
+offset_bottom = 468.0
 theme = SubResource("Theme_jkq4t")
 theme_override_constants/separation = 12
 
-[node name="BootUI" type="PanelContainer" parent="Layout" node_paths=PackedStringArray("connect_address", "payload_input")]
+[node name="BootUI" type="PanelContainer" parent="Layout" node_paths=PackedStringArray("connect_address", "payload_input", "cert_input", "boot_ui", "status_ui", "status_text")]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_r1q81")
 script = ExtResource("2_wn6yf")
-connect_address = NodePath("VBoxContainer/HBoxContainer2/ConnectAddress")
-payload_input = NodePath("VBoxContainer/TextEdit")
+connect_address = NodePath("VBoxContainer/BootOptions/HBoxContainer2/ConnectAddress")
+payload_input = NodePath("VBoxContainer/BootOptions/HandshakeField")
+cert_input = NodePath("VBoxContainer/BootOptions/CredentialsField")
+boot_ui = NodePath("VBoxContainer/BootOptions")
+status_ui = NodePath("VBoxContainer/Status")
+status_text = NodePath("VBoxContainer/Status/StatusText")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Layout/BootUI"]
 layout_mode = 2
@@ -50,7 +55,7 @@ size_flags_vertical = 0
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="Layout/BootUI/VBoxContainer/HBoxContainer3"]
-custom_minimum_size = Vector2(24, 0)
+custom_minimum_size = Vector2(18, 0)
 layout_mode = 2
 texture = ExtResource("3_vbxjx")
 expand_mode = 4
@@ -72,47 +77,50 @@ text = "X"
 [node name="HSeparator" type="HSeparator" parent="Layout/BootUI/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Layout/BootUI/VBoxContainer"]
+[node name="BootOptions" type="VBoxContainer" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 modulate = Color(1, 1, 1, 0.596078)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 text = "Online"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 layout_mode = 2
 
-[node name="Host" type="Button" parent="Layout/BootUI/VBoxContainer/HBoxContainer"]
+[node name="Host" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer"]
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "Host"
 
-[node name="HostAct" type="Button" parent="Layout/BootUI/VBoxContainer/HBoxContainer"]
+[node name="HostAct" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Host + Act Client"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 layout_mode = 2
 
-[node name="Connect" type="Button" parent="Layout/BootUI/VBoxContainer/HBoxContainer2"]
+[node name="Connect" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer2"]
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "Connect"
 
-[node name="ConnectAddress" type="LineEdit" parent="Layout/BootUI/VBoxContainer/HBoxContainer2"]
+[node name="ConnectAddress" type="LineEdit" parent="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "ws://localhost:4200"
 placeholder_text = "URL..."
 caret_blink = true
 
-[node name="Label5" type="Label" parent="Layout/BootUI/VBoxContainer"]
+[node name="Label5" type="Label" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 modulate = Color(1, 1, 1, 0.596078)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 text = "JSON Handshake Payload"
 
-[node name="TextEdit" type="TextEdit" parent="Layout/BootUI/VBoxContainer"]
+[node name="HandshakeField" type="TextEdit" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 text = "{
@@ -121,47 +129,72 @@ text = "{
 placeholder_text = "JSON Data..."
 caret_blink = true
 
-[node name="HSeparator2" type="HSeparator" parent="Layout/BootUI/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="Layout/BootUI/VBoxContainer"]
+[node name="Label6" type="Label" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 modulate = Color(1, 1, 1, 0.596078)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
+text = "JSON Credentials Payload"
+
+[node name="CredentialsField" type="TextEdit" parent="Layout/BootUI/VBoxContainer/BootOptions"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "{
+
+}"
+placeholder_text = "JSON Data..."
+caret_blink = true
+
+[node name="HSeparator2" type="HSeparator" parent="Layout/BootUI/VBoxContainer/BootOptions"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Layout/BootUI/VBoxContainer/BootOptions"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
 text = "One Screen"
 
-[node name="OneScreen" type="Button" parent="Layout/BootUI/VBoxContainer"]
+[node name="OneScreen" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 layout_mode = 2
 text = "Start One Screen"
 
-[node name="HSeparator3" type="HSeparator" parent="Layout/BootUI/VBoxContainer"]
+[node name="HSeparator3" type="HSeparator" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 layout_mode = 2
 
-[node name="Label4" type="Label" parent="Layout/BootUI/VBoxContainer"]
+[node name="Label4" type="Label" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 modulate = Color(1, 1, 1, 0.596078)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 text = "Swap"
 
-[node name="Swap" type="Button" parent="Layout/BootUI/VBoxContainer"]
+[node name="Swap" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 layout_mode = 2
 text = "Start Swap"
 
-[node name="Label7" type="Label" parent="Layout/BootUI/VBoxContainer"]
+[node name="HSeparator4" type="HSeparator" parent="Layout/BootUI/VBoxContainer/BootOptions"]
+layout_mode = 2
+
+[node name="Label7" type="Label" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 modulate = Color(1, 1, 1, 0.596078)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 text = "Solo"
 
-[node name="Solo" type="Button" parent="Layout/BootUI/VBoxContainer"]
+[node name="Solo" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions"]
 layout_mode = 2
 text = "Start Solo"
 
+[node name="Status" type="VBoxContainer" parent="Layout/BootUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="StatusText" type="Label" parent="Layout/BootUI/VBoxContainer/Status"]
+layout_mode = 2
+text = "Running as Server at 4200"
+
 [connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer3/Close" to="Layout/BootUI" method="_on_close_pressed"]
-[connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer/Host" to="Layout/BootUI" method="_on_host_pressed"]
-[connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer/HostAct" to="Layout/BootUI" method="_on_host_act_pressed"]
-[connection signal="pressed" from="Layout/BootUI/VBoxContainer/HBoxContainer2/Connect" to="Layout/BootUI" method="_on_connect_pressed"]
-[connection signal="text_changed" from="Layout/BootUI/VBoxContainer/HBoxContainer2/ConnectAddress" to="Layout/BootUI" method="_on_connect_address_text_changed"]
-[connection signal="pressed" from="Layout/BootUI/VBoxContainer/OneScreen" to="Layout/BootUI" method="_on_one_screen_pressed"]
-[connection signal="pressed" from="Layout/BootUI/VBoxContainer/Swap" to="Layout/BootUI" method="_on_swap_pressed"]
-[connection signal="pressed" from="Layout/BootUI/VBoxContainer/Solo" to="Layout/BootUI" method="_on_solo_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer/Host" to="Layout/BootUI" method="_on_host_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer/HostAct" to="Layout/BootUI" method="_on_host_act_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer2/Connect" to="Layout/BootUI" method="_on_connect_pressed"]
+[connection signal="text_changed" from="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer2/ConnectAddress" to="Layout/BootUI" method="_on_connect_address_text_changed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/BootOptions/OneScreen" to="Layout/BootUI" method="_on_one_screen_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/BootOptions/Swap" to="Layout/BootUI" method="_on_swap_pressed"]
+[connection signal="pressed" from="Layout/BootUI/VBoxContainer/BootOptions/Solo" to="Layout/BootUI" method="_on_solo_pressed"]

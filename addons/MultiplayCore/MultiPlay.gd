@@ -5,6 +5,9 @@ extends MPBase
 ## Core of everything MultiPlay
 class_name MultiPlayCore
 
+## MultiPlay Core Version
+const MP_VERSION = "0.1-alpha"
+
 ## On network scene loaded
 signal scene_loaded
 ## Emit when new player is connected to the server, Emit to all players in the server.
@@ -15,6 +18,8 @@ signal player_disconnected(player: MPPlayer)
 signal connected_to_server(localplayer: MPPlayer)
 ## Emit when client has disconnected from the server, Only emit locally.
 signal disconnected_from_server(reason: String)
+## Emit when client faced connection error
+signal connection_error(reason: ConnectionError)
 ## Emit when swap index has changed. Only emit in Swap Play mode
 signal swap_changed(to_index: int, old_index: int)
 
@@ -38,25 +43,46 @@ enum NetworkProtocol {
 	WebSockets,
 }
 
+## List of connection errors
+enum ConnectionError {
+	UNKNOWN,
+	SERVER_FULL,
+	AUTH_FAILED,
+}
+
 @export_subgroup("Network")
 ## Determines which network protocol to use.
 @export var network_protocol: NetworkProtocol
 ## Which port to use in online game host.
-@export var port: int = 4200
+@export_range(0, 65535) var port: int = 4200
 ## Max players for the game.
 @export var max_players = 2
 
 @export_subgroup("Spawn Meta")
 ## Your own template player scene.
 @export var player_scene: PackedScene
+## The first scene to load
+@export var first_scene: PackedScene
 
 @export_subgroup("Inputs")
 ## Which action key to use for swap mode.
-@export var swap_input_action = ""
+@export var swap_input_action: String:
+	get:
+		return swap_input_action
+	set(value):
+		swap_input_action = value
+		if Engine.is_editor_hint():
+			update_configuration_warnings()
 
 @export_subgroup("GUI")
 ## Enable Debug UI
 @export var debug_gui_enabled = true
+
+func _get_configuration_warnings():
+	var warns = []
+	if swap_input_action == "":
+		warns.append("Swap Input action currently not set.")
+	return warns
 
 var _net_data = {
 	current_scene_path = ""
@@ -71,8 +97,7 @@ var online_peer: MultiplayerPeer = null
 var online_connected = false
 
 ## Players Collection
-var players: MPPlayersCollection = MPPlayersCollection.new()
-var _players_node: Node
+var players: MPPlayersCollection
 var _plr_spawner: MultiplayerSpawner
 ## Determines if MultiPlay has started
 var started = false
@@ -89,6 +114,8 @@ var current_scene: Node = null
 var current_swap_index = 0
 
 var _join_handshake_data = {}
+var _join_credentials_data = {}
+var _extensions = []
 
 func _ready():
 	if Engine.is_editor_hint():
@@ -109,7 +136,10 @@ func _ready():
 		add_child(dgui)
 
 func _init_data():
+	print("MultiPlay Core v" + MP_VERSION + " - https://mpc.himaji.xyz - https://discord.gg/PXh9kZ9GzC")
+	print("")
 	started = true
+	MPIO.mpc = self
 	InputMap.add_action("empty")
 	_setup_nodes()
 
@@ -127,6 +157,9 @@ func start_solo():
 	_online_host()
 	
 	create_player(1, {})
+
+func _report_extension(ext: MPExtension):
+	_extensions.append(ext)
 
 ## Start swap mode
 func start_swap():
@@ -169,9 +202,9 @@ func swap_to(index):
 	swap_changed.emit(current_swap_index, old_index)
 
 func _presetup_nodes():
-	_players_node = Node.new()
-	_players_node.name = "Players"
-	add_child(_players_node, true)
+	players = MPPlayersCollection.new()
+	players.name = "Players"
+	add_child(players, true)
 	
 	_plr_spawner = MultiplayerSpawner.new()
 	_plr_spawner.name = "PlayerSpawner"
@@ -179,7 +212,7 @@ func _presetup_nodes():
 	add_child(_plr_spawner, true)
 
 func _setup_nodes():
-	_plr_spawner.spawn_path = _players_node.get_path()
+	_plr_spawner.spawn_path = players.get_path()
 	_plr_spawner.spawned.connect(_debug_node_spawned)
 
 func _debug_node_spawned(node: Node):
@@ -191,9 +224,9 @@ func start_online_host(act_client: bool = false, act_client_handshake_data: Dict
 	_online_host(act_client, act_client_handshake_data)
 
 ## Start online mode as client
-func start_online_join(url: String, handshake_data: Dictionary = {}):
+func start_online_join(url: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	mode = PlayMode.Online
-	_online_join(url, handshake_data)
+	_online_join(url, handshake_data, credentials_data)
 
 func _online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}):
 	_init_data()
@@ -212,17 +245,21 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.peer_connected.connect(_network_player_connected)
 	multiplayer.peer_disconnected.connect(_network_player_disconnected)
-
+	
+	if first_scene:
+		load_scene(first_scene.resource_path)
+	
 	if act_client:
 		_join_handshake_data = act_client_handshake_data
 		#create_player(1, act_client_handshake_data)
 		_network_player_connected(1)
 		_client_connected()
 
-func _online_join(url: String, handshake_data: Dictionary = {}):
+func _online_join(url: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	_init_data()
 	
 	_join_handshake_data = handshake_data
+	_join_credentials_data = credentials_data
 	
 	if network_protocol == NetworkProtocol.ENet:
 		var splitd = url.split(":")
@@ -239,7 +276,6 @@ func _online_join(url: String, handshake_data: Dictionary = {}):
 
 ## Create player node
 func create_player(player_id, handshake_data = {}):
-	player_count = player_count + 1
 	_plr_spawner.spawn({player_id = player_id, handshake_data = handshake_data, pindex = player_count})
 
 @rpc("authority", "call_local", "reliable")
@@ -254,6 +290,8 @@ func _net_broadcast_remove_player(peer_id: int):
 	var target_plr = players.get_player_by_id(peer_id)
 	
 	if target_plr:
+		player_count = player_count - 1
+		
 		if !is_server:
 			player_disconnected.emit(target_plr)
 			players._internal_remove_player(peer_id)
@@ -265,9 +303,11 @@ func _player_spawned(data):
 	player.name = str(data.player_id)
 	player.player_id = data.player_id
 	player.handshake_data = data.handshake_data
-	player.player_index = data.pindex - 1
+	player.player_index = data.pindex
 	player.is_local = false
 	player.mpc = self
+	
+	player_count = player_count + 1
 	
 	# If is local player
 	if data.player_id == multiplayer.get_unique_id():
@@ -293,14 +333,19 @@ func _player_spawned(data):
 	return player
 
 func _network_player_connected(player_id):
-	if player_count >= max_players:
-		online_peer.disconnect_peer(player_id)
-		return
-	rpc_id(player_id, "_internal_recv_net_data", _net_data)
+	pass
+
+func find_key(dictionary, value):
+	var index = dictionary.values().find(value)
+	return dictionary.keys()[index]
+
+@rpc("authority", "call_local")
+func _handshake_disconnect_peer(reason: ConnectionError):
+	MPIO.logerr("Connection Error: " + str(find_key(ConnectionError, reason)))
+	connection_error.emit(reason)
+	online_peer.close()
 
 func _network_player_disconnected(player_id):
-	player_count = player_count - 1
-	
 	var target_plr = players.get_player_by_id(player_id)
 	
 	if target_plr:
@@ -308,10 +353,30 @@ func _network_player_disconnected(player_id):
 		player_disconnected.emit(target_plr)
 		target_plr.queue_free()
 
+# Init player
 @rpc("any_peer", "call_local", "reliable")
-func _join_handshake(handshake_data):
-	MPIO.plr_id = multiplayer.get_unique_id()
-	create_player(multiplayer.get_remote_sender_id(), handshake_data)
+func _join_handshake(handshake_data, credentials_data):
+	var from_id = multiplayer.get_remote_sender_id()
+	
+	var existing_plr = players.get_player_by_id(from_id)
+	
+	if existing_plr:
+		return
+	
+	if player_count >= max_players:
+		rpc_id(from_id, "_handshake_disconnect_peer", ConnectionError.SERVER_FULL)
+		return
+	
+	# Auth non server players
+	if from_id != 1:
+		for ext in _extensions:
+			if ext is MPAuth:
+				if !ext.authenticate(from_id, credentials_data, handshake_data):
+					rpc_id(from_id, "_handshake_disconnect_peer", ConnectionError.AUTH_FAILED)
+					return
+	
+	rpc_id(from_id, "_internal_recv_net_data", _net_data)
+	create_player(from_id, handshake_data)
 
 @rpc("any_peer", "call_local", "reliable")
 func _internal_recv_net_data(data):
@@ -323,10 +388,10 @@ func _internal_recv_net_data(data):
 		_net_load_scene(_net_data.current_scene_path)
 	
 	MPIO.logdata("Sending Join Handshake")
-	rpc_id(1, "_join_handshake", _join_handshake_data)
 
 func _client_connected():
 	MPIO.logdata("Connected")
+	rpc_id(1, "_join_handshake", _join_handshake_data, _join_credentials_data)
 
 func _client_disconnected():
 	if online_connected:
@@ -342,10 +407,12 @@ func load_scene(scene_path: String):
 	rpc("_net_load_scene", scene_path)
 
 func _check_if_net_from_id(id):
-	return mode == PlayMode.Online and multiplayer.get_remote_sender_id() == id
+	if mode != PlayMode.Online:
+		return true
+	return multiplayer.get_remote_sender_id() == id
 
 @rpc("authority", "call_local", "reliable")
-func _net_load_scene(scene_path: String):
+func _net_load_scene(scene_path: String, respawn_players = true):
 	_net_data.current_scene_path = scene_path
 	
 	if current_scene:
@@ -363,3 +430,5 @@ func _net_load_scene(scene_path: String):
 	
 	add_child(scene_node)
 	
+	if respawn_players:
+		players.respawn_node_all()

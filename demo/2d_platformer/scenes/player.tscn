@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://bh3eicxcruiih"]
+
+[ext_resource type="Script" path="res://demo/2d_platformer/scripts/PlayerMovement.gd" id="1_v06ti"]
+[ext_resource type="SpriteFrames" uid="uid://bmtcbxaryhliq" path="res://demo/2d_platformer/assets/sprite_frames.tres" id="2_x8ixq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7554x"]
+size = Vector2(36, 58)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_iubik"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath("Sprite:flip_h")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+texture_filter = 1
+script = ExtResource("1_v06ti")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_7554x")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(2.5, 2.5)
+sprite_frames = ExtResource("2_x8ixq")
+animation = &"g"
+autoplay = "g"
+speed_scale = 0.0
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_iubik")
+
+[node name="SwapIndicator" type="AnimatedSprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -46)
+scale = Vector2(1.2, 1.2)
+sprite_frames = ExtResource("2_x8ixq")
+animation = &"swap_focus"
+flip_v = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+visible = false
+enabled = false
+position_smoothing_enabled = true
+
+[node name="PlayerLabel" type="Label" parent="."]
+offset_left = -23.0
+offset_top = -60.0
+offset_right = 17.0
+offset_bottom = -37.0
+text = "P"
+horizontal_alignment = 1

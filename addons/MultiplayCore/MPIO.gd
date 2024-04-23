@@ -4,6 +4,8 @@ extends MPBase
 
 class_name MultiPlayIO
 
+## Main MultiPlay Core
+var mpc: MultiPlayCore = null
 var plr_id = 0
 
 ## Log data to the output console

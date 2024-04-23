@@ -27,44 +27,44 @@ var is_swap_focused = false
 ## The resource path of the template player.
 var player_node_resource_path = ""
 
+var _local_got_handshake = false
+
 ## On player ready. Only emit locally
 signal player_ready
 ## On handshake data is ready. Emit to all players
 signal handshake_ready(handshake_data: Dictionary)
 ## On swap focused, Swap mode only
-signal swap_focused
+signal swap_focused(old_swap: MPPlayer)
 ## On swap unfocused, Swap mode only
-signal swap_unfocused
+signal swap_unfocused(new_swap: MPPlayer)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	if mpc.mode == mpc.PlayMode.Online:
-		MPIO.logdata(str(player_id) + " local is " + str(is_local))
-		if !is_local:
-			pass
-			#rpc("_get_handshake_data")
-	else:
+	if mpc.mode != mpc.PlayMode.Online:
 		is_ready = true
 		player_ready.emit()
 		_send_handshake_data(handshake_data)
-		mpc.connect_to_server.emit()
+		mpc.connected_to_server.emit()
 	
 	mpc.swap_changed.connect(_on_swap_changed)
 	
 	if mpc.mode == mpc.PlayMode.Swap and mpc.current_swap_index == player_index:
 		is_swap_focused = true
-		swap_focused.emit()
+		swap_focused.emit(null)
 	
 	mpc.online_connected = true
 
-func _on_swap_changed(new, _old):
+func _on_swap_changed(new, old):
+	var new_focus = mpc.players.get_player_by_index(new)
+	var old_focus = mpc.players.get_player_by_index(old)
+	
 	if new == player_index:
 		is_swap_focused = true
-		swap_focused.emit()
+		swap_focused.emit(old_focus)
 	
 	if new != player_index and is_swap_focused == true:
 		is_swap_focused = false
-		swap_unfocused.emit()
+		swap_unfocused.emit(new_focus)
 
 ## Translate input action to the intended ones.
 ##
@@ -120,7 +120,9 @@ func _process(delta):
 	pass
 
 func _check_if_net_from_id(id):
-	return mpc.mode == mpc.PlayMode.Online and multiplayer.get_remote_sender_id() == id
+	if mpc.mode != mpc.PlayMode.Online:
+		return true
+	return multiplayer.get_remote_sender_id() == id
 
 @rpc("authority", "call_local")
 func _send_handshake_data(data):
@@ -132,6 +134,9 @@ func _internal_ping(server_time: float):
 	if !_check_if_net_from_id(1):
 		return
 	if !is_local:
+		if not _local_got_handshake:
+			_local_got_handshake = true
+			rpc("_get_handshake_data")
 		return
 	var current_time = Time.get_unix_time_from_system()
 	
@@ -163,15 +168,17 @@ func kick(reason: String = ""):
 
 ## Respawn player node, Server only.
 func respawn_node():
-	rpc_id(1, "_net_respawn")
+	print("respawn get")
+	rpc("_net_despawn")
+	rpc("_net_spawn_node")
 
 ## Despawn player node, Server only.
 func despawn_node():
-	rpc_id(1, "_net_despawn")
+	rpc("_net_despawn")
 
 ## Spawn player node, Server only.
 func spawn_node():
-	rpc_id(1, "_net_spawn_node")
+	rpc("_net_spawn_node")
 
 @rpc("any_peer", "call_local")
 func _net_kick(reason: String = ""):
@@ -187,35 +194,40 @@ func _net_kick(reason: String = ""):
 	_internal_peer.close()
 
 @rpc("any_peer", "call_local")
-func _net_respawn():
-	if !_check_if_net_from_id(1):
-		return
-	
-	_net_despawn()
-	_net_spawn_node()
-
-@rpc("any_peer", "call_local")
 func _net_despawn():
 	if !_check_if_net_from_id(1):
 		return
 	
 	if player_node:
-		player_node.queue_free()
+		player_node.free()
 		player_node = null
 
 @rpc("any_peer", "call_local")
 func _net_spawn_node():
+	print("rpc spawn got")
 	if !_check_if_net_from_id(1):
 		return
-	
+	print("despawning")
 	if player_node and is_instance_valid(player_node):
 		MPIO.logwarn("spawn_node: Player node already exists. Free it first with despawn_node or use respawn_node")
 		return
-	
+
 	if player_node_resource_path:
 		var packed_load = load(player_node_resource_path)
 		var pscene = packed_load.instantiate()
+		
+		pscene.set_multiplayer_authority(player_id)
+		
 		add_child(pscene, true)
+		
+		is_ready = true
+		_send_handshake_data(handshake_data)
+		
+		if is_local:
+			player_ready.emit()
+		
+		if mpc.mode == mpc.PlayMode.Swap:
+			mpc.swap_to(0)
 		
 		player_node = pscene
 

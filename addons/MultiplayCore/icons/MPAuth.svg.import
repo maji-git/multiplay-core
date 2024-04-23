@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://neigvmp777a3"
-path="res://.godot/imported/icon.svg-0e26b57068e7508dec2c10f86f7c1c40.ctex"
+uid="uid://bqrbedqykjml3"
+path="res://.godot/imported/MPAuth.svg-0b19f7002e685f9cd98ddfc75afa9eff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/MultiplayCore/icons/icon.svg"
-dest_files=["res://.godot/imported/icon.svg-0e26b57068e7508dec2c10f86f7c1c40.ctex"]
+source_file="res://addons/MultiplayCore/icons/MPAuth.svg"
+dest_files=["res://.godot/imported/MPAuth.svg-0b19f7002e685f9cd98ddfc75afa9eff.ctex"]
 
 [params]
 
