@@ -122,7 +122,7 @@ func _ready():
 		return
 	_presetup_nodes()
 	
-	if debug_gui_enabled:
+	if debug_gui_enabled and OS.is_debug_build():
 		var dgui = preload("res://addons/MultiplayCore/debug_ui/debug_ui.tscn").instantiate()
 		var bootui = dgui.get_node("Layout/BootUI")
 		
