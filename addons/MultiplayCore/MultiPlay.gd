@@ -394,8 +394,8 @@ func _physics_process(delta):
 		players._internal_ping()
 
 ## Load scene for all players
-func load_scene(scene_path: String):
-	rpc("_net_load_scene", scene_path)
+func load_scene(scene_path: String, respawn_players = true):
+	rpc("_net_load_scene", scene_path, respawn_players)
 
 func _check_if_net_from_id(id):
 	if mode != PlayMode.Online:
