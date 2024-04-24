@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://yx2r3bxi0kfc"]
+[gd_scene load_steps=6 format=3 uid="uid://yx2r3bxi0kfc"]
 
 [ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_ubvtg"]
 [ext_resource type="PackedScene" uid="uid://lw18orwsroqc" path="res://test_player.tscn" id="2_d01oj"]
 [ext_resource type="Script" path="res://addons/MultiplayCore/auths/MPAuth.gd" id="3_ta4np"]
-[ext_resource type="Script" path="res://tests/PasswordAuth.gd" id="4_whb18"]
 [ext_resource type="Script" path="res://tests/TestScriptz.gd" id="6_kqkof"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0jls2"]
@@ -19,8 +18,7 @@ swap_input_action = "swap"
 [node name="MPAuth" type="Node" parent="MultiplayCore"]
 script = ExtResource("3_ta4np")
 
-[node name="PassAuth" type="Node" parent="MultiplayCore/MPAuth"]
-script = ExtResource("4_whb18")
+[node name="PassAuth" type="Node" parent="."]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2(-24, 602)
