@@ -1,0 +1,133 @@
+[gd_scene load_steps=6 format=3 uid="uid://dxnrjskmes7tf"]
+
+[ext_resource type="Script" path="res://addons/MultiplayCore/editor/scripts/UpdatePopup.gd" id="1_1e3dt"]
+[ext_resource type="Texture2D" uid="uid://c01w42px0l5kw" path="res://addons/MultiplayCore/icons/icon.svg" id="1_embs7"]
+
+[sub_resource type="Animation" id="Animation_wrshe"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Title:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_fjliv"]
+resource_name = "slide"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Title:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lxre1"]
+_data = {
+"RESET": SubResource("Animation_wrshe"),
+"slide": SubResource("Animation_fjliv")
+}
+
+[node name="UpdatePopup" type="Window" node_paths=PackedStringArray("http_request", "slidetxt_anim_play", "status_label", "main_title", "update_btn", "update_progress_bar")]
+title = "Check for updates"
+initial_position = 2
+size = Vector2i(400, 350)
+script = ExtResource("1_1e3dt")
+http_request = NodePath("HTTPRequest")
+slidetxt_anim_play = NodePath("Panel/VBoxContainer/HBoxContainer/Control/AnimPlay")
+status_label = NodePath("Panel/VBoxContainer/HBoxContainer/Control/Title")
+main_title = NodePath("Panel/VBoxContainer/Label")
+update_btn = NodePath("Panel/VBoxContainer/HBoxContainer/UpdateButton")
+update_progress_bar = NodePath("Panel/VBoxContainer/HBoxContainer/UpdateProgressBar")
+
+[node name="Panel" type="Panel" parent="."]
+self_modulate = Color(0.74902, 0.74902, 0.74902, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 15.0
+offset_right = 385.0
+offset_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+texture = ExtResource("1_embs7")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Checking Updates..."
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 7
+alignment = 1
+
+[node name="UpdateButton" type="Button" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Update"
+
+[node name="UpdateProgressBar" type="ProgressBar" parent="Panel/VBoxContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+show_percentage = false
+
+[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 1.00001
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+
+[node name="AnimPlay" type="AnimationPlayer" parent="Panel/VBoxContainer/HBoxContainer/Control"]
+libraries = {
+"": SubResource("AnimationLibrary_lxre1")
+}
+
+[node name="LinkButton2" type="LinkButton" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Read Release Notes"
+uri = "https://github.com/maji-git/multiplay-core/releases"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[connection signal="close_requested" from="." to="." method="queue_free"]
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/UpdateButton" to="." method="_on_update_button_pressed"]
+[connection signal="request_completed" from="HTTPRequest" to="." method="_on_http_request_request_completed"]
