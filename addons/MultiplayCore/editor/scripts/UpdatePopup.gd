@@ -17,8 +17,6 @@ var download_url = ""
 var download_commit_hash = ""
 
 var request_step = ""
-# workaround for plugin
-var plugin: EditorPlugin
 
 func check_updates():
 	update_btn.disabled = true
