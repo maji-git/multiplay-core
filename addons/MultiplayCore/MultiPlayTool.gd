@@ -13,8 +13,8 @@ func _enter_tree():
 	submenu.add_item("Check for updates", 1)
 	submenu.add_item("Download Script Templates", 2)
 	submenu.add_separator()
-	submenu.add_item("Open Documentation", 3)
-	submenu.add_item("Get Support", 4)
+	submenu.add_item("Open Documentation", 8)
+	submenu.add_item("Get Support", 9)
 	
 	submenu.id_pressed.connect(_toolmenu_pressed)
 	
@@ -50,6 +50,12 @@ func _firstrun_restart_editor():
 func _toolmenu_pressed(id):
 	if id == 1:
 		open_update_popup()
+	
+	if id == 8:
+		OS.shell_open("https://mpc.himaji.xyz/docs/")
+	
+	if id == 9:
+		OS.shell_open("https://mpc.himaji.xyz/docs/community/get-support/")
 
 func set_firstrun(to):
 	var fr = FileAccess.open("user://mpc_tool_firstrun", FileAccess.WRITE)
