@@ -4,3 +4,5 @@
 /**        export-ignore
 /addons    !export-ignore
 /addons/** !export-ignore
+/script_templates    !export-ignore
+/script_templates/** !export-ignore
