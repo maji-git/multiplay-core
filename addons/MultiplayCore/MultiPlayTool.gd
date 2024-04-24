@@ -11,7 +11,6 @@ func get_icon(n):
 func _enter_tree():
 	var submenu: PopupMenu = PopupMenu.new()
 	submenu.add_item("Check for updates", 1)
-	submenu.add_item("Download Script Templates", 2)
 	submenu.add_separator()
 	submenu.add_item("Open Documentation", 8)
 	submenu.add_item("Get Support", 9)
