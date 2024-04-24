@@ -85,11 +85,11 @@ func _on_http_request_request_completed(result, response_code, headers, body):
 		DirAccess.remove_absolute("res://addons/MultiplayCore")
 		
 		for f in files:
-			var fp = f.trim_prefix("multiplay-core-" + download_commit_hash).trim_prefix("/addons")
+			var fp = f.trim_prefix("multiplay-core-" + download_commit_hash)
 			
 			var res := reader.read_file(f)
 			
-			var user_path = "res://addons/" + fp
+			var user_path = "res://" + fp
 			if res.size() == 0:
 				DirAccess.make_dir_recursive_absolute(user_path)
 			else:
@@ -101,7 +101,7 @@ func _on_http_request_request_completed(result, response_code, headers, body):
 		
 		reader.close()
 		
-		set_status("Completed! Restart the Editor to finish installation ;)", Color.LIME_GREEN)
+		set_status("Completed! Restart the Editor to finish installation :D", Color.LIME_GREEN)
 		
 		update_btn.text = "Save + Restart"
 		update_btn.visible = true
