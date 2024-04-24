@@ -6,7 +6,7 @@ extends MPBase
 class_name MultiPlayCore
 
 ## MultiPlay Core Version
-const MP_VERSION = "0.1-alpha"
+const MP_VERSION = "0.2-alpha"
 
 ## On network scene loaded
 signal scene_loaded
@@ -215,16 +215,16 @@ func _setup_nodes():
 	_plr_spawner.spawn_path = players.get_path()
 
 ## Start online mode as host
-func start_online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}):
+func start_online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
 	mode = PlayMode.Online
-	_online_host(act_client, act_client_handshake_data)
+	_online_host(act_client, act_client_handshake_data, act_client_credentials_data)
 
 ## Start online mode as client
 func start_online_join(url: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	mode = PlayMode.Online
 	_online_join(url, handshake_data, credentials_data)
 
-func _online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}):
+func _online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
 	_init_data()
 	
 	is_server = true
@@ -247,6 +247,7 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 	
 	if act_client:
 		_join_handshake_data = act_client_handshake_data
+		_join_credentials_data = act_client_credentials_data
 		#create_player(1, act_client_handshake_data)
 		_network_player_connected(1)
 		_client_connected()
@@ -337,6 +338,7 @@ func find_key(dictionary, value):
 @rpc("authority", "call_local")
 func _handshake_disconnect_peer(reason: ConnectionError):
 	MPIO.logerr("Connection Error: " + str(find_key(ConnectionError, reason)))
+	online_connected = false
 	connection_error.emit(reason)
 	online_peer.close()
 
@@ -362,13 +364,29 @@ func _join_handshake(handshake_data, credentials_data):
 		rpc_id(from_id, "_handshake_disconnect_peer", ConnectionError.SERVER_FULL)
 		return
 	
-	# Auth non server players
-	if from_id != 1:
-		for ext in _extensions:
-			if ext is MPAuth:
-				if !ext.authenticate(from_id, credentials_data, handshake_data):
-					rpc_id(from_id, "_handshake_disconnect_peer", ConnectionError.AUTH_FAILED)
-					return
+	var auth_data = {}
+	
+	# Clear internal data, this is reserved
+	if handshake_data.keys().has("_net_internal"):
+		handshake_data._net_internal = {}
+	
+	handshake_data._net_internal = {
+		auth_data = {}
+	}
+	
+	# Authenticate client
+	for ext in _extensions:
+		if ext is MPAuth:
+			var auth_result = await ext.authenticate(from_id, credentials_data, handshake_data)
+			if typeof(auth_result) == TYPE_BOOL and auth_result == false:
+				rpc_id(from_id, "_handshake_disconnect_peer", ConnectionError.AUTH_FAILED)
+				return
+				
+			auth_data = auth_result
+				
+			break
+	
+	handshake_data._net_internal.auth_data = auth_data
 	
 	rpc_id(from_id, "_internal_recv_net_data", _net_data)
 	create_player(from_id, handshake_data)
@@ -388,7 +406,7 @@ func _client_disconnected():
 	if online_connected:
 		disconnected_from_server.emit("Unknown")
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+# Ping player
 func _physics_process(delta):
 	if started and is_server:
 		players._internal_ping()

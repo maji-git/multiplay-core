@@ -13,10 +13,14 @@ class_name MPAuth
 ## [code]credentials_data[/code] Credentials data from the player[br]
 ## [code]handshake_data[/code] Handshake data from the player[br]
 ##
+## Return false if fail, otherwise return the data
+##
 var authenticate_function: Callable
 
 func authenticate(plr_id, credentials_data, handshake_data):
 	if !authenticate_function:
 		MPIO.logwarn("authenticate: authenticate_function has not been set. Allowing user in by default.")
 		return true
-	return authenticate_function.call(plr_id, credentials_data, handshake_data)
+	
+	var result = await authenticate_function.call(plr_id, credentials_data, handshake_data)
+	return result

@@ -8,6 +8,8 @@ class_name MPPlayer
 @export var ping_ms: int
 ## Handshake data
 @export var handshake_data = {}
+## Authentication Data
+var auth_data = {}
 ## ID of the player
 @export var player_id = 0
 ## Get MultiPlayCore
@@ -113,11 +115,13 @@ func _get_handshake_data():
 @rpc("any_peer")
 func _recv_handshake_data(hs):
 	handshake_data = hs
-	handshake_ready.emit(handshake_data)
+	_on_handshake_ready()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+func _on_handshake_ready():
+	if handshake_data.keys().has("_net_internal"):
+		if handshake_data._net_internal.keys().has("auth_data"):
+			auth_data = handshake_data._net_internal.auth_data
+	handshake_ready.emit(handshake_data)
 
 func _check_if_net_from_id(id):
 	if mpc.mode != mpc.PlayMode.Online:
@@ -127,7 +131,7 @@ func _check_if_net_from_id(id):
 @rpc("authority", "call_local")
 func _send_handshake_data(data):
 	handshake_data = data
-	handshake_ready.emit(data)
+	_on_handshake_ready()
 
 @rpc("any_peer", "call_local")
 func _internal_ping(server_time: float):

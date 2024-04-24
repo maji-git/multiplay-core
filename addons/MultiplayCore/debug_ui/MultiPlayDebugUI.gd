@@ -32,11 +32,11 @@ func save_debug_cache():
 	fp.close()
 
 func _on_host_pressed():
-	mpc.start_online_host(false, JSON.parse_string(payload_input.text))
+	mpc.start_online_host(false, JSON.parse_string(payload_input.text), JSON.parse_string(cert_input.text))
 	boot_close()
 
 func _on_host_act_pressed():
-	mpc.start_online_host(true, JSON.parse_string(payload_input.text))
+	mpc.start_online_host(true, JSON.parse_string(payload_input.text), JSON.parse_string(cert_input.text))
 	boot_close()
 
 func _on_connect_pressed():
