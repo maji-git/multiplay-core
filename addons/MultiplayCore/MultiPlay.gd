@@ -6,7 +6,7 @@ extends MPBase
 class_name MultiPlayCore
 
 ## MultiPlay Core Version
-const MP_VERSION = "0.2-alpha"
+const MP_VERSION = "0.2.3-alpha"
 
 ## On network scene loaded
 signal scene_loaded
