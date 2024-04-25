@@ -331,13 +331,13 @@ func _player_spawned(data):
 func _network_player_connected(player_id):
 	pass
 
-func find_key(dictionary, value):
+func _find_key(dictionary, value):
 	var index = dictionary.values().find(value)
 	return dictionary.keys()[index]
 
 @rpc("authority", "call_local")
 func _handshake_disconnect_peer(reason: ConnectionError):
-	MPIO.logerr("Connection Error: " + str(find_key(ConnectionError, reason)))
+	MPIO.logerr("Connection Error: " + str(_find_key(ConnectionError, reason)))
 	online_connected = false
 	connection_error.emit(reason)
 	online_peer.close()
