@@ -441,3 +441,5 @@ func _net_load_scene(scene_path: String, respawn_players = true):
 	
 	if respawn_players:
 		players.respawn_node_all()
+	
+	scene_loaded.emit()
