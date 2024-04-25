@@ -92,6 +92,9 @@ func translate_action(origin_action: StringName) -> StringName:
 			var events = InputMap.action_get_events(origin_action)
 		
 			for e in events:
+				if not (e is InputEventJoypadButton or e is InputEventJoypadMotion):
+					continue
+				
 				var nevent = e.duplicate(true)
 				nevent.device = player_index
 				
