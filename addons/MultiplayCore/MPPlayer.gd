@@ -168,7 +168,7 @@ func disconnect_player():
 
 ## Kick the player, Server only.
 func kick(reason: String = ""):
-	rpc_id(1, "_net_kick", reason)
+	rpc_id(player_id, "_net_kick", reason)
 
 ## Respawn player node, Server only.
 func respawn_node():
