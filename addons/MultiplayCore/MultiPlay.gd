@@ -152,6 +152,9 @@ func _init_data():
 	MPIO.mpc = self
 	InputMap.add_action("empty")
 	_setup_nodes()
+	
+	if mode == PlayMode.Online and _net_protocol == null:
+		assert(false, "NetProtocol is current not set.")
 
 ## Start one screen mode
 func start_one_screen():
