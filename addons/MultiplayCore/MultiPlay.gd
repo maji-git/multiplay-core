@@ -285,17 +285,28 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 		_network_player_connected(1)
 		_client_connected()
 
-func _online_join(url: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
+func _online_join(address: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	_init_data()
 	
 	_join_handshake_data = handshake_data
 	_join_credentials_data = credentials_data
 	
-	var splitd = url.split(":")
+	var result_url = ""
+	
+	var ip_split = Array(address.split("/"))
+	var hostname = ip_split[0]
+	
+	ip_split.pop_front()
+	
+	var url_path = "/".join(PackedStringArray(ip_split))
+	
+	var splitd = hostname.split(":")
 	var port_num = null
+	
 	if splitd.size() > 1:
 		port_num = int(splitd[1])
-	online_peer = _net_protocol.join(splitd[0], port_num)
+	
+	online_peer = _net_protocol.join(hostname + "/" + url_path, port_num)
 	
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.connected_to_server.connect(_client_connected)
