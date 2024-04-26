@@ -11,6 +11,7 @@ func get_icon(n):
 func _enter_tree():
 	var submenu: PopupMenu = PopupMenu.new()
 	submenu.add_item("Check for updates", 1)
+	submenu.add_item("Create Self Signed Certificate", 2)
 	submenu.add_separator()
 	submenu.add_item("Open Documentation", 8)
 	submenu.add_item("Get Support", 9)
@@ -50,6 +51,9 @@ func _toolmenu_pressed(id):
 	if id == 1:
 		open_update_popup()
 	
+	if id == 2:
+		run_devscript(preload("res://addons/MultiplayCore/dev_scripts/CertMake.gd"))
+	
 	if id == 8:
 		OS.shell_open("https://mpc.himaji.xyz/docs/")
 	
@@ -60,6 +64,9 @@ func set_firstrun(to):
 	var fr = FileAccess.open("user://mpc_tool_firstrun", FileAccess.WRITE)
 	fr.store_string(to)
 	fr.close()
+
+func run_devscript(script):
+	await script.run()
 
 func open_update_popup():
 	var popup = UPDATE_POPUP.instantiate()
