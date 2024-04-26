@@ -132,6 +132,7 @@ func _ready():
 		return
 	_presetup_nodes()
 	
+	
 	if debug_gui_enabled and OS.is_debug_build():
 		var dgui = preload("res://addons/MultiplayCore/debug_ui/debug_ui.tscn").instantiate()
 		var bootui = dgui.get_node("Layout/BootUI")
@@ -141,6 +142,27 @@ func _ready():
 		bootui.join_address = "127.0.0.1:" + str(port)
 		
 		add_child(dgui)
+	
+	# Parse CLI arguments
+	var arguments = {}
+	for argument in OS.get_cmdline_args():
+		if argument.find("=") > -1:
+			var key_value = argument.split("=")
+			arguments[key_value[0].lstrip("--")] = key_value[1]
+		else:
+			arguments[argument.lstrip("--")] = ""
+	
+	if arguments.has("port"):
+		port = int(arguments.port)
+	
+	if arguments.has("server"):
+		_online_host(arguments.has("act-client"))
+	
+	if arguments.has("client"):
+		var client_url = ""
+		if arguments.has("url"):
+			client_url = arguments.url
+		_online_join(client_url)
 
 func _tool_child_refresh_warns(new_child):
 	update_configuration_warnings()
