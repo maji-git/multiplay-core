@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnt63jyg1scmb"
-path="res://.godot/imported/MPStartTransform3D.svg-1a8611cf833f3a259d00ede09a4dcbee.ctex"
+uid="uid://k0ytc3st8e8q"
+path="res://.godot/imported/MPNetProtocolBase.svg-9c000ab6ccf9356ea22b56fdc573abc3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/MultiplayCore/icons/MPStartTransform3D.svg"
-dest_files=["res://.godot/imported/MPStartTransform3D.svg-1a8611cf833f3a259d00ede09a4dcbee.ctex"]
+source_file="res://addons/MultiplayCore/icons/MPNetProtocolBase.svg"
+dest_files=["res://.godot/imported/MPNetProtocolBase.svg-9c000ab6ccf9356ea22b56fdc573abc3.ctex"]
 
 [params]
 

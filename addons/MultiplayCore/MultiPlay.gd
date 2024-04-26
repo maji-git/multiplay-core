@@ -35,14 +35,6 @@ enum PlayMode {
 	Solo
 }
 
-## Network Protocol to use in online games
-enum NetworkProtocol {
-	## Use ENet
-	ENet,
-	## Use WebSockets
-	WebSockets,
-}
-
 ## List of connection errors
 enum ConnectionError {
 	UNKNOWN,
@@ -51,8 +43,8 @@ enum ConnectionError {
 }
 
 @export_subgroup("Network")
-## Determines which network protocol to use.
-@export var network_protocol: NetworkProtocol
+## Which ip to bind on in online game host.
+@export var bind_address: String = "*"
 ## Which port to use in online game host.
 @export_range(0, 65535) var port: int = 4200
 ## Max players for the game.
@@ -82,6 +74,20 @@ func _get_configuration_warnings():
 	var warns = []
 	if swap_input_action == "":
 		warns.append("Swap Input action currently not set.")
+	
+	var net_count = 0
+	for c in get_children():
+		if c is MPNetProtocolBase:
+			net_count = net_count + 1
+			if net_count > 1:
+				break
+	
+	if net_count == 0:
+		warns.append("No Net Protocol set for online mode, add one by Add Child Node > Type in search 'Protocol'")
+	elif net_count > 1:
+		warns.append("Only 1 Net Protocol can be set.")
+	
+	
 	return warns
 
 var _net_data = {
@@ -117,8 +123,12 @@ var _join_handshake_data = {}
 var _join_credentials_data = {}
 var _extensions = []
 
+var _net_protocol: MPNetProtocolBase = null
+
 func _ready():
 	if Engine.is_editor_hint():
+		child_entered_tree.connect(_tool_child_refresh_warns)
+		child_exiting_tree.connect(_tool_child_refresh_warns)
 		return
 	_presetup_nodes()
 	
@@ -128,12 +138,12 @@ func _ready():
 		
 		bootui.mpc = self
 		
-		if network_protocol == NetworkProtocol.WebSockets:
-			bootui.join_address = "ws://localhost:" + str(port)
-		elif network_protocol == NetworkProtocol.ENet:
-			bootui.join_address = "127.0.0.1:" + str(port)
+		bootui.join_address = "127.0.0.1:" + str(port)
 		
 		add_child(dgui)
+
+func _tool_child_refresh_warns(new_child):
+	update_configuration_warnings()
 
 func _init_data():
 	print("MultiPlay Core v" + MP_VERSION + " - https://mpc.himaji.xyz - https://discord.gg/PXh9kZ9GzC")
@@ -160,6 +170,9 @@ func start_solo():
 
 func _report_extension(ext: MPExtension):
 	_extensions.append(ext)
+	
+	if ext is MPNetProtocolBase:
+		_net_protocol = ext
 
 ## Start swap mode
 func start_swap():
@@ -229,12 +242,7 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 	
 	is_server = true
 	
-	if network_protocol == NetworkProtocol.ENet:
-		online_peer = ENetMultiplayerPeer.new()
-		online_peer.create_server(port, max_players);
-	elif network_protocol == NetworkProtocol.WebSockets:
-		online_peer = WebSocketMultiplayerPeer.new()
-		online_peer.create_server(port);
+	online_peer = _net_protocol.host(port, bind_address, max_players)
 	
 	MPIO.logdata("Starting server at port " + str(port))
 	
@@ -258,14 +266,11 @@ func _online_join(url: String, handshake_data: Dictionary = {}, credentials_data
 	_join_handshake_data = handshake_data
 	_join_credentials_data = credentials_data
 	
-	if network_protocol == NetworkProtocol.ENet:
-		var splitd = url.split(":")
-		
-		online_peer = ENetMultiplayerPeer.new()
-		online_peer.create_client(splitd[0], int(splitd[1]));
-	elif network_protocol == NetworkProtocol.WebSockets:
-		online_peer = WebSocketMultiplayerPeer.new()
-		online_peer.create_client(url)
+	var splitd = url.split(":")
+	var port_num = null
+	if splitd.size() > 1:
+		port_num = int(splitd[1])
+	online_peer = _net_protocol.join(splitd[0], port_num)
 	
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.connected_to_server.connect(_client_connected)
