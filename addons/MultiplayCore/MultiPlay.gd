@@ -55,6 +55,8 @@ enum ConnectionError {
 @export var player_scene: PackedScene
 ## The first scene to load
 @export var first_scene: PackedScene
+## Should Client authority be assigned automatically?
+@export var assign_client_authority = true
 
 @export_subgroup("Inputs")
 ## Which action key to use for swap mode.
