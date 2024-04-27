@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://pomh8jqv6rie"]
+
+[ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_m1jil"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="2_i3yor"]
+[ext_resource type="PackedScene" uid="uid://pe6us1xv4gji" path="res://tests/3d/player.tscn" id="2_xecj0"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_gfph1"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_fqi44"]
+
+[sub_resource type="Environment" id="Environment_xggn3"]
+background_mode = 1
+background_color = Color(0.709804, 0.921569, 0.964706, 1)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MultiPlayCore" type="Node" parent="."]
+script = ExtResource("1_m1jil")
+player_scene = ExtResource("2_xecj0")
+swap_input_action = "swap"
+
+[node name="ENetProtocol" type="Node" parent="MultiPlayCore"]
+script = ExtResource("2_i3yor")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("PlaneMesh_gfph1")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("WorldBoundaryShape3D_fqi44")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_xggn3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 0, 0)
