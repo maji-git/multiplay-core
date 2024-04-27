@@ -13,8 +13,6 @@ func host(port, bind_ip, max_players) -> MultiplayerPeer:
 	return peer
 
 func join(address, port) -> MultiplayerPeer:
-	var protocol = "ws"
-	
 	var peer = ENetMultiplayerPeer.new()
 	peer.create_client(address, port)
 	

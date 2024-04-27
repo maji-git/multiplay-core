@@ -295,18 +295,22 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 	
 	var ip_split = Array(address.split("/"))
 	var hostname = ip_split[0]
+	var real_hostname = hostname.split(":")[0]
 	
 	ip_split.pop_front()
 	
 	var url_path = "/".join(PackedStringArray(ip_split))
 	
-	var splitd = hostname.split(":")
+	if url_path.length() > 0:
+		url_path = "/" + url_path
+	
+	var portsplit = hostname.split(":")
 	var port_num = null
 	
-	if splitd.size() > 1:
-		port_num = int(splitd[1])
+	if portsplit.size() > 1:
+		port_num = int(portsplit[1])
 	
-	online_peer = _net_protocol.join(hostname + "/" + url_path, port_num)
+	online_peer = _net_protocol.join(real_hostname + url_path, port_num)
 	
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.connected_to_server.connect(_client_connected)

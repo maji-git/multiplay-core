@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_ubvtg"]
 [ext_resource type="PackedScene" uid="uid://lw18orwsroqc" path="res://test_player.tscn" id="2_d01oj"]
 [ext_resource type="Script" path="res://addons/MultiplayCore/auths/MPAuth.gd" id="3_ta4np"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/WebSocketNetProtocol.gd" id="4_k5ljr"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="4_gpbte"]
 [ext_resource type="Script" path="res://tests/TestScriptz.gd" id="6_kqkof"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0jls2"]
@@ -19,8 +19,8 @@ swap_input_action = "swap"
 [node name="MPAuth" type="Node" parent="MultiplayCore"]
 script = ExtResource("3_ta4np")
 
-[node name="WebSocketNetProtocol" type="Node" parent="MultiplayCore"]
-script = ExtResource("4_k5ljr")
+[node name="ENetProtocol" type="Node" parent="MultiplayCore"]
+script = ExtResource("4_gpbte")
 
 [node name="PassAuth" type="Node" parent="."]
 

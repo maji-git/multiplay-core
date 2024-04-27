@@ -30,7 +30,12 @@ func join(address, port) -> MultiplayerPeer:
 		client_tls_options = TLSOptions.client(ssl_certificate)
 		protocol = "wss"
 	
-	var url = protocol + "://" + address + str(port)
+	var portstr = ""
+	
+	if port:
+		portstr = ":" + str(port)
+	
+	var url = protocol + "://" + address + portstr
 	
 	var peer = WebSocketMultiplayerPeer.new()
 	peer.create_client(url, client_tls_options)
