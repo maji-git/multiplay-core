@@ -1,3 +1,4 @@
+@icon("res://addons/MultiplayCore/icons/MPTransformSync.svg")
 extends MPBase
 ## Network Transform Synchronizer
 class_name MPTransformSync
@@ -38,6 +39,7 @@ func _ready():
 	_net_scale = _parent.scale
 
 func _physics_process(delta):
+	
 	if multiplayer.get_unique_id() == get_multiplayer_authority():
 		# Sync Position
 		if sync_position and (_parent.position - _net_position).length() > position_sensitivity:
