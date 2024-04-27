@@ -14,7 +14,6 @@ size = Vector2(1174, 23)
 [node name="MultiplayCore" type="Node" parent="."]
 script = ExtResource("1_ubvtg")
 player_scene = ExtResource("2_d01oj")
-assign_client_authority = false
 swap_input_action = "swap"
 
 [node name="MPAuth" type="Node" parent="MultiplayCore"]
