@@ -3,6 +3,7 @@ extends MPBase
 ## Network Transform Synchronizer
 class_name MPTransformSync
 
+@export var lerp_enabled = true
 @export var lerp_speed = 20
 
 @export_subgroup("Sync Transform")
@@ -58,13 +59,29 @@ func _physics_process(delta):
 		if sync_scale and (_parent.scale - _net_scale).length() > scale_sensitivity:
 			rpc("_recv_transform", "scl", _parent.scale)
 		
-		_parent.position = _net_position
-		_parent.rotation = _net_rotation
-		_parent.scale = _net_scale
+		# Sync all transforms
+		if sync_position:
+			_parent.position = _net_position
+		if sync_rotation:
+			_parent.rotation = _net_rotation
+		if sync_scale:
+			_parent.scale = _net_scale
 	else:
-		_parent.position = _parent.position.lerp(_net_position, delta * lerp_speed)
-		_parent.rotation = lerp(_parent.rotation, _net_rotation, delta * lerp_speed)
-		_parent.scale = _parent.scale.lerp(_net_scale, delta * lerp_speed)
+		if lerp_enabled:
+			if sync_position:
+				_parent.position = _parent.position.lerp(_net_position, delta * lerp_speed)
+			if sync_rotation:
+				_parent.rotation = lerp(_parent.rotation, _net_rotation, delta * lerp_speed)
+			if sync_scale:
+				_parent.scale = _parent.scale.lerp(_net_scale, delta * lerp_speed)
+		else:
+			# Sync all transforms
+			if sync_position:
+				_parent.position = _net_position
+			if sync_rotation:
+				_parent.rotation = _net_rotation
+			if sync_scale:
+				_parent.scale = _net_scale
 
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _recv_transform(field: String, set_to):
