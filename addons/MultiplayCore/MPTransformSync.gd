@@ -39,8 +39,8 @@ func _ready():
 	_net_scale = _parent.scale
 
 func _physics_process(delta):
-	
-	if multiplayer.get_unique_id() == get_multiplayer_authority():
+	# Only watch for changes if is authority or server
+	if multiplayer.get_unique_id() == get_multiplayer_authority() || multiplayer.get_unique_id() == 1:
 		# Sync Position
 		if sync_position and (_parent.position - _net_position).length() > position_sensitivity:
 			rpc("_recv_transform", "pos", _parent.position)
@@ -68,7 +68,8 @@ func _physics_process(delta):
 
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _recv_transform(field: String, set_to):
-	if multiplayer.get_remote_sender_id() != get_multiplayer_authority():
+	# Allow transform change from authority & server
+	if multiplayer.get_remote_sender_id() != get_multiplayer_authority() || multiplayer.get_remote_sender_id() == 1:
 		return
 	if field == "pos":
 		_net_position = set_to
