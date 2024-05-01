@@ -49,7 +49,7 @@ func _ready():
 
 func _physics_process(delta):
 	# Only watch for changes if is authority or server
-	if multiplayer.get_unique_id() == get_multiplayer_authority() || multiplayer.get_unique_id() == 1:
+	if multiplayer.get_unique_id() == get_multiplayer_authority():
 		# Sync Position
 		if sync_position and (_parent.position - _net_position).length() > position_sensitivity:
 			rpc("_recv_transform", "pos", _parent.position)
@@ -61,21 +61,13 @@ func _physics_process(delta):
 			
 			if _sync_type == "3d" and (_parent.rotation - _net_rotation).length() > rotation_sensitivity:
 				rpc("_recv_transform", "rot", _parent.rotation)
-			
-	
+		
 		# Sync Scale
 		if sync_scale and (_parent.scale - _net_scale).length() > scale_sensitivity:
 			rpc("_recv_transform", "scl", _parent.scale)
-		
-		# Sync all transforms
-		if sync_position:
-			_parent.position = _net_position
-		if sync_rotation:
-			_parent.rotation = _net_rotation
-		if sync_scale:
-			_parent.scale = _net_scale
 	else:
 		if lerp_enabled:
+			# Sync all transforms w/lerp
 			if sync_position:
 				_parent.position = _parent.position.lerp(_net_position, delta * lerp_speed)
 			if sync_rotation:
@@ -91,14 +83,50 @@ func _physics_process(delta):
 			if sync_scale:
 				_parent.scale = _net_scale
 
+## Set position of the 2D player node, Server only.
+func set_player_position_2d(to: Vector2):
+	rpc("_recv_transform", "pos", to, true)
+
+## Set rotation of the 2D player node, Server only.
+func set_player_rotation_2d(to: float):
+	rpc("_recv_transform", "rot", to, true)
+
+## Set scale of the 2D player node, Server only.
+func set_player_scale_2d(to: Vector2):
+	rpc("_recv_transform", "scl", to, true)
+
+## Set position of the 3D player node, Server only.
+func set_player_position_3d(to: Vector3):
+	rpc("_recv_transform", "pos", to, true)
+
+## Set rotation of the 3D player node, Server only.
+func set_player_rotation_3d(to: Vector3):
+	rpc("_recv_transform", "rot", to, true)
+
+## Set scale of the 3D player node, Server only.
+func set_player_scale_3d(to: Vector3):
+	rpc("_recv_transform", "scl", to, true)
+
 @rpc("any_peer", "call_local", "unreliable_ordered")
-func _recv_transform(field: String, set_to):
+func _recv_transform(field: String, set_to = null, is_server_cmd = false):
 	# Allow transform change from authority & server
-	if multiplayer.get_remote_sender_id() != get_multiplayer_authority() || multiplayer.get_remote_sender_id() == 1:
-		return
+	var sender_id = multiplayer.get_remote_sender_id()
+	if sender_id != get_multiplayer_authority():
+		if is_server_cmd and sender_id == 1:
+			pass
+		else:
+			return
 	if field == "pos":
 		_net_position = set_to
 	elif field == "rot":
 		_net_rotation = set_to
 	elif field == "scl":
 		_net_scale = set_to
+	
+	if is_server_cmd:
+		if field == "pos":
+			_parent.position = _net_position
+		elif field == "rot":
+			_parent.rotation = _net_rotation
+		elif field == "scl":
+			_parent.scale = _net_scale

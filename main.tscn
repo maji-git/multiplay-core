@@ -1,13 +1,17 @@
-[gd_scene load_steps=7 format=3 uid="uid://yx2r3bxi0kfc"]
+[gd_scene load_steps=9 format=3 uid="uid://yx2r3bxi0kfc"]
 
 [ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_ubvtg"]
 [ext_resource type="PackedScene" uid="uid://lw18orwsroqc" path="res://test_player.tscn" id="2_d01oj"]
 [ext_resource type="Script" path="res://addons/MultiplayCore/auths/MPAuth.gd" id="3_ta4np"]
 [ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="4_gpbte"]
 [ext_resource type="Script" path="res://tests/TestScriptz.gd" id="6_kqkof"]
+[ext_resource type="Script" path="res://tests/TransformSetTest.gd" id="6_xx5hu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0jls2"]
 size = Vector2(1174, 23)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cfnk7"]
+size = Vector2(200, 20)
 
 [node name="MultiPlay" type="Node2D"]
 
@@ -35,6 +39,21 @@ shape = SubResource("RectangleShape2D_0jls2")
 
 [node name="test" type="Node2D" parent="."]
 script = ExtResource("6_kqkof")
+
+[node name="Test" type="Area2D" parent="."]
+position = Vector2(810, 581)
+script = ExtResource("6_xx5hu")
+
+[node name="Label" type="Label" parent="Test"]
+offset_left = -63.0
+offset_top = -24.0
+offset_right = 65.0
+offset_bottom = -1.0
+text = "Position Set Test"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Test"]
+shape = SubResource("RectangleShape2D_cfnk7")
+debug_color = Color(0.972549, 0, 0.431373, 0.419608)
 
 [connection signal="player_connected" from="MultiplayCore" to="test" method="_on_multiplay_core_player_connected"]
 [connection signal="player_disconnected" from="MultiplayCore" to="test" method="_on_multiplay_core_player_disconnected"]
