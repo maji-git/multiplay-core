@@ -86,28 +86,28 @@ func _physics_process(delta):
 			if sync_scale:
 				_parent.scale = _net_scale
 
-## Set position of the 2D player node, Server only.
-func set_player_position_2d(to: Vector2):
+## Set position of the 2D node, Server only.
+func set_position_2d(to: Vector2):
 	rpc("_recv_transform", "pos", to, true)
 
-## Set rotation of the 2D player node, Server only.
-func set_player_rotation_2d(to: float):
+## Set rotation of the 2D node, Server only.
+func set_rotation_2d(to: float):
 	rpc("_recv_transform", "rot", to, true)
 
-## Set scale of the 2D player node, Server only.
-func set_player_scale_2d(to: Vector2):
+## Set scale of the 2D node, Server only.
+func setr_scale_2d(to: Vector2):
 	rpc("_recv_transform", "scl", to, true)
 
-## Set position of the 3D player node, Server only.
-func set_player_position_3d(to: Vector3):
+## Set position of the 3D node, Server only.
+func set_position_3d(to: Vector3):
 	rpc("_recv_transform", "pos", to, true)
 
-## Set rotation of the 3D player node, Server only.
-func set_player_rotation_3d(to: Vector3):
+## Set rotation of the 3D node, Server only.
+func set_rotation_3d(to: Vector3):
 	rpc("_recv_transform", "rot", to, true)
 
-## Set scale of the 3D player node, Server only.
-func set_player_scale_3d(to: Vector3):
+## Set scale of the 3D node, Server only.
+func set_scale_3d(to: Vector3):
 	rpc("_recv_transform", "scl", to, true)
 
 @rpc("any_peer", "call_local", "unreliable_ordered")

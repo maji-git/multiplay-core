@@ -10,4 +10,4 @@ func _body_entered(body: Node2D):
 	
 	# If body is player
 	if body.is_in_group("player"):
-		body.get_node("MPTransformSync").set_player_position_2d(Vector2(0,5))
+		body.get_node("MPTransformSync").set_position_2d(Vector2(0,5))
