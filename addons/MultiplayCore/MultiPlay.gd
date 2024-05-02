@@ -367,7 +367,9 @@ func _player_spawned(data):
 		
 		player.player_node = pscene
 
-	player.set_multiplayer_authority(data.player_id, true)
+	if assign_client_authority:
+		player.set_multiplayer_authority(data.player_id, true)
+	
 	players._internal_add_player(data.player_id, player)
 	
 	if is_server:
