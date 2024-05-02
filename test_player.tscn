@@ -30,3 +30,4 @@ one_way_collision = true
 
 [node name="MPTransformSync" type="Node" parent="."]
 script = ExtResource("3_vurcr")
+lerp_speed = 50
