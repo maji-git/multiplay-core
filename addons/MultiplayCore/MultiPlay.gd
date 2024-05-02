@@ -312,7 +312,7 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 	if portsplit.size() > 1:
 		port_num = int(portsplit[1])
 	
-	online_peer = _net_protocol.join(real_hostname + url_path, port_num)
+	online_peer = await _net_protocol.join(real_hostname + url_path, port_num)
 	
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.connected_to_server.connect(_client_connected)
@@ -447,6 +447,7 @@ func _internal_recv_net_data(data):
 		_net_load_scene(_net_data.current_scene_path)
 
 func _client_connected():
+	print("CLIENT CONNECTED")
 	rpc_id(1, "_join_handshake", _join_handshake_data, _join_credentials_data)
 
 func _client_disconnected():
