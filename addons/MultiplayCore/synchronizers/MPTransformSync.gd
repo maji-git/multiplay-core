@@ -1,5 +1,5 @@
 @icon("res://addons/MultiplayCore/icons/MPTransformSync.svg")
-extends MPBase
+extends MPSyncBase
 ## Network Transform Synchronizer
 class_name MPTransformSync
 
@@ -49,7 +49,7 @@ func _ready():
 
 func _physics_process(delta):
 	# Only watch for changes if is authority or server
-	if multiplayer.get_unique_id() == get_multiplayer_authority():
+	if check_send_permission():
 		# Sync Position
 		if sync_position and (_parent.position - _net_position).length() > position_sensitivity:
 			rpc("_recv_transform", "pos", _parent.position)
@@ -110,12 +110,8 @@ func set_player_scale_3d(to: Vector3):
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _recv_transform(field: String, set_to = null, is_server_cmd = false):
 	# Allow transform change from authority & server
-	var sender_id = multiplayer.get_remote_sender_id()
-	if sender_id != get_multiplayer_authority():
-		if is_server_cmd and sender_id == 1:
-			pass
-		else:
-			return
+	if !check_recv_permission(is_server_cmd):
+		return
 	if field == "pos":
 		_net_position = set_to
 	elif field == "rot":

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://pe6us1xv4gji"]
 
 [ext_resource type="Script" path="res://tests/3d/PlayerController.gd" id="1_yelsh"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/MPTransformSync.gd" id="2_4sy0r"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="2_4sy0r"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_jxqk0"]
 

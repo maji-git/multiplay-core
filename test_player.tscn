@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://tests/PlayerMovement.gd" id="1_n3fks"]
 [ext_resource type="Texture2D" uid="uid://c8wdrl1etp8wy" path="res://icon.svg" id="2_wyjoy"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/MPTransformSync.gd" id="3_2pivd"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="3_lxih6"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ff620"]
 height = 50.0
@@ -29,4 +29,4 @@ shape = SubResource("CapsuleShape2D_ff620")
 one_way_collision = true
 
 [node name="MPTransformSync" type="Node" parent="."]
-script = ExtResource("3_2pivd")
+script = ExtResource("3_lxih6")
