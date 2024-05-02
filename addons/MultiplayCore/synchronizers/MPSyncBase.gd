@@ -3,6 +3,12 @@ extends MPBase
 ## Base class of Network Synchronizers
 class_name MPSyncBase
 
+func _ready():
+	pass
+
+func should_sync():
+	return MPIO.mpc.mode == MPIO.mpc.PlayMode.Online
+
 ## Check network send permission
 func check_send_permission():
 	return multiplayer.get_unique_id() == get_multiplayer_authority()

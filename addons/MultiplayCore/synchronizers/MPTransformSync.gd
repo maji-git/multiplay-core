@@ -36,6 +36,7 @@ var _parent = null
 var _sync_type = ""
 
 func _ready():
+	super()
 	_parent = get_parent()
 	
 	if _parent is Node2D:
@@ -48,6 +49,8 @@ func _ready():
 	_net_scale = _parent.scale
 
 func _physics_process(delta):
+	if !should_sync():
+		return
 	# Only watch for changes if is authority or server
 	if check_send_permission():
 		# Sync Position
