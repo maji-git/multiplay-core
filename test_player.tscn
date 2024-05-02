@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://lw18orwsroqc"]
 
 [ext_resource type="Script" path="res://tests/PlayerMovement.gd" id="1_n3fks"]
-[ext_resource type="Texture2D" uid="uid://c8wdrl1etp8wy" path="res://icon.svg" id="2_wyjoy"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="3_lxih6"]
+[ext_resource type="Texture2D" uid="uid://of2r0vvc2uo0" path="res://tests/assets/player-sprite.png" id="2_1ny8i"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="3_vurcr"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ff620"]
 height = 50.0
@@ -12,8 +12,8 @@ position = Vector2(119, 158)
 script = ExtResource("1_n3fks")
 
 [node name="Icon" type="Sprite2D" parent="."]
-scale = Vector2(0.395, 0.395)
-texture = ExtResource("2_wyjoy")
+scale = Vector2(0.24, 0.24)
+texture = ExtResource("2_1ny8i")
 
 [node name="playingThis" type="Label" parent="."]
 visible = false
@@ -29,4 +29,4 @@ shape = SubResource("CapsuleShape2D_ff620")
 one_way_collision = true
 
 [node name="MPTransformSync" type="Node" parent="."]
-script = ExtResource("3_lxih6")
+script = ExtResource("3_vurcr")
