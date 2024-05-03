@@ -73,9 +73,6 @@ func _physics_process(delta):
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
 		gdbot.idle()
 	
-	if Input.is_action_just_pressed(mpp.ma("interact")):
-		gdbot.hurt()
-	
 	move_and_slide()
 	
 	if !is_on_floor():
