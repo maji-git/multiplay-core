@@ -16,7 +16,7 @@ func _process(delta):
 
 func _on_multiplay_core_player_connected(player):
 	if oz == 0:
-		mpc.load_scene("res://another_scene.tscn")
+		#mpc.load_scene("res://another_scene.tscn")
 		return
 	oz = oz - 1
 

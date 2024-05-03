@@ -4,8 +4,10 @@
 [ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="2_4sy0r"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_jxqk0"]
+resource_local_to_scene = true
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5kmd0"]
+resource_local_to_scene = true
 
 [node name="Player" type="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
