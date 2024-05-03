@@ -47,6 +47,20 @@ func _ready():
 	_net_position = _parent.position
 	_net_rotation = _parent.rotation
 	_net_scale = _parent.scale
+	
+	# Sync when new player joins
+	if should_sync() and check_send_permission():
+		MPIO.mpc.player_connected.connect(_on_player_connected)
+
+func _on_player_connected(plr: MPPlayer):
+	if sync_position:
+		rpc_id(plr.player_id,"_recv_transform", "pos", _parent.position)
+	
+	if sync_rotation:
+		rpc_id(plr.player_id,"_recv_transform", "rot", _parent.rotation)
+	
+	if sync_scale:
+		rpc_id(plr.player_id,"_recv_transform", "scl", _parent.scale)
 
 func _physics_process(delta):
 	if !should_sync():

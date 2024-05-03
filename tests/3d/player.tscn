@@ -11,7 +11,11 @@
 [ext_resource type="AnimationLibrary" uid="uid://dlohfyy3w0jbd" path="res://tests/assets/gdbot/custom_animations/custom_lib.res" id="8_jkt42"]
 [ext_resource type="PackedScene" uid="uid://dvy2nao23i4rl" path="res://tests/assets/gdbot/gdbot_face.tscn" id="10_ln7wy"]
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_jxqk0"]
+resource_local_to_scene = true
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5kmd0"]
+resource_local_to_scene = true
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_v8id0"]
 viewport_path = NodePath("GDbotSkin/SubViewport")
