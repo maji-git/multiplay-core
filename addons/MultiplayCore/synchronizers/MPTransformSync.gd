@@ -48,7 +48,9 @@ func _ready():
 	_net_rotation = _parent.rotation
 	_net_scale = _parent.scale
 	
-	MPIO.mpc.player_connected.connect(_on_player_connected)
+	# Sync when new player joins
+	if should_sync() and check_send_permission():
+		MPIO.mpc.player_connected.connect(_on_player_connected)
 
 func _on_player_connected(plr: MPPlayer):
 	if sync_position:
