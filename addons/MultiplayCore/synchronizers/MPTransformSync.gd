@@ -109,7 +109,7 @@ func set_rotation_2d(to: float):
 	rpc("_recv_transform", "rot", to, true)
 
 ## Set scale of the 2D node, Server only.
-func setr_scale_2d(to: Vector2):
+func set_scale_2d(to: Vector2):
 	rpc("_recv_transform", "scl", to, true)
 
 ## Set position of the 3D node, Server only.
