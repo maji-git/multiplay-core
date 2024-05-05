@@ -15,17 +15,14 @@ func _ready():
 		MPIO.logwarn("MPAnimationSync: Need to be parented to AnimationPlayer.")
 		set_process(false)
 		return
-
-func _physics_process(delta):
-	if !should_sync():
-		return
 	
-	# Only watch for changes if is authority or server
-	if check_send_permission():
-		if _parent.current_animation != _net_current_animation:
-			_net_current_animation = _parent.current_animation
-			
-			rpc("_recv_play_anim", _net_current_animation, _parent.get_playing_speed())
+	if should_sync() and check_send_permission():
+		_parent.animation_started.connect(_on_animation_started)
+
+func _on_animation_started(new_anim):
+	_net_current_animation = new_anim
+	
+	rpc("_recv_play_anim", _net_current_animation, _parent.get_playing_speed())
 
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _recv_play_anim(anim_name: String, anim_speed = 1.0):
