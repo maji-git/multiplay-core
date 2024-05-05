@@ -61,10 +61,12 @@ func _physics_process(delta):
 				# Sync any properties
 				var val = _parent.get(path)
 				
-				if val != p.data.old_val:
-					p.data.old_val = val
+				# Check for types
+				if p.data.old_val == null or typeof(val) == typeof(p.data.old_val):
+					if val != p.data.old_val:
+						p.data.old_val = val
 				
-					rpc("_recv_prop_sync", path, val)
+						rpc("_recv_prop_sync", path, val)
 
 
 # Handle play animation for AnimationNodeStateMachinePlayback
