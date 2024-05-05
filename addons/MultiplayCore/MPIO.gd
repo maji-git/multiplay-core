@@ -6,7 +6,7 @@ class_name MultiPlayIO
 
 ## Main MultiPlay Core
 var mpc: MultiPlayCore = null
-var plr_id = 0
+var plr_id: int = 0
 
 ## Log data to the output console
 func logdata(data):

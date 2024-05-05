@@ -56,7 +56,7 @@ enum ConnectionError {
 ## The first scene to load
 @export var first_scene: PackedScene
 ## Should Client authority be assigned automatically?
-@export var assign_client_authority = true
+@export var assign_client_authority: bool = true
 
 @export_subgroup("Inputs")
 ## Which action key to use for swap mode.
@@ -70,7 +70,7 @@ enum ConnectionError {
 
 @export_subgroup("GUI")
 ## Enable Debug UI
-@export var debug_gui_enabled = true
+@export var debug_gui_enabled: bool = true
 
 func _get_configuration_warnings():
 	var warns = []
@@ -97,29 +97,29 @@ var _net_data = {
 }
 
 ## Current playmode
-var mode = PlayMode.Online
+var mode: PlayMode = PlayMode.Online
 ## MultiplayerPeer for the game
 var online_peer: MultiplayerPeer = null
 
 ## If conneccted in online mode
-var online_connected = false
+var online_connected: bool = false
 
 ## Players Collection
 var players: MPPlayersCollection
 var _plr_spawner: MultiplayerSpawner
 ## Determines if MultiPlay has started
-var started = false
+var started: bool = false
 ## Determines if MultiPlay is running as server
-var is_server = false
+var is_server: bool = false
 ## The local player node
 var local_player: MPPlayer = null
 ## Current player count
-var player_count = 0
+var player_count: int = 0
 ## Current scene node
 var current_scene: Node = null
 
 ## Current swap index, Swap mode only.
-var current_swap_index = 0
+var current_swap_index: int = 0
 
 var _join_handshake_data = {}
 var _join_credentials_data = {}

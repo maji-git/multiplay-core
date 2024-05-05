@@ -4,25 +4,25 @@ extends MPSyncBase
 class_name MPTransformSync
 
 ## Enable lerp for sync?
-@export var lerp_enabled = true
+@export var lerp_enabled: bool = true
 ## Determines lerp speed
-@export var lerp_speed = 20
+@export var lerp_speed: int = 20
 
 @export_subgroup("Sync Transform")
 ## Determines if position will be sync
-@export var sync_position = true
+@export var sync_position: bool = true
 ## Determines if rotation will be sync
-@export var sync_rotation = true
+@export var sync_rotation: bool = true
 ## Determines if scale will be sync
-@export var sync_scale = false
+@export var sync_scale: bool = false
 
 @export_subgroup("Sync Sensitivity")
 ## Determines the sync sensitivity of position
-@export var position_sensitivity = 0.01
+@export var position_sensitivity: float = 0.01
 ## Determines the sync sensitivity of rotation
-@export var rotation_sensitivity = 0.01
+@export var rotation_sensitivity: float = 0.01
 ## Determines the sync sensitivity of scale
-@export var scale_sensitivity = 0.01
+@export var scale_sensitivity: float = 0.01
 
 var _net_position = null
 var _net_rotation = null

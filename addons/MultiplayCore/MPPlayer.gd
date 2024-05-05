@@ -11,23 +11,23 @@ class_name MPPlayer
 ## Authentication Data
 var auth_data = {}
 ## ID of the player
-@export var player_id = 0
+@export var player_id: int = 0
 ## Get MultiPlayCore
 var mpc: MultiPlayCore
 ## The player node created from the template, see [member MultiPlayCore.player_scene]
 var player_node: Node
 ## Determines if this player is local
-var is_local = false
+var is_local: bool = false
 ## Determines if this player network is ready
-var is_ready = false
+var is_ready: bool = false
 ## Determines the player index, not to be confused with player_id.
-var player_index = 0
+var player_index: int = 0
 var _internal_peer: MultiplayerPeer
 var _initcount = 20
 ## Determines if swap is focusing this player, Swap mode only.
-var is_swap_focused = false
+var is_swap_focused: bool = false
 ## The resource path of the template player.
-var player_node_resource_path = ""
+var player_node_resource_path: String = ""
 
 var _local_got_handshake = false
 
