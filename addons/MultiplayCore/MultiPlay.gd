@@ -141,7 +141,12 @@ func _ready():
 		
 		bootui.mpc = self
 		
-		bootui.join_address = "127.0.0.1:" + str(port)
+		var bind_address_url = bind_address
+		
+		if bind_address_url == "*":
+			bind_address_url = "127.0.0.1"
+		
+		bootui.join_address = bind_address_url + ":" + str(port)
 		
 		add_child(dgui)
 	
