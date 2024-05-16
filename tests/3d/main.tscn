@@ -16,6 +16,7 @@ background_color = Color(0.709804, 0.921569, 0.964706, 1)
 
 [node name="MultiPlayCore" type="Node" parent="."]
 script = ExtResource("1_m1jil")
+connect_timeout_ms = null
 player_scene = ExtResource("2_xecj0")
 swap_input_action = "swap"
 

@@ -18,6 +18,7 @@ size = Vector2(200, 20)
 [node name="MultiplayCore" type="Node" parent="."]
 script = ExtResource("1_ubvtg")
 port = 8000
+connect_timeout_ms = 20
 player_scene = ExtResource("2_d01oj")
 swap_input_action = "swap"
 
@@ -26,7 +27,6 @@ script = ExtResource("3_ta4np")
 
 [node name="LatencyNetProtocol" type="Node" parent="MultiplayCore"]
 script = ExtResource("4_f5wx6")
-simulate_loss = 0.1
 
 [node name="PassAuth" type="Node" parent="."]
 

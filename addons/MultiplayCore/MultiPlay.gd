@@ -37,9 +37,14 @@ enum PlayMode {
 
 ## List of connection errors
 enum ConnectionError {
+	## Unknown reason
 	UNKNOWN,
+	## The server's full
 	SERVER_FULL,
+	## Authentication Failure
 	AUTH_FAILED,
+	## Connection timed out
+	TIMEOUT
 }
 
 @export_subgroup("Network")
@@ -49,6 +54,8 @@ enum ConnectionError {
 @export_range(0, 65535) var port: int = 4200
 ## Max players for the game.
 @export var max_players = 2
+## Time in milliseconds before timing out the user.
+@export var connect_timeout_ms = 50000
 
 @export_subgroup("Spawn Meta")
 ## Your own template player scene.
@@ -101,8 +108,11 @@ var mode: PlayMode = PlayMode.Online
 ## MultiplayerPeer for the game
 var online_peer: MultiplayerPeer = null
 
-## If conneccted in online mode
+## If connected in online mode
 var online_connected: bool = false
+
+## If player node is ready
+var player_node_ready: bool = false
 
 ## Players Collection
 var players: MPPlayersCollection
@@ -394,20 +404,37 @@ func _player_spawned(data):
 	return player
 
 func _on_local_player_ready():
+	connected_to_server.emit(self)
+	player_node_ready = true
 	debug_status_txt = "Connected!"
 
 func _network_player_connected(player_id):
-	pass
+	await get_tree().create_timer(connect_timeout_ms / 1000).timeout
+	
+	var player_node = players.get_player_by_id(player_id)
+	
+	if !player_node:
+		_kick_player_handshake(player_id, ConnectionError.TIMEOUT)
 
 func _find_key(dictionary, value):
 	var index = dictionary.values().find(value)
 	return dictionary.keys()[index]
 
+func _kick_player_handshake(plr_id: int, reason: ConnectionError):
+	var player_node = players.get_player_by_id(plr_id)
+	
+	if !player_node:
+		players._internal_remove_player(plr_id)
+		
+	rpc_id(plr_id, "_handshake_disconnect_peer", reason)
+
 @rpc("authority", "call_local")
 func _handshake_disconnect_peer(reason: ConnectionError):
-	MPIO.logerr("Connection Error: " + str(_find_key(ConnectionError, reason)))
+	var reason_str = str(_find_key(ConnectionError, reason))
+	MPIO.logerr("Connection Error: " + reason_str)
 	online_connected = false
 	connection_error.emit(reason)
+	disconnected_from_server.emit(reason_str)
 	online_peer.close()
 
 func _network_player_disconnected(player_id):
@@ -429,7 +456,7 @@ func _join_handshake(handshake_data, credentials_data):
 		return
 	
 	if player_count >= max_players:
-		rpc_id(from_id, "_handshake_disconnect_peer", ConnectionError.SERVER_FULL)
+		_kick_player_handshake(from_id, ConnectionError.SERVER_FULL)
 		return
 	
 	var auth_data = {}
@@ -447,7 +474,7 @@ func _join_handshake(handshake_data, credentials_data):
 		if ext is MPAuth:
 			var auth_result = await ext.authenticate(from_id, credentials_data, handshake_data)
 			if typeof(auth_result) == TYPE_BOOL and auth_result == false:
-				rpc_id(from_id, "_handshake_disconnect_peer", ConnectionError.AUTH_FAILED)
+				_kick_player_handshake(from_id, ConnectionError.AUTH_FAILED)
 				return
 				
 			auth_data = auth_result
@@ -473,6 +500,7 @@ func _client_connected():
 	debug_status_txt = "Awaiting server data..."
 	online_connected = true
 	rpc_id(1, "_join_handshake", _join_handshake_data, _join_credentials_data)
+
 
 func _client_disconnected():
 	if online_connected:

@@ -153,8 +153,6 @@ func _internal_ping(server_time: float):
 			is_ready = true
 			player_ready.emit()
 			
-			mpc.connected_to_server.emit(self)
-			
 			mpc._on_local_player_ready()
 			
 			rpc("_send_handshake_data", handshake_data)

@@ -26,14 +26,18 @@ func get_players() -> Dictionary:
 	return players
 
 func _internal_add_player(player_id, player: MPPlayer):
+	MPIO.logdata("ADD PLAYER CALLED AT " + str(player_id))
 	players[player_id] = player
 
 func _internal_remove_player(player_id):
+	MPIO.logdata("REMOVE PLAYER CALLED AT " + str(player_id))
 	players[player_id] = null
+	
+	print(players)
 
 func _internal_ping():
 	for p in players.values():
-		if is_instance_valid(p):
+		if p and is_instance_valid(p):
 			p.rpc("_internal_ping", Time.get_unix_time_from_system())
 
 ## Despawn all player's node
