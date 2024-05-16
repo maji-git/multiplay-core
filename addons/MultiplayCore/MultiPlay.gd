@@ -118,6 +118,9 @@ var player_count: int = 0
 ## Current scene node
 var current_scene: Node = null
 
+## Debug Status
+var debug_status_txt = ""
+
 ## Current swap index, Swap mode only.
 var current_swap_index: int = 0
 
@@ -133,6 +136,8 @@ func _ready():
 		child_exiting_tree.connect(_tool_child_refresh_warns)
 		return
 	_presetup_nodes()
+	
+	disconnected_from_server.connect(_on_local_disconnected)
 	
 	
 	if debug_gui_enabled and OS.is_debug_build():
@@ -272,6 +277,8 @@ func start_online_join(url: String, handshake_data: Dictionary = {}, credentials
 func _online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
 	_init_data()
 	
+	debug_status_txt = "Server Started!"
+	
 	is_server = true
 	
 	online_peer = _net_protocol.host(port, bind_address, max_players)
@@ -294,6 +301,8 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 
 func _online_join(address: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	_init_data()
+	
+	debug_status_txt = "Connecting to " + address + "..."
 	
 	_join_handshake_data = handshake_data
 	_join_credentials_data = credentials_data
@@ -362,6 +371,8 @@ func _player_spawned(data):
 		player.is_local = true
 		local_player = player
 		player._internal_peer = player
+		
+		debug_status_txt = "Pinging..."
 	
 	# First time init
 	if player_scene:
@@ -381,6 +392,9 @@ func _player_spawned(data):
 		rpc("_net_broadcast_new_player", player.player_id)
 	
 	return player
+
+func _on_local_player_ready():
+	debug_status_txt = "Connected!"
 
 func _network_player_connected(player_id):
 	pass
@@ -447,6 +461,8 @@ func _join_handshake(handshake_data, credentials_data):
 
 @rpc("any_peer", "call_local", "reliable")
 func _internal_recv_net_data(data):
+	debug_status_txt = "Waiting for player node..."
+	
 	MPIO.plr_id = multiplayer.get_unique_id()
 	
 	_net_data = data
@@ -454,12 +470,16 @@ func _internal_recv_net_data(data):
 		_net_load_scene(_net_data.current_scene_path)
 
 func _client_connected():
-	print("CLIENT CONNECTED")
+	debug_status_txt = "Awaiting server data..."
+	online_connected = true
 	rpc_id(1, "_join_handshake", _join_handshake_data, _join_credentials_data)
 
 func _client_disconnected():
 	if online_connected:
 		disconnected_from_server.emit("Unknown")
+
+func _on_local_disconnected(reason):
+	debug_status_txt = "Disconnected: " + str(reason)
 
 # Ping player
 func _physics_process(delta):

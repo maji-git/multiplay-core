@@ -53,8 +53,6 @@ func _ready():
 	if mpc.mode == mpc.PlayMode.Swap and mpc.current_swap_index == player_index:
 		is_swap_focused = true
 		swap_focused.emit(null)
-	
-	mpc.online_connected = true
 
 func _on_swap_changed(new, old):
 	var new_focus = mpc.players.get_player_by_index(new)
@@ -151,10 +149,13 @@ func _internal_ping(server_time: float):
 	
 	if not is_ready:
 		if _initcount < 1:
+			# Connnection Ready!
 			is_ready = true
 			player_ready.emit()
 			
 			mpc.connected_to_server.emit(self)
+			
+			mpc._on_local_player_ready()
 			
 			rpc("_send_handshake_data", handshake_data)
 		else:

@@ -26,6 +26,7 @@ script = ExtResource("3_ta4np")
 
 [node name="LatencyNetProtocol" type="Node" parent="MultiplayCore"]
 script = ExtResource("4_f5wx6")
+simulate_loss = 0.1
 
 [node name="PassAuth" type="Node" parent="."]
 

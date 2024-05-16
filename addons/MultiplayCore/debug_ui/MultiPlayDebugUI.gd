@@ -54,14 +54,15 @@ func update_status_text():
 		return
 	var s_array = []
 	
-	if mpc.online_connected:
-		s_array.append("Connected!")
-	else:
-		s_array.append("Disconnected")
+	s_array.append(mpc.debug_status_txt)
 	
-	s_array.append("Running as Server at " + str(mpc.port))
+	if mpc.is_server:
+		s_array.append("Running as Server at " + str(mpc.port))
 	
 	s_array.append("Player Count: " + str(mpc.player_count))
+	
+	if is_instance_valid(mpc.local_player) and !mpc.is_server:
+		s_array.append("Ping: " + str(mpc.local_player.ping_ms) + "ms")
 	
 	status_text.text = "\n".join(s_array)
 
