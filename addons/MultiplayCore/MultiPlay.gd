@@ -510,9 +510,8 @@ func _client_disconnected():
 		disconnected_from_server.emit("Unknown")
 
 func _client_connect_failed():
-	if online_connected:
-		disconnected_from_server.emit("Connection Failure")
-		connection_error.emit(ConnectionError.CONNECTION_FAILURE)
+	disconnected_from_server.emit("Connection Failure")
+	connection_error.emit(ConnectionError.CONNECTION_FAILURE)
 
 func _on_local_disconnected(reason):
 	debug_status_txt = "Disconnected: " + str(reason)

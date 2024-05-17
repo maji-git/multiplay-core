@@ -6,6 +6,7 @@ class_name WebSocketNetProtocol
 
 @export var secure: bool
 @export_subgroup("Secure Options")
+
 @export var server_private_key: CryptoKey
 @export var ssl_certificate: X509Certificate
 
