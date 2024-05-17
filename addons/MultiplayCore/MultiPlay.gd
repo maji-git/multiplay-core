@@ -44,7 +44,9 @@ enum ConnectionError {
 	## Authentication Failure
 	AUTH_FAILED,
 	## Connection timed out
-	TIMEOUT
+	TIMEOUT,
+	## Failure during connection
+	CONNECTION_FAILURE
 }
 
 @export_subgroup("Network")
@@ -341,6 +343,7 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.connected_to_server.connect(_client_connected)
 	multiplayer.server_disconnected.connect(_client_disconnected)
+	multiplayer.connection_failed.connect(_client_connect_failed)
 
 ## Create player node
 func create_player(player_id, handshake_data = {}):
@@ -505,6 +508,11 @@ func _client_connected():
 func _client_disconnected():
 	if online_connected:
 		disconnected_from_server.emit("Unknown")
+
+func _client_connect_failed():
+	if online_connected:
+		disconnected_from_server.emit("Connection Failure")
+		connection_error.emit(ConnectionError.CONNECTION_FAILURE)
 
 func _on_local_disconnected(reason):
 	debug_status_txt = "Disconnected: " + str(reason)
