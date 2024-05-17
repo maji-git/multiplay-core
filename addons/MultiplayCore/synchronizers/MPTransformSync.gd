@@ -129,20 +129,21 @@ func _recv_transform(field: String, set_to = null, is_server_cmd = false):
 	# Allow transform change from authority & server
 	if !check_recv_permission(is_server_cmd):
 		return
-	if field == "pos":
-		_net_position = set_to
-	elif field == "rot":
-		_net_rotation = set_to
-	elif field == "scl":
-		_net_scale = set_to
 	
-	if is_server_cmd:
+	if !is_server_cmd:
 		if field == "pos":
-			_parent.position = _net_position
+			_net_position = set_to
 		elif field == "rot":
-			_parent.rotation = _net_rotation
+			_net_rotation = set_to
 		elif field == "scl":
-			_parent.scale = _net_scale
+			_net_scale = set_to
+	else:
+		if field == "pos":
+			_parent.position = set_to
+		elif field == "rot":
+			_parent.rotation = set_to
+		elif field == "scl":
+			_parent.scale = set_to
 
 @rpc("any_peer", "call_local", "reliable")
 func _recv_transform_reliable(field: String, set_to = null, is_server_cmd = false):
