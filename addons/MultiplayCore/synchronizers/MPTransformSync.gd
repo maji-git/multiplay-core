@@ -54,13 +54,13 @@ func _ready():
 
 func _on_player_connected(plr: MPPlayer):
 	if sync_position:
-		rpc_id(plr.player_id,"_recv_transform", "pos", _parent.position)
+		rpc_id(plr.player_id, "_recv_transform_reliable", "pos", _parent.position)
 	
 	if sync_rotation:
-		rpc_id(plr.player_id,"_recv_transform", "rot", _parent.rotation)
+		rpc_id(plr.player_id, "_recv_transform_reliable", "rot", _parent.rotation)
 	
 	if sync_scale:
-		rpc_id(plr.player_id,"_recv_transform", "scl", _parent.scale)
+		rpc_id(plr.player_id, "_recv_transform_reliable", "scl", _parent.scale)
 
 func _physics_process(delta):
 	if !should_sync():
@@ -102,27 +102,27 @@ func _physics_process(delta):
 
 ## Set position of the 2D node, Server only.
 func set_position_2d(to: Vector2):
-	rpc("_recv_transform", "pos", to, true)
+	rpc("_recv_transform_reliable", "pos", to, true)
 
 ## Set rotation of the 2D node, Server only.
 func set_rotation_2d(to: float):
-	rpc("_recv_transform", "rot", to, true)
+	rpc("_recv_transform_reliable", "rot", to, true)
 
 ## Set scale of the 2D node, Server only.
 func set_scale_2d(to: Vector2):
-	rpc("_recv_transform", "scl", to, true)
+	rpc("_recv_transform_reliable", "scl", to, true)
 
 ## Set position of the 3D node, Server only.
 func set_position_3d(to: Vector3):
-	rpc("_recv_transform", "pos", to, true)
+	rpc("_recv_transform_reliable", "pos", to, true)
 
 ## Set rotation of the 3D node, Server only.
 func set_rotation_3d(to: Vector3):
-	rpc("_recv_transform", "rot", to, true)
+	rpc("_recv_transform_reliable", "rot", to, true)
 
 ## Set scale of the 3D node, Server only.
 func set_scale_3d(to: Vector3):
-	rpc("_recv_transform", "scl", to, true)
+	rpc("_recv_transform_reliable", "scl", to, true)
 
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _recv_transform(field: String, set_to = null, is_server_cmd = false):
@@ -143,3 +143,7 @@ func _recv_transform(field: String, set_to = null, is_server_cmd = false):
 			_parent.rotation = _net_rotation
 		elif field == "scl":
 			_parent.scale = _net_scale
+
+@rpc("any_peer", "call_local", "reliable")
+func _recv_transform_reliable(field: String, set_to = null, is_server_cmd = false):
+	_recv_transform(field, set_to, is_server_cmd)
