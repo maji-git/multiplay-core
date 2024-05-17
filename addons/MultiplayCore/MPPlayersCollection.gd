@@ -26,11 +26,9 @@ func get_players() -> Dictionary:
 	return players
 
 func _internal_add_player(player_id, player: MPPlayer):
-	MPIO.logdata("ADD PLAYER CALLED AT " + str(player_id))
 	players[player_id] = player
 
 func _internal_remove_player(player_id):
-	MPIO.logdata("REMOVE PLAYER CALLED AT " + str(player_id))
 	players[player_id] = null
 	
 	print(players)
