@@ -8,12 +8,17 @@ class_name ENetProtocol
 @export var compression_mode: ENetConnection.CompressionMode = ENetConnection.COMPRESS_ZLIB
 
 @export_subgroup("Bandwidth")
+## Bandwidth In Limit
 @export var bandwidth_in_limit = 0
+## Bandwidth Out Limit
 @export var bandwidth_out_limit = 0
 
 @export_subgroup("Secure Options")
+## Specify if you needs encryption in your ENet
 @export var secure: bool
+## Secure Private key for server
 @export var server_private_key: CryptoKey
+## Trusted SSL certificate for server & client
 @export var ssl_certificate: X509Certificate
 
 var role = ""
