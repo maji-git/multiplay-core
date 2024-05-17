@@ -331,7 +331,7 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 		url_path = "/" + url_path
 	
 	var portsplit = hostname.split(":")
-	var port_num = null
+	var port_num = 80
 	
 	if portsplit.size() > 1:
 		port_num = int(portsplit[1])
