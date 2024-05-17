@@ -9,8 +9,31 @@ var mpc: MultiPlayCore
 @export var status_text: Label
 var join_address = "ws://localhost:4200"
 
-# Called when the node enters the scene tree for the first time.
+# Used to make frequent data update slower
+var delta_step = 0
+
+# delta max in frames
+const DELTA_STEP_MAX = 100
+
+# String array line count
+const STRING_ARRAY_SLOT = 6
+
+# The amount of ping count to keep for average calculation.
+const PING_HISTORY_MAX = 12
+
+var s_array = []
+
+var ping_history = []
+
+func average(numbers: Array) -> float:
+	var sum := 0.0
+	for n in numbers:
+		sum += n
+	return sum / numbers.size()
+
 func _ready():
+	s_array.resize(STRING_ARRAY_SLOT + 1)
+	s_array.fill("")
 	connect_address.text = join_address
 	
 	var fp = FileAccess.open("user://mp_debug_bootui", FileAccess.READ)
@@ -52,19 +75,41 @@ func _process(delta):
 func update_status_text():
 	if !mpc:
 		return
-	var s_array = []
 	
-	s_array.append(mpc.debug_status_txt)
+	s_array[0] = mpc.debug_status_txt
 	
 	if mpc.is_server:
-		s_array.append("Running as Server at " + str(mpc.port))
+		s_array[1] = "Running as Server at " + str(mpc.port)
+	else:
+		s_array[1] = "Running as client"
 	
-	s_array.append("Player Count: " + str(mpc.player_count))
+	s_array[2] = "Player Count: " + str(mpc.player_count)
 	
-	if is_instance_valid(mpc.local_player) and !mpc.is_server:
-		s_array.append("Ping: " + str(mpc.local_player.ping_ms) + "ms")
+	delta_step = delta_step + 1
 	
-	status_text.text = "\n".join(s_array)
+	# Update frequent data on delta step max
+	if delta_step >= DELTA_STEP_MAX:
+		delta_step = 0
+		
+		# Update ping count
+		if is_instance_valid(mpc.local_player) and !mpc.is_server:
+			var ping_ms = mpc.local_player.ping_ms
+			s_array[3] = "Ping: " + str(ping_ms) + "ms"
+			
+			ping_history.append(ping_ms)
+			
+			if ping_history.size() > PING_HISTORY_MAX:
+				ping_history.pop_front()
+			
+			s_array[4] = " ▸ Average Ping: " + str(round(average(ping_history))) + "ms"
+	
+	var result_txt = ""
+	
+	for s in s_array:
+		if s != "":
+			result_txt = result_txt + s + "\n"
+	
+	status_text.text = result_txt
 
 func _on_one_screen_pressed():
 	mpc.start_one_screen()
