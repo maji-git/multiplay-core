@@ -22,10 +22,8 @@ swap_input_action = "swap"
 
 [node name="ENetProtocol" type="Node" parent="MultiPlayCore"]
 script = ExtResource("2_i3yor")
-compression_mode = null
 bandwidth_in_limit = null
 bandwidth_out_limit = null
-secure = null
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 

@@ -5,6 +5,8 @@ const RESTART_POPUP = preload("res://addons/MultiplayCore/editor/window/first_re
 const WELCOME_POPUP = preload("res://addons/MultiplayCore/editor/window/welcome_popup.tscn")
 const UPDATE_POPUP = preload("res://addons/MultiplayCore/editor/window/update_popup.tscn")
 
+var before_export_checkout = null
+
 func get_icon(n):
 	return EditorInterface.get_base_control().get_theme_icon(n)
 
@@ -21,6 +23,10 @@ func _enter_tree():
 	add_tool_submenu_item("MultiPlay Core", submenu)
 	
 	add_autoload_singleton("MPIO", "res://addons/MultiplayCore/MPIO.gd")
+	
+	before_export_checkout = preload("res://addons/MultiplayCore/editor/scripts/ExportCheckout.gd").new()
+	
+	add_export_plugin(before_export_checkout)
 	
 	if FileAccess.file_exists("user://mpc_tool_firstrun"):
 		
@@ -76,6 +82,9 @@ func open_update_popup():
 
 func _exit_tree():
 	remove_tool_menu_item("MultiPlay Core")
+	
+	remove_export_plugin(before_export_checkout)
+	
 	print("goodbye!")
 	
 	remove_autoload_singleton("MPIO")
