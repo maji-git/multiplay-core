@@ -385,7 +385,10 @@ func _player_spawned(data):
 		local_player = player
 		player._internal_peer = player
 		
-		debug_status_txt = "Pinging..."
+		if mode == PlayMode.Online:
+			debug_status_txt = "Pinging..."
+		else:
+			debug_status_txt = "Ready!"
 	
 	# First time init
 	if player_scene:
