@@ -18,18 +18,9 @@ const DELTA_STEP_MAX = 100
 # String array line count
 const STRING_ARRAY_SLOT = 6
 
-# The amount of ping count to keep for average calculation.
-const PING_HISTORY_MAX = 12
-
 var s_array = []
 
-var ping_history = []
-
-func average(numbers: Array) -> float:
-	var sum := 0.0
-	for n in numbers:
-		sum += n
-	return sum / numbers.size()
+var worst_ping = 0
 
 func _ready():
 	s_array.resize(STRING_ARRAY_SLOT + 1)
@@ -96,12 +87,10 @@ func update_status_text():
 			var ping_ms = mpc.local_player.ping_ms
 			s_array[3] = "Ping: " + str(ping_ms) + "ms"
 			
-			ping_history.append(ping_ms)
+			if ping_ms > worst_ping:
+				worst_ping = ping_ms
 			
-			if ping_history.size() > PING_HISTORY_MAX:
-				ping_history.pop_front()
-			
-			s_array[4] = " ▸ Average Ping: " + str(round(average(ping_history))) + "ms"
+			s_array[4] = " ▸ Worst Ping: " + str(worst_ping) + "ms"
 	
 	var result_txt = ""
 	
