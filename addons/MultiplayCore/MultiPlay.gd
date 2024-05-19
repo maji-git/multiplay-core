@@ -46,7 +46,11 @@ enum ConnectionError {
 	## Connection timed out
 	TIMEOUT,
 	## Failure during connection
-	CONNECTION_FAILURE
+	CONNECTION_FAILURE,
+	## Internal handshake data cannot be readed by the server
+	INVALID_HANDSHAKE,
+	## Client's Multiplay version is not compatible with the server
+	VERSION_MISMATCH,
 }
 
 @export_subgroup("Network")
@@ -451,18 +455,39 @@ func _network_player_disconnected(player_id):
 		player_disconnected.emit(target_plr)
 		target_plr.queue_free()
 
+# Validate network join internal data
+func _check_join_internal(handshake_data):
+	if !handshake_data.keys().has("_net_join_internal"):
+		return false
+	
+	if !handshake_data._net_join_internal.keys().has("mp_version"):
+		return false
+	
+	return true
+
 # Init player
 @rpc("any_peer", "call_local", "reliable")
-func _join_handshake(handshake_data, credentials_data):
+func _join_handshake(handshake_data: Dictionary, credentials_data):
 	var from_id = multiplayer.get_remote_sender_id()
 	
 	var existing_plr = players.get_player_by_id(from_id)
 	
+	# Prevent existing player from init
 	if existing_plr:
 		return
 	
 	if player_count >= max_players:
 		_kick_player_handshake(from_id, ConnectionError.SERVER_FULL)
+		return
+	
+	# Kick if no join data present
+	if !_check_join_internal(handshake_data):
+		_kick_player_handshake(from_id, ConnectionError.INVALID_HANDSHAKE)
+		return
+	
+	# Check Multiplay version, kick if mismatch
+	if handshake_data._net_join_internal.mp_version != MP_VERSION:
+		_kick_player_handshake(from_id, ConnectionError.VERSION_MISMATCH)
 		return
 	
 	var auth_data = {}
@@ -489,6 +514,9 @@ func _join_handshake(handshake_data, credentials_data):
 	
 	handshake_data._net_internal.auth_data = auth_data
 	
+	# Clear join internal, not going to be used anymore
+	handshake_data.erase("_net_join_internal")
+	
 	rpc_id(from_id, "_internal_recv_net_data", _net_data)
 	create_player(from_id, handshake_data)
 
@@ -505,6 +533,15 @@ func _internal_recv_net_data(data):
 func _client_connected():
 	debug_status_txt = "Awaiting server data..."
 	online_connected = true
+	
+	# Clear net join internals, this is reserved
+	if _join_handshake_data.keys().has("_net_join_internal"):
+		_join_handshake_data._net_join_internal = {}
+	
+	_join_handshake_data._net_join_internal = {
+		mp_version = MP_VERSION
+	}
+	
 	rpc_id(1, "_join_handshake", _join_handshake_data, _join_credentials_data)
 
 
