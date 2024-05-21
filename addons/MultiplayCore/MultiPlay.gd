@@ -191,6 +191,11 @@ func _ready():
 		if arguments.has("url"):
 			client_url = arguments.url
 		_online_join(client_url)
+	
+	if OS.has_feature("debug"):
+		if arguments.has("mp-debug"):
+			DisplayServer.window_set_size(Vector2i(int(arguments.win_width), int(arguments.win_height)))
+			DisplayServer.window_set_position(Vector2i(int(arguments.win_x), int(arguments.win_y)))
 
 func _tool_child_refresh_warns(new_child):
 	update_configuration_warnings()
@@ -414,7 +419,7 @@ func _player_spawned(data):
 	return player
 
 func _on_local_player_ready():
-	connected_to_server.emit(self)
+	connected_to_server.emit(local_player)
 	player_node_ready = true
 	debug_status_txt = "Connected!"
 
