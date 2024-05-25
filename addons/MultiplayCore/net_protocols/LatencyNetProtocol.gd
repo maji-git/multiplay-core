@@ -1,6 +1,6 @@
 @tool
 @icon("res://addons/MultiplayCore/icons/LatencyNetProtocol.svg")
-extends MPNetProtocolBase
+extends ENetProtocol
 ## Network Protocol for simulating network latency, based on ENet/UDP. Intended for debuging purposes.
 class_name LatencyNetProtocol
 
@@ -41,17 +41,10 @@ func _ready():
 
 ## Host function
 func host(port, bind_ip, max_players) -> MultiplayerPeer:
-	var peer = ENetMultiplayerPeer.new()
-	peer.set_bind_ip(bind_ip)
-	peer.create_server(port, max_players)
-	
-	return peer
+	return super(port, bind_ip, max_players)
 
 func join(address, port) -> MultiplayerPeer:
-	var peer = ENetMultiplayerPeer.new()
-	var err = peer.create_client("127.0.0.1", _virtual_port)
-	
-	return peer
+	return super("127.0.0.1", _virtual_port)
 
 class QueueEntry :
 	var byte_array : PackedByteArray

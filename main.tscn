@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_ubvtg"]
 [ext_resource type="PackedScene" uid="uid://lw18orwsroqc" path="res://test_player.tscn" id="2_d01oj"]
 [ext_resource type="Script" path="res://addons/MultiplayCore/auths/MPAuth.gd" id="3_ta4np"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/LatencyNetProtocol.gd" id="4_f5wx6"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/LatencyNetProtocol.gd" id="4_tw1wt"]
 [ext_resource type="Script" path="res://tests/TestScriptz.gd" id="6_kqkof"]
 [ext_resource type="Script" path="res://tests/TransformSetTest.gd" id="6_xx5hu"]
 
@@ -17,7 +17,8 @@ size = Vector2(200, 20)
 
 [node name="MultiplayCore" type="Node" parent="."]
 script = ExtResource("1_ubvtg")
-port = 8000
+port = 3000
+connect_timeout_ms = 10000
 player_scene = ExtResource("2_d01oj")
 swap_input_action = "swap"
 
@@ -25,7 +26,8 @@ swap_input_action = "swap"
 script = ExtResource("3_ta4np")
 
 [node name="LatencyNetProtocol" type="Node" parent="MultiplayCore"]
-script = ExtResource("4_f5wx6")
+script = ExtResource("4_tw1wt")
+simulate_loss = 0.02
 
 [node name="PassAuth" type="Node" parent="."]
 

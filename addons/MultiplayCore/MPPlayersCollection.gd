@@ -30,10 +30,12 @@ func _internal_add_player(player_id, player: MPPlayer):
 
 func _internal_remove_player(player_id):
 	players[player_id] = null
+	
+	print(players)
 
 func _internal_ping():
 	for p in players.values():
-		if is_instance_valid(p):
+		if p and is_instance_valid(p):
 			p.rpc("_internal_ping", Time.get_unix_time_from_system())
 
 ## Despawn all player's node

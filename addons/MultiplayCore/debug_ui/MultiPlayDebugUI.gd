@@ -9,9 +9,25 @@ var mpc: MultiPlayCore
 @export var status_text: Label
 var join_address = "ws://localhost:4200"
 
-# Called when the node enters the scene tree for the first time.
+# Used to make frequent data update slower
+var delta_step = 0
+
+# delta max in frames
+const DELTA_STEP_MAX = 100
+
+# String array line count
+const STRING_ARRAY_SLOT = 6
+
+var s_array = []
+
+var worst_ping = 0
+
 func _ready():
+	s_array.resize(STRING_ARRAY_SLOT + 1)
+	s_array.fill("")
 	connect_address.text = join_address
+	
+	mpc.connected_to_server.connect(_plr_connected)
 	
 	var fp = FileAccess.open("user://mp_debug_bootui", FileAccess.READ)
 	if fp:
@@ -22,6 +38,9 @@ func _ready():
 	
 	boot_ui.visible = true
 	status_ui.visible = false
+
+func _plr_connected(_new_plr):
+	boot_close()
 
 func save_debug_cache():
 	var fp = FileAccess.open("user://mp_debug_bootui", FileAccess.WRITE)
@@ -52,18 +71,39 @@ func _process(delta):
 func update_status_text():
 	if !mpc:
 		return
-	var s_array = []
 	
-	if mpc.online_connected:
-		s_array.append("Connected!")
+	s_array[0] = mpc.debug_status_txt
+	
+	if mpc.is_server:
+		s_array[1] = "Running as Server at " + str(mpc.port)
 	else:
-		s_array.append("Disconnected")
+		s_array[1] = "Running as client"
 	
-	s_array.append("Running as Server at " + str(mpc.port))
+	s_array[2] = "Player Count: " + str(mpc.player_count)
 	
-	s_array.append("Player Count: " + str(mpc.player_count))
+	delta_step = delta_step + 1
 	
-	status_text.text = "\n".join(s_array)
+	# Update frequent data on delta step max
+	if delta_step >= DELTA_STEP_MAX:
+		delta_step = 0
+		
+		# Update ping count
+		if is_instance_valid(mpc.local_player) and !mpc.is_server:
+			var ping_ms = mpc.local_player.ping_ms
+			s_array[3] = "Ping: " + str(ping_ms) + "ms"
+			
+			if ping_ms > worst_ping:
+				worst_ping = ping_ms
+			
+			s_array[4] = " ▸ Worst Ping: " + str(worst_ping) + "ms"
+	
+	var result_txt = ""
+	
+	for s in s_array:
+		if s != "":
+			result_txt = result_txt + s + "\n"
+	
+	status_text.text = result_txt
 
 func _on_one_screen_pressed():
 	mpc.start_one_screen()

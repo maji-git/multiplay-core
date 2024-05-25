@@ -4,9 +4,13 @@ extends MPNetProtocolBase
 ## Websocket Network Protocol
 class_name WebSocketNetProtocol
 
+## Specify if you needs encryption in your web socket
 @export var secure: bool
 @export_subgroup("Secure Options")
+
+## Secure Private key for server
 @export var server_private_key: CryptoKey
+## Trusted SSL certificate for server & client
 @export var ssl_certificate: X509Certificate
 
 ## Host function

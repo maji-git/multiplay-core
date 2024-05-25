@@ -54,13 +54,13 @@ func _ready():
 
 func _on_player_connected(plr: MPPlayer):
 	if sync_position:
-		rpc_id(plr.player_id,"_recv_transform", "pos", _parent.position)
+		rpc_id(plr.player_id, "_recv_transform_reliable", "pos", _parent.position)
 	
 	if sync_rotation:
-		rpc_id(plr.player_id,"_recv_transform", "rot", _parent.rotation)
+		rpc_id(plr.player_id, "_recv_transform_reliable", "rot", _parent.rotation)
 	
 	if sync_scale:
-		rpc_id(plr.player_id,"_recv_transform", "scl", _parent.scale)
+		rpc_id(plr.player_id, "_recv_transform_reliable", "scl", _parent.scale)
 
 func _physics_process(delta):
 	if !should_sync():
@@ -122,24 +122,29 @@ func set_rotation_3d(to: Vector3):
 
 ## Set scale of the 3D node, Server only.
 func set_scale_3d(to: Vector3):
-	rpc("_recv_transform", "scl", to, true)
+	rpc("_recv_transform_reliable", "scl", to, true)
 
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _recv_transform(field: String, set_to = null, is_server_cmd = false):
 	# Allow transform change from authority & server
 	if !check_recv_permission(is_server_cmd):
 		return
-	if field == "pos":
-		_net_position = set_to
-	elif field == "rot":
-		_net_rotation = set_to
-	elif field == "scl":
-		_net_scale = set_to
 	
-	if is_server_cmd:
+	if !is_server_cmd:
 		if field == "pos":
-			_parent.position = _net_position
+			_net_position = set_to
 		elif field == "rot":
-			_parent.rotation = _net_rotation
+			_net_rotation = set_to
 		elif field == "scl":
-			_parent.scale = _net_scale
+			_net_scale = set_to
+	else:
+		if field == "pos":
+			_parent.position = set_to
+		elif field == "rot":
+			_parent.rotation = set_to
+		elif field == "scl":
+			_parent.scale = set_to
+
+@rpc("any_peer", "call_local", "reliable")
+func _recv_transform_reliable(field: String, set_to = null, is_server_cmd = false):
+	_recv_transform(field, set_to, is_server_cmd)
