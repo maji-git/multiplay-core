@@ -43,8 +43,8 @@ func _enter_tree():
 		init_popup.confirmed.connect(_firstrun_restart_editor)
 
 func _on_project_opened():
-	mprun_btn = _add_toolbar_button(_mprun_btn, ICON_RUN, ICON_RUN_PRESSED)
-	mprun_btn.tooltip_text = "MultiPlay Quick Run\nQuickly test online mode"
+	#mprun_btn = _add_toolbar_button(_mprun_btn, ICON_RUN, ICON_RUN_PRESSED)
+	#mprun_btn.tooltip_text = "MultiPlay Quick Run\nQuickly test online mode"
 	
 	var submenu: PopupMenu = PopupMenu.new()
 	submenu.add_item("Check for updates", 1)
@@ -168,5 +168,5 @@ func _exit_tree():
 	
 	remove_autoload_singleton("MPIO")
 	
-	remove_control_from_container(CONTAINER_TOOLBAR, mprun_btn)
-	mprun_btn.free()
+	#remove_control_from_container(CONTAINER_TOOLBAR, mprun_btn)
+	#mprun_btn.free()
