@@ -122,7 +122,7 @@ func set_rotation_3d(to: Vector3):
 
 ## Set scale of the 3D node, Server only.
 func set_scale_3d(to: Vector3):
-	rpc("_recv_transform_reliable", "scl", to, true)
+	rpc("_recv_transform", "scl", to, true)
 
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _recv_transform(field: String, set_to = null, is_server_cmd = false):

@@ -36,6 +36,9 @@ func _on_player_ready():
 	
 	# Enable the camera
 	$Camera.current = true
+	
+	# Set Player Position
+	#position = Vector3(mpp.player_index * 40, 2, 0)
 
 # On handshake data is ready. This emits to everyone in the server. You can also use it to init something for all players.
 func _on_handshake_ready(hs):

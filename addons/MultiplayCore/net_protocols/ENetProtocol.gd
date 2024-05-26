@@ -9,9 +9,9 @@ class_name ENetProtocol
 
 @export_subgroup("Bandwidth")
 ## Bandwidth In Limit
-@export var bandwidth_in_limit = 0
+@export var bandwidth_in_limit: int = 0
 ## Bandwidth Out Limit
-@export var bandwidth_out_limit = 0
+@export var bandwidth_out_limit: int = 0
 
 @export_subgroup("Secure Options")
 ## Specify if you needs encryption in your ENet
@@ -54,6 +54,8 @@ func host(port, bind_ip, max_players) -> MultiplayerPeer:
 
 func join(address, port) -> MultiplayerPeer:
 	role = "client"
+	print(address)
+	print(port)
 	var peer = ENetMultiplayerPeer.new()
 	var err = peer.create_client(address, port)
 	
