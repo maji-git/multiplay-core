@@ -7,6 +7,8 @@ const UPDATE_POPUP = preload("res://addons/MultiplayCore/editor/window/update_po
 const ICON_RUN = preload("res://addons/MultiplayCore/icons/MPDebugPlay.svg")
 const ICON_RUN_PRESSED = preload("res://addons/MultiplayCore/icons/MPDebugPlay_Pressed.svg")
 
+const MULTIPLAY_ASSETLIB_URL = "https://assets.mpc.himaji.xyz"
+
 var before_export_checkout = null
 var mprun_btn: PanelContainer = null
 
@@ -19,6 +21,7 @@ func _enter_tree():
 	add_autoload_singleton("MPIO", "res://addons/MultiplayCore/MPIO.gd")
 	
 	icon_refresh = get_icon("RotateLeft")
+	_set_assetlib()
 	
 	if FileAccess.file_exists("user://mpc_tool_firstrun"):
 		var fr = FileAccess.open("user://mpc_tool_firstrun", FileAccess.READ)
@@ -41,6 +44,12 @@ func _enter_tree():
 		init_popup.popup_centered()
 		
 		init_popup.confirmed.connect(_firstrun_restart_editor)
+
+func _set_assetlib():
+	var editor_settings = EditorInterface.get_editor_settings()
+	var aburls = editor_settings.get_setting("asset_library/available_urls")
+	
+	aburls["MultiPlay AssetLib"] = MULTIPLAY_ASSETLIB_URL
 
 func _on_project_opened():
 	#mprun_btn = _add_toolbar_button(_mprun_btn, ICON_RUN, ICON_RUN_PRESSED)
@@ -161,7 +170,7 @@ func open_update_popup():
 
 func _exit_tree():
 	remove_tool_menu_item("MultiPlay Core")
-	
+	 
 	remove_export_plugin(before_export_checkout)
 	
 	print("goodbye!")
