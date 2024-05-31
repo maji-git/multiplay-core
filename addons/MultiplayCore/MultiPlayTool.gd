@@ -21,7 +21,6 @@ func _enter_tree():
 	add_autoload_singleton("MPIO", "res://addons/MultiplayCore/MPIO.gd")
 	
 	icon_refresh = get_icon("RotateLeft")
-	_set_assetlib()
 	
 	if FileAccess.file_exists("user://mpc_tool_firstrun"):
 		var fr = FileAccess.open("user://mpc_tool_firstrun", FileAccess.READ)
@@ -47,9 +46,15 @@ func _enter_tree():
 
 func _set_assetlib():
 	var editor_settings = EditorInterface.get_editor_settings()
-	var aburls = editor_settings.get_setting("asset_library/available_urls")
+	var aburls: Dictionary = editor_settings.get_setting("asset_library/available_urls")
 	
-	aburls["MultiPlay AssetLib"] = MULTIPLAY_ASSETLIB_URL
+	if !aburls.keys().has("MultiPlay AssetLib"):
+		aburls["MultiPlay AssetLib"] = MULTIPLAY_ASSETLIB_URL
+		
+		print("Installed MultiPlay Asset Library! If you don't see the option in the site dropdown, try to open and close editor settings menu.")
+	else:
+		print("MultiPlay Asset Library has been uninstalled")
+		aburls.erase("MultiPlay AssetLib")
 
 func _on_project_opened():
 	#mprun_btn = _add_toolbar_button(_mprun_btn, ICON_RUN, ICON_RUN_PRESSED)
@@ -58,6 +63,7 @@ func _on_project_opened():
 	var submenu: PopupMenu = PopupMenu.new()
 	submenu.add_item("Check for updates", 1)
 	submenu.add_item("Create Self Signed Certificate", 2)
+	submenu.add_item("Toggle MPC Asset Library", 6)
 	submenu.add_separator()
 	submenu.add_item("Open Documentation", 8)
 	submenu.add_item("Get Support", 9)
@@ -136,6 +142,9 @@ func _toolmenu_pressed(id):
 	
 	if id == 2:
 		run_devscript(preload("res://addons/MultiplayCore/dev_scripts/CertMake.gd"))
+	
+	if id == 6:
+		_set_assetlib()
 	
 	if id == 8:
 		OS.shell_open("https://mpc.himaji.xyz/docs/")
