@@ -202,12 +202,28 @@ func _ready():
 		EngineDebugger.send_message("mpc:session_ready", [])
 
 func _debugger_msg_capture(msg, data):
-	if msg == "start_server":
-		start_online_host(true)
-		_debug_bootui.boot_close()
-	if msg == "start_client":
-		start_online_join(_debug_join_address)
-		_debug_bootui.boot_close()
+	if msg.begins_with("start_"):
+		var cred = {}
+		var handsh = {}
+		var session_id = data[0]
+		
+		# Load up debug configs
+		var fp = FileAccess.open("user://mp_debug_configs", FileAccess.READ)
+		if fp:
+			var fp_data: Dictionary = JSON.parse_string(fp.get_as_text())
+			fp.close()
+			
+			if fp_data.keys().has("debug_configs"):
+				if fp_data.debug_configs.keys().has(str(session_id)):
+					handsh = JSON.parse_string(fp_data.debug_configs[str(session_id)].handshake)
+					cred = JSON.parse_string(fp_data.debug_configs[str(session_id)].credentials)
+	
+		if msg == "start_server":
+			start_online_host(true, handsh, cred)
+			_debug_bootui.boot_close()
+		if msg == "start_client":
+			start_online_join(_debug_join_address, handsh, cred)
+			_debug_bootui.boot_close()
 	return true
 
 func _tool_child_refresh_warns(new_child):

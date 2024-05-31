@@ -16,9 +16,9 @@ func _capture(message, data, session_id):
 	if message == "mpc:session_ready" and send_start_auto:
 		start_auto_i = start_auto_i + 1
 		if session_id == 0:
-			session.send_message("mpc:start_server")
+			session.send_message("mpc:start_server", [session_id])
 		else:
-			session.send_message("mpc:start_client")
+			session.send_message("mpc:start_client", [session_id])
 		
 		if start_auto_i == get_sessions().size():
 			start_auto_i = 0

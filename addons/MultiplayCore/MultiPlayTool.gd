@@ -47,10 +47,12 @@ func _enter_tree():
 func _on_project_opened():
 	mprun_btn = _add_toolbar_button(_mprun_btn, ICON_RUN, ICON_RUN_PRESSED)
 	mprun_btn.tooltip_text = "MultiPlay Quick Run\nQuickly test online mode"
+	mprun_btn.gui_input.connect(_mprun_gui_input)
 	
 	var submenu: PopupMenu = PopupMenu.new()
 	submenu.add_item("Check for updates", 1)
 	submenu.add_item("Create Self Signed Certificate", 2)
+	submenu.add_item("Configure Debug Options", 3)
 	submenu.add_separator()
 	submenu.add_item("Open Documentation", 8)
 	submenu.add_item("Get Support", 9)
@@ -78,6 +80,15 @@ func _mprun_btn():
 	
 	EditorInterface.play_main_scene()
 
+func open_run_debug_config():
+	EditorInterface.popup_dialog_centered(preload("res://addons/MultiplayCore/editor/window/debug_configs.tscn").instantiate())
+
+func _mprun_gui_input(e):
+	if e is InputEventMouseButton:
+		
+		if e.button_index == 2 and e.pressed:
+			open_run_debug_config()
+
 func _unhandled_input(event):
 	if event is InputEventKey:
 		if event.ctrl_pressed && event.keycode == KEY_F5:
@@ -89,6 +100,9 @@ func _toolmenu_pressed(id):
 	
 	if id == 2:
 		run_devscript(preload("res://addons/MultiplayCore/dev_scripts/CertMake.gd"))
+	
+	if id == 3:
+		open_run_debug_config()
 	
 	if id == 8:
 		OS.shell_open("https://mpc.himaji.xyz/docs/")

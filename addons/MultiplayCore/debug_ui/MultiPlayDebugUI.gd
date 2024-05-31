@@ -31,11 +31,16 @@ func _ready():
 	if fp:
 		var fp_data = JSON.parse_string(fp.get_as_text())
 		fp.close()
-		payload_input.text = fp_data.payload_input
-		cert_input.text = fp_data.cert_input
+		payload_input.text = get_or_empty(fp_data, "payload_input")
+		cert_input.text = get_or_empty(fp_data, "cert_input")
 	
 	boot_ui.visible = true
 	status_ui.visible = false
+
+func get_or_empty(data: Dictionary, field: String):
+	if data.keys().has(field):
+		return data[field]
+	return ""
 
 func save_debug_cache():
 	var fp = FileAccess.open("user://mp_debug_bootui", FileAccess.WRITE)
