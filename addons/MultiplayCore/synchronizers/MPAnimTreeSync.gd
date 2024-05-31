@@ -70,8 +70,9 @@ func _physics_process(delta):
 				# Check for types
 				if p.data.old_val == null:
 					do_sync = true
-				elif val != p.data.old_val:
-					do_sync = true
+				elif typeof(val) == typeof(p.data.old_val):
+					if val != p.data.old_val:
+						do_sync = true
 				
 				if do_sync:
 					p.data.old_val = val
