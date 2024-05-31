@@ -6,7 +6,7 @@ extends MPBase
 class_name MultiPlayCore
 
 ## MultiPlay Core Version
-const MP_VERSION = "0.2.4-dev-np"
+const MP_VERSION = "1.0.0"
 
 ## MultiPlay Core Version Name
 const MP_VERSION_NAME = "Envelope Puppet"
