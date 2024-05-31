@@ -52,7 +52,7 @@ func _on_project_opened():
 	var submenu: PopupMenu = PopupMenu.new()
 	submenu.add_item("Check for updates", 1)
 	submenu.add_item("Create Self Signed Certificate", 2)
-	submenu.add_item("Configure Debug Options", 3)
+	submenu.add_item("Configure Debug Data", 3)
 	submenu.add_separator()
 	submenu.add_item("Open Documentation", 8)
 	submenu.add_item("Get Support", 9)
