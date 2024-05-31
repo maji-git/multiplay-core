@@ -532,7 +532,7 @@ func _internal_recv_net_data(data):
 	MPIO.plr_id = multiplayer.get_unique_id()
 	
 	_net_data = data
-	if _net_data.current_scene_path != "":
+	if _net_data.current_scene_path != "" and is_server == false:
 		_net_load_scene(_net_data.current_scene_path)
 
 func _client_connected():
@@ -595,9 +595,9 @@ func _net_load_scene(scene_path: String, respawn_players = true):
 	var scene_pack = load(scene_path)
 	var scene_node = scene_pack.instantiate()
 	
-	current_scene = scene_node
+	add_child(scene_node, true)
 	
-	add_child(scene_node)
+	current_scene = scene_node
 	
 	if respawn_players:
 		players.respawn_node_all()
