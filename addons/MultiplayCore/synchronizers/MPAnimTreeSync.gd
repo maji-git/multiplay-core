@@ -37,7 +37,8 @@ func _physics_process(delta):
 	if check_send_permission():
 		for p in property_list:
 			var obj = p.obj
-			var path = p.path
+			var path: String = p.path
+
 			if obj is AnimationNodeStateMachinePlayback:
 				# Sync state machine
 				var current_anim = obj.get_current_node()
@@ -58,15 +59,24 @@ func _physics_process(delta):
 					if p.data.one_shot_active:
 						p.data.one_shot_active = false
 			else:
+				# Ignore time parameters
+				if path.ends_with("/time"):
+					continue
+				
 				# Sync any properties
 				var val = _parent.get(path)
 				
+				var do_sync = false
 				# Check for types
-				if p.data.old_val == null or typeof(val) == typeof(p.data.old_val):
-					if val != p.data.old_val:
-						p.data.old_val = val
+				if p.data.old_val == null:
+					do_sync = true
+				elif val != p.data.old_val:
+					do_sync = true
 				
-						rpc("_recv_prop_sync", path, val)
+				if do_sync:
+					p.data.old_val = val
+						
+					rpc("_recv_prop_sync", path, val)
 
 
 # Handle play animation for AnimationNodeStateMachinePlayback
