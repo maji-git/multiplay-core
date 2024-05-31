@@ -8,6 +8,9 @@ class_name MultiPlayCore
 ## MultiPlay Core Version
 const MP_VERSION = "0.2.4-dev-np"
 
+## MultiPlay Core Version Name
+const MP_VERSION_NAME = "Envelope Puppet"
+
 ## On network scene loaded
 signal scene_loaded
 ## Emit when new player is connected to the server, Emit to all players in the server.

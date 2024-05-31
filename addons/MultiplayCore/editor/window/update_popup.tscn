@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://dxnrjskmes7tf"]
 
 [ext_resource type="Script" path="res://addons/MultiplayCore/editor/scripts/UpdatePopup.gd" id="1_1e3dt"]
-[ext_resource type="Texture2D" uid="uid://c01w42px0l5kw" path="res://addons/MultiplayCore/icons/icon.svg" id="1_embs7"]
+[ext_resource type="Texture2D" uid="uid://caxuos5oe7cre" path="res://addons/MultiplayCore/editor/version_icon.png" id="2_smiai"]
 
 [sub_resource type="Animation" id="Animation_wrshe"]
 length = 0.001
@@ -40,7 +40,7 @@ _data = {
 "slide": SubResource("Animation_fjliv")
 }
 
-[node name="UpdatePopup" type="Window" node_paths=PackedStringArray("http_request", "slidetxt_anim_play", "status_label", "main_title", "update_btn", "update_progress_bar")]
+[node name="UpdatePopup" type="Window" node_paths=PackedStringArray("http_request", "slidetxt_anim_play", "status_label", "main_title", "current_version", "update_btn", "update_progress_bar")]
 title = "Check for updates"
 initial_position = 2
 size = Vector2i(400, 350)
@@ -49,6 +49,7 @@ http_request = NodePath("HTTPRequest")
 slidetxt_anim_play = NodePath("Panel/VBoxContainer/HBoxContainer/Control/AnimPlay")
 status_label = NodePath("Panel/VBoxContainer/HBoxContainer/Control/Title")
 main_title = NodePath("Panel/VBoxContainer/Label")
+current_version = NodePath("Panel/VBoxContainer/CurrentVersion")
 update_btn = NodePath("Panel/VBoxContainer/HBoxContainer/UpdateButton")
 update_progress_bar = NodePath("Panel/VBoxContainer/HBoxContainer/UpdateProgressBar")
 
@@ -70,10 +71,10 @@ grow_vertical = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer"]
+[node name="VerIcon" type="TextureRect" parent="Panel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
-texture = ExtResource("1_embs7")
+texture = ExtResource("2_smiai")
 expand_mode = 1
 stretch_mode = 5
 
@@ -125,6 +126,13 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Read Release Notes"
 uri = "https://github.com/maji-git/multiplay-core/releases"
+
+[node name="CurrentVersion" type="Label" parent="Panel/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.658824)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Current Version:"
+horizontal_alignment = 1
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
 

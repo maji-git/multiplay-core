@@ -5,6 +5,7 @@ extends Node
 @export var slidetxt_anim_play: AnimationPlayer
 @export var status_label: Label
 @export var main_title: Label
+@export var current_version: Label
 
 @export var update_btn: Button
 
@@ -19,6 +20,7 @@ var download_commit_hash = ""
 var request_step = ""
 
 func check_updates():
+	current_version.text = "Current Version: " + MultiPlayCore.MP_VERSION + " - " + MultiPlayCore.MP_VERSION_NAME
 	update_btn.disabled = true
 	set_status("Checking for updates...")
 	request_step = "meta_fetch"
