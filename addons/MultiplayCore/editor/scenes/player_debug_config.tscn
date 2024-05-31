@@ -1,0 +1,70 @@
+[gd_scene load_steps=5 format=3 uid="uid://dwuqgi8uj5n3j"]
+
+[ext_resource type="Script" path="res://addons/MultiplayCore/editor/scripts/PlayerDebugConfig.gd" id="1_154qf"]
+[ext_resource type="FontFile" uid="uid://up2o2ylbi16n" path="res://addons/MultiplayCore/fonts/VictorMono-Medium.ttf" id="1_ix4xy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8ok7j"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 0.333333)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jrsfa"]
+
+[node name="Player 1" type="Panel" node_paths=PackedStringArray("handshake_edit", "credentials_edit")]
+script = ExtResource("1_154qf")
+handshake_edit = NodePath("VBoxContainer/VBoxContainer/TextEdit")
+credentials_edit = NodePath("VBoxContainer/VBoxContainer2/TextEdit")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "JSON Handshake Data"
+
+[node name="TextEdit" type="TextEdit" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("1_ix4xy")
+theme_override_styles/normal = SubResource("StyleBoxFlat_8ok7j")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_jrsfa")
+text = "{
+
+}"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "JSON Credentials Data"
+
+[node name="TextEdit" type="TextEdit" parent="VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("1_ix4xy")
+theme_override_styles/normal = SubResource("StyleBoxFlat_8ok7j")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_jrsfa")
+text = "{
+
+}"

@@ -81,7 +81,7 @@ enum ConnectionError {
 		if Engine.is_editor_hint():
 			update_configuration_warnings()
 
-@export_subgroup("GUI")
+@export_subgroup("Debug Options")
 ## Enable Debug UI
 @export var debug_gui_enabled: bool = true
 
@@ -145,6 +145,9 @@ var _join_credentials_data = {}
 var _extensions = []
 
 var _net_protocol: MPNetProtocolBase = null
+var _debug_join_address = ""
+
+var _debug_bootui = null
 
 func _ready():
 	if Engine.is_editor_hint():
@@ -155,19 +158,21 @@ func _ready():
 	
 	disconnected_from_server.connect(_on_local_disconnected)
 	
-	
-	if debug_gui_enabled and OS.is_debug_build():
-		var dgui = preload("res://addons/MultiplayCore/debug_ui/debug_ui.tscn").instantiate()
-		var bootui = dgui.get_node("Layout/BootUI")
-		
-		bootui.mpc = self
-		
+	if OS.is_debug_build():
 		var bind_address_url = bind_address
 		
 		if bind_address_url == "*":
 			bind_address_url = "127.0.0.1"
 		
-		bootui.join_address = bind_address_url + ":" + str(port)
+		_debug_join_address = bind_address_url + ":" + str(port)
+	
+	if debug_gui_enabled and OS.is_debug_build():
+		var dgui = preload("res://addons/MultiplayCore/debug_ui/debug_ui.tscn").instantiate()
+		_debug_bootui = dgui.get_node("Layout/BootUI")
+		
+		_debug_bootui.mpc = self
+		
+		_debug_bootui.join_address = _debug_join_address
 		
 		add_child(dgui)
 	
@@ -193,9 +198,33 @@ func _ready():
 		_online_join(client_url)
 	
 	if OS.has_feature("debug"):
-		if arguments.has("mp-debug"):
-			DisplayServer.window_set_size(Vector2i(int(arguments.win_width), int(arguments.win_height)))
-			DisplayServer.window_set_position(Vector2i(int(arguments.win_x), int(arguments.win_y)))
+		EngineDebugger.register_message_capture("mpc", _debugger_msg_capture)
+		EngineDebugger.send_message("mpc:session_ready", [])
+
+func _debugger_msg_capture(msg, data):
+	if msg.begins_with("start_"):
+		var cred = {}
+		var handsh = {}
+		var session_id = data[0]
+		
+		# Load up debug configs
+		var fp = FileAccess.open("user://mp_debug_configs", FileAccess.READ)
+		if fp:
+			var fp_data: Dictionary = JSON.parse_string(fp.get_as_text())
+			fp.close()
+			
+			if fp_data.keys().has("debug_configs"):
+				if fp_data.debug_configs.keys().has(str(session_id)):
+					handsh = JSON.parse_string(fp_data.debug_configs[str(session_id)].handshake)
+					cred = JSON.parse_string(fp_data.debug_configs[str(session_id)].credentials)
+	
+		if msg == "start_server":
+			start_online_host(true, handsh, cred)
+			_debug_bootui.boot_close()
+		if msg == "start_client":
+			start_online_join(_debug_join_address, handsh, cred)
+			_debug_bootui.boot_close()
+	return true
 
 func _tool_child_refresh_warns(new_child):
 	update_configuration_warnings()
@@ -419,6 +448,18 @@ func _player_spawned(data):
 	return player
 
 func _on_local_player_ready():
+	EngineDebugger.send_message("mpc:connected", [local_player.player_id])
+	
+	# Add node that tells what pid session is in scene session tab
+	var viewnode = Node.new()
+	if is_server:
+		viewnode.name = "Server Session"
+	else:
+		viewnode.name = "Client ID " + str(local_player.player_id)
+	get_node("/root").add_child(viewnode, true)
+	
+	_debug_bootui.boot_close()
+	
 	connected_to_server.emit(local_player)
 	player_node_ready = true
 	debug_status_txt = "Connected!"

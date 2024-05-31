@@ -14,6 +14,8 @@ var mprun_btn: PanelContainer = null
 
 var icon_refresh
 
+var debugger = null
+
 func get_icon(n):
 	return EditorInterface.get_base_control().get_theme_icon(n)
 
@@ -57,12 +59,14 @@ func _set_assetlib():
 		aburls.erase("MultiPlay AssetLib")
 
 func _on_project_opened():
-	#mprun_btn = _add_toolbar_button(_mprun_btn, ICON_RUN, ICON_RUN_PRESSED)
-	#mprun_btn.tooltip_text = "MultiPlay Quick Run\nQuickly test online mode"
+	mprun_btn = _add_toolbar_button(_mprun_btn, ICON_RUN, ICON_RUN_PRESSED)
+	mprun_btn.tooltip_text = "MultiPlay Quick Run\nQuickly test online mode"
+	mprun_btn.gui_input.connect(_mprun_gui_input)
 	
 	var submenu: PopupMenu = PopupMenu.new()
 	submenu.add_item("Check for updates", 1)
 	submenu.add_item("Create Self Signed Certificate", 2)
+	submenu.add_item("Configure Debug Data", 3)
 	submenu.add_item("Toggle MPC Asset Library", 6)
 	submenu.add_separator()
 	submenu.add_item("Open Documentation", 8)
@@ -74,6 +78,10 @@ func _on_project_opened():
 	
 	before_export_checkout = preload("res://addons/MultiplayCore/editor/scripts/ExportCheckout.gd").new()
 	add_export_plugin(before_export_checkout)
+	
+	debugger = preload("res://addons/MultiplayCore/editor/scripts/DebuggerPlugin.gd").new()
+	add_debugger_plugin(debugger)
+
 
 func _firstrun_restart_editor():
 	set_firstrun("0")
@@ -81,60 +89,25 @@ func _firstrun_restart_editor():
 	EditorInterface.restart_editor()
 
 func _mprun_btn():
-	print("MULTIPLAY RUN")
 	EditorInterface.save_all_scenes()
 	
-	mprun_btn.get_node("tbtn").texture_normal = icon_refresh
+	debugger.send_start_auto = true
 	
-	var pids = []
-	
-	var wincount = 2
-	
-	var win_pos = []
-	
-	var screen_padding = 150
-	
-	var win_width = ProjectSettings.get_setting_with_override("display/window/size/viewport_width")
-	var win_height = ProjectSettings.get_setting_with_override("display/window/size/viewport_height")
-	var screen_size = DisplayServer.screen_get_size() - Vector2i(screen_padding, screen_padding)
-	
-	var win_spacing = 50
-	
-	var debug_win_width = (screen_size.x / 2)
-	var debug_win_height = win_height
-	
-	if wincount > 2:
-		debug_win_height = (screen_size.y / 2)
-	
-	var x = 0
-	var y = 0
-	
-	for i in range(0, wincount):
-		var args = [
-			"--debug",
-			"--mp-debug",
-			"--win_width=" + str(debug_win_width - win_spacing),
-			"--win_height=" + str(debug_win_height - win_spacing),
-			"--win_x=" + str(x + win_spacing),
-			"--win_y=" + str(y + win_spacing),
-		]
+	EditorInterface.play_main_scene()
+
+func open_run_debug_config():
+	EditorInterface.popup_dialog_centered(preload("res://addons/MultiplayCore/editor/window/debug_configs.tscn").instantiate())
+
+func _mprun_gui_input(e):
+	if e is InputEventMouseButton:
 		
-		x = x + debug_win_width
-		
-		if x > debug_win_width:
-			x = 0
-			y = y + debug_win_height
-		
-		print(x, ", ", y)
-		
-		if i == 0:
-			args.append("--server")
-			args.append("--act-client")
-		else:
-			args.append("--client")
-		
-		var pid = OS.create_process(OS.get_executable_path(), args, false)
-		pids.append(pid)
+		if e.button_index == 2 and e.pressed:
+			open_run_debug_config()
+
+func _unhandled_input(event):
+	if event is InputEventKey:
+		if event.ctrl_pressed && event.keycode == KEY_F5:
+			_mprun_btn()
 
 func _toolmenu_pressed(id):
 	if id == 1:
@@ -143,6 +116,9 @@ func _toolmenu_pressed(id):
 	if id == 2:
 		run_devscript(preload("res://addons/MultiplayCore/dev_scripts/CertMake.gd"))
 	
+	if id == 3:
+		open_run_debug_config()
+
 	if id == 6:
 		_set_assetlib()
 	
@@ -177,6 +153,7 @@ func open_update_popup():
 	popup.popup_centered()
 	popup.check_updates()
 
+
 func _exit_tree():
 	remove_tool_menu_item("MultiPlay Core")
 	 
@@ -185,6 +162,7 @@ func _exit_tree():
 	print("goodbye!")
 	
 	remove_autoload_singleton("MPIO")
+	remove_debugger_plugin(debugger)
 	
-	#remove_control_from_container(CONTAINER_TOOLBAR, mprun_btn)
-	#mprun_btn.free()
+	remove_control_from_container(CONTAINER_TOOLBAR, mprun_btn)
+	mprun_btn.free()

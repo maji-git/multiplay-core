@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://6ys58mvq55l3"]
+
+[ext_resource type="PackedScene" uid="uid://dwuqgi8uj5n3j" path="res://addons/MultiplayCore/editor/scenes/player_debug_config.tscn" id="1_1q3wl"]
+
+[node name="Window" type="AcceptDialog"]
+title = "Multiplay Debug Data Config"
+size = Vector2i(600, 400)
+ok_button_text = "Close"
+
+[node name="TabContainer" type="TabContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Player 1 (Host)" parent="TabContainer" instance=ExtResource("1_1q3wl")]
+layout_mode = 2
+
+[node name="Player 2" parent="TabContainer" instance=ExtResource("1_1q3wl")]
+visible = false
+layout_mode = 2
+session_id = 1
+
+[node name="Player 3" parent="TabContainer" instance=ExtResource("1_1q3wl")]
+visible = false
+layout_mode = 2
+session_id = 2
+
+[node name="Player 4" parent="TabContainer" instance=ExtResource("1_1q3wl")]
+visible = false
+layout_mode = 2
+session_id = 3
+
+[connection signal="close_requested" from="." to="." method="queue_free"]
