@@ -27,8 +27,6 @@ func _ready():
 	s_array.fill("")
 	connect_address.text = join_address
 	
-	mpc.connected_to_server.connect(_plr_connected)
-	
 	var fp = FileAccess.open("user://mp_debug_bootui", FileAccess.READ)
 	if fp:
 		var fp_data = JSON.parse_string(fp.get_as_text())
@@ -38,9 +36,6 @@ func _ready():
 	
 	boot_ui.visible = true
 	status_ui.visible = false
-
-func _plr_connected(_new_plr):
-	boot_close()
 
 func save_debug_cache():
 	var fp = FileAccess.open("user://mp_debug_bootui", FileAccess.WRITE)
