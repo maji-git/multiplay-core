@@ -50,16 +50,27 @@ func save_debug_cache():
 	}))
 	fp.close()
 
+func parse_json_or_none(data):
+	var d = JSON.parse_string(data)
+	
+	if d:
+		return d
+	
+	if data != "":
+		print("Got Invalid JSON data, join data ignored")
+	
+	return {}
+
 func _on_host_pressed():
-	mpc.start_online_host(false, JSON.parse_string(payload_input.text), JSON.parse_string(cert_input.text))
+	mpc.start_online_host(false, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
 	boot_close()
 
 func _on_host_act_pressed():
-	mpc.start_online_host(true, JSON.parse_string(payload_input.text), JSON.parse_string(cert_input.text))
+	mpc.start_online_host(true, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
 	boot_close()
 
 func _on_connect_pressed():
-	mpc.start_online_join(join_address, JSON.parse_string(payload_input.text), JSON.parse_string(cert_input.text))
+	mpc.start_online_join(join_address, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
 	boot_close()
 
 func _on_connect_address_text_changed(new_text):
