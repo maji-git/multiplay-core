@@ -2,7 +2,7 @@
 
 <img src="addons/MultiplayCore/icons/icon.svg" height="100">
 
-# MultiPlay Core, Alpha!
+# MultiPlay Core
 
 Create Godot Multiplayer games ready for network, local play and more!
 
@@ -13,8 +13,8 @@ Create Godot Multiplayer games ready for network, local play and more!
 MultiPlay Core is a **Godot Multiplayer Framework**. Designed to make multiplayer easier, and meet user’s preferences on multiplayer games! Some of the key features include:
 
 - Multiple play mode with minimal code.
-- Simplified API for general-purpose uses.
-- Allow for user data when joining in.
+- Simplified/Extensive API for general-purpose uses.
+- Extends more functionality from Godot High Level Networking.
 
 ## License
 
