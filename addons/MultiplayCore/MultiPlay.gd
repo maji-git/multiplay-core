@@ -223,10 +223,12 @@ func _debugger_msg_capture(msg, data):
 	
 		if msg == "start_server":
 			start_online_host(true, handsh, cred)
-			_debug_bootui.boot_close()
+			if _debug_bootui:
+				_debug_bootui.boot_close()
 		if msg == "start_client":
 			start_online_join(_debug_join_address, handsh, cred)
-			_debug_bootui.boot_close()
+			if _debug_bootui:
+				_debug_bootui.boot_close()
 	return true
 
 func _tool_child_refresh_warns(new_child):
@@ -461,7 +463,8 @@ func _on_local_player_ready():
 		viewnode.name = "Client ID " + str(local_player.player_id)
 	get_node("/root").add_child(viewnode, true)
 	
-	_debug_bootui.boot_close()
+	if _debug_bootui:
+		_debug_bootui.boot_close()
 	
 	connected_to_server.emit(local_player)
 	player_node_ready = true
