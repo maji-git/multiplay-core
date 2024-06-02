@@ -33,9 +33,14 @@ func _internal_remove_player(player_id):
 	
 	print(players)
 
+func _get_player_peer_ids():
+	var p = multiplayer.get_peers()
+	p.append(1)
+	return p
+
 func _internal_ping():
 	for p in players.values():
-		if p and is_instance_valid(p):
+		if p and is_instance_valid(p) and p.player_id in _get_player_peer_ids():
 			p.rpc("_internal_ping", Time.get_unix_time_from_system())
 
 ## Despawn all player's node
