@@ -11,6 +11,8 @@ extends Node
 
 @export var update_progress_bar: ProgressBar
 
+const RELEASE_INFO_JSON = "https://mpc.himaji.xyz/static/releases/release-info.json"
+
 var label_to_set = ""
 var label_clr_to_set = Color.WHITE
 
@@ -23,8 +25,10 @@ func check_updates():
 	current_version.text = "Current Version: " + MultiPlayCore.MP_VERSION + " - " + MultiPlayCore.MP_VERSION_NAME
 	update_btn.disabled = true
 	set_status("Checking for updates...")
+	print("Update checker running...")
 	request_step = "meta_fetch"
-	http_request.request("https://godotengine.org/asset-library/api/asset/2889")
+	http_request.request_completed.connect(_on_http_request_request_completed)
+	http_request.request(RELEASE_INFO_JSON)
 
 func anim_apply_status():
 	status_label.text = label_to_set
@@ -46,7 +50,7 @@ func _on_http_request_request_completed(result, response_code, headers, body):
 			var data = JSON.parse_string(body.get_string_from_utf8())
 			
 			download_url = data.download_url
-			download_commit_hash = data.download_commit
+			download_commit_hash = data.download_commit_hash
 			
 			if data.version_string == MultiPlayCore.MP_VERSION:
 				# Latest version already

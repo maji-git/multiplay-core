@@ -138,4 +138,3 @@ horizontal_alignment = 1
 
 [connection signal="close_requested" from="." to="." method="queue_free"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/UpdateButton" to="." method="_on_update_button_pressed"]
-[connection signal="request_completed" from="HTTPRequest" to="." method="_on_http_request_request_completed"]
