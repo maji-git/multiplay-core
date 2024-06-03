@@ -336,7 +336,7 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 	
 	is_server = true
 	
-	online_peer = _net_protocol.host(port, bind_address, max_players)
+	online_peer = await _net_protocol.host(port, bind_address, max_players)
 	
 	MPIO.logdata("Starting server at port " + str(port))
 	
