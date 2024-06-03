@@ -170,14 +170,17 @@ func _ready():
 		_debug_join_address = bind_address_url + ":" + str(port)
 	
 	if debug_gui_enabled and OS.is_debug_build():
-		var dgui = preload("res://addons/MultiplayCore/debug_ui/debug_ui.tscn").instantiate()
-		_debug_bootui = dgui.get_node("Layout/BootUI")
+		var debug_override = _net_protocol._override_debug_url(bind_address, port)
 		
-		_debug_bootui.mpc = self
+		if !debug_override:
+			var bind_address_url = bind_address
 		
-		_debug_bootui.join_address = _debug_join_address
+			if bind_address_url == "*":
+				bind_address_url = "127.0.0.1"
 		
-		add_child(dgui)
+			_debug_join_address = bind_address_url + ":" + str(port)
+		else:
+			_debug_join_address = debug_override
 	
 	# Parse CLI arguments
 	var arguments = {}

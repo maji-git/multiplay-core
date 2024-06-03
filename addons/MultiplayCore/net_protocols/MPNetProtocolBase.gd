@@ -6,9 +6,14 @@ class_name MPNetProtocolBase
 
 var net_protocols = []
 
+## Debug URL Override
+func _override_debug_url(bind_ip: String, port: int):
+	return null
+
 ## Host function
 func host(port, bind_ip, max_players) -> MultiplayerPeer:
 	return OfflineMultiplayerPeer.new()
 
+## Join Function
 func join(address, port) -> MultiplayerPeer:
 	return OfflineMultiplayerPeer.new()
