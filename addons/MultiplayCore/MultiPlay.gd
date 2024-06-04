@@ -191,7 +191,6 @@ func _ready():
 		
 		add_child(dgui)
 	
-	
 	# Parse CLI arguments
 	var arguments = {}
 	for argument in OS.get_cmdline_args():
