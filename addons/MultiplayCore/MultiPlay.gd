@@ -229,15 +229,14 @@ func _ready():
 ## Register Network Extension for this MPC (Extension API)
 func register_net_extension(ext: MPNetProtocolBase):
 	_net_protocol = ext
-	
-	register_extension(ext)
 
 ## Register any extension
 func register_extension(ext: MPExtension):
-	_extensions.append(ext)
+	if _extensions.find(ext) == -1:
+		_extensions.append(ext)
 	
-	ext.mpc = self
-	ext._mpc_ready()
+		ext.mpc = self
+		ext._mpc_ready()
 
 func _debugger_msg_capture(msg, data):
 	if msg.begins_with("start_"):
