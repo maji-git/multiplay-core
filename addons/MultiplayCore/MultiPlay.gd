@@ -169,7 +169,7 @@ func _ready():
 		
 		_debug_join_address = bind_address_url + ":" + str(port)
 	
-	if debug_gui_enabled and OS.is_debug_build():
+	if OS.is_debug_build():
 		var debug_override = _net_protocol._override_debug_url(bind_address, port)
 		
 		if !debug_override:
@@ -181,6 +181,16 @@ func _ready():
 			_debug_join_address = bind_address_url + ":" + str(port)
 		else:
 			_debug_join_address = debug_override
+	
+	if debug_gui_enabled and OS.is_debug_build():
+		var dgui = preload("res://addons/MultiplayCore/debug_ui/debug_ui.tscn").instantiate()
+		_debug_bootui = dgui.get_node("Layout/BootUI")
+		
+		_debug_bootui.mpc = self
+		_debug_bootui.join_address = _debug_join_address
+		
+		add_child(dgui)
+	
 	
 	# Parse CLI arguments
 	var arguments = {}
@@ -206,6 +216,20 @@ func _ready():
 	if OS.has_feature("debug"):
 		EngineDebugger.register_message_capture("mpc", _debugger_msg_capture)
 		EngineDebugger.send_message("mpc:session_ready", [])
+	
+	for ext in _extensions:
+		if ext is MPExtension:
+			_extensions.append(ext)
+	
+			if ext is MPNetProtocolBase:
+				_net_protocol = ext
+		
+			ext.mpc = self
+			ext._mpc_ready()
+
+## Register Network Extension for this MPC (Extension API)
+func register_net_extension(ext: MPNetProtocolBase):
+	_net_protocol = ext
 
 func _debugger_msg_capture(msg, data):
 	if msg.begins_with("start_"):
@@ -262,12 +286,6 @@ func start_solo():
 	_online_host()
 	
 	create_player(1, {})
-
-func _report_extension(ext: MPExtension):
-	_extensions.append(ext)
-	
-	if ext is MPNetProtocolBase:
-		_net_protocol = ext
 
 ## Start swap mode
 func start_swap():
