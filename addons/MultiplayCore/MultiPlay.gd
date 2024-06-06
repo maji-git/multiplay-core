@@ -638,18 +638,14 @@ func _check_if_net_from_id(id):
 func _net_load_scene(scene_path: String, respawn_players = true):
 	_net_data.current_scene_path = scene_path
 	
-	var check_scene_path = scene_path
-	
-	if !OS.is_debug_build():
-		check_scene_path = check_scene_path + ".remap"
-	
 	if current_scene:
 		current_scene.queue_free()
 		current_scene = null
 	
-	if !FileAccess.file_exists(check_scene_path):
-		MPIO.logerr("Target scene doesn't exist")
-		return
+	if !FileAccess.file_exists(scene_path):
+		if !FileAccess.file_exists(scene_path + ".remap"):
+			MPIO.logerr("Target scene doesn't exist")
+			return
 	
 	var scene_pack = load(scene_path)
 	var scene_node = scene_pack.instantiate()
