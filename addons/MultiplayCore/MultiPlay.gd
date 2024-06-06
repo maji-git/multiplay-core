@@ -216,7 +216,7 @@ func _ready():
 		EngineDebugger.register_message_capture("mpc", _debugger_msg_capture)
 		EngineDebugger.send_message("mpc:session_ready", [])
 	
-	for ext in _extensions:
+	for ext in get_children():
 		if ext is MPExtension:
 			_extensions.append(ext)
 	
