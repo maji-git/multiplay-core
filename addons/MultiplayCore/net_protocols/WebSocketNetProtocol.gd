@@ -17,7 +17,7 @@ class_name WebSocketNetProtocol
 func host(port, bind_ip, max_players) -> MultiplayerPeer:
 	var server_tls_options = null
 	
-	if secure:
+	if secure and server_private_key and ssl_certificate:
 		server_tls_options = TLSOptions.server(server_private_key, ssl_certificate)
 	
 	var peer = WebSocketMultiplayerPeer.new()
@@ -31,7 +31,8 @@ func join(address, port) -> MultiplayerPeer:
 	var protocol = "ws"
 	
 	if secure:
-		client_tls_options = TLSOptions.client(ssl_certificate)
+		if ssl_certificate:
+			client_tls_options = TLSOptions.client(ssl_certificate)
 		protocol = "wss"
 	
 	var portstr = ""
