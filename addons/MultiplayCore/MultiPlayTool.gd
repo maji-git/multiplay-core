@@ -20,7 +20,8 @@ func get_icon(n):
 	return EditorInterface.get_base_control().get_theme_icon(n)
 
 func _enter_tree():
-	add_autoload_singleton("MPIO", "res://addons/MultiplayCore/MPIO.gd")
+	if not ProjectSettings.has_setting("autoload/MPIO"):
+		add_autoload_singleton("MPIO", "res://addons/MultiplayCore/MPIO.gd")
 	
 	icon_refresh = get_icon("RotateLeft")
 	
