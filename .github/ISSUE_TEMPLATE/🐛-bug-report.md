@@ -29,5 +29,9 @@ Go to Help -> Copy System Info and paste it here
 
 ```
 
+**MultiPlay Core Version**
+You can locate the version by going to Project -> Tools -> MultiPlay Core -> Check for updates.
+
+
 **Additional context**
 Add any other context about the problem here.
