@@ -6,6 +6,10 @@
 
 Create Godot Multiplayer games ready for network, local play and more!
 
+<a href="https://trello.com/b/GbqiaVtB/multiplay-core-roadmap" target="_blank">
+<img height="24" alt="public-roadmap" src="https://github.com/maji-git/multiplay-core/assets/150906506/ad89401c-618c-45b0-9606-2f2c23aec66a">
+</a>
+ 
 [Documentation](https://mpc.himaji.xyz/docs) • [AssetLib](https://godotengine.org/asset-library/asset/2889)
 
 </center>
