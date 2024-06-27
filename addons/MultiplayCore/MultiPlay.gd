@@ -6,7 +6,7 @@ extends MPBase
 class_name MultiPlayCore
 
 ## MultiPlay Core Version
-const MP_VERSION = "1.0.0"
+const MP_VERSION = "1.0.0-ext"
 
 ## MultiPlay Core Version Name
 const MP_VERSION_NAME = "Envelope Puppet"
@@ -215,6 +215,28 @@ func _ready():
 	if OS.has_feature("debug"):
 		EngineDebugger.register_message_capture("mpc", _debugger_msg_capture)
 		EngineDebugger.send_message("mpc:session_ready", [])
+	
+	for ext in get_children():
+		if ext is MPExtension:
+			_extensions.append(ext)
+	
+			if ext is MPNetProtocolBase:
+				_net_protocol = ext
+		
+			ext.mpc = self
+			ext._mpc_ready()
+
+## Register Network Extension for this MPC (Extension API)
+func register_net_extension(ext: MPNetProtocolBase):
+	_net_protocol = ext
+
+## Register any extension
+func register_extension(ext: MPExtension):
+	if _extensions.find(ext) == -1:
+		_extensions.append(ext)
+	
+		ext.mpc = self
+		ext._mpc_ready()
 
 func _debugger_msg_capture(msg, data):
 	if msg.begins_with("start_"):
@@ -271,12 +293,6 @@ func start_solo():
 	_online_host()
 	
 	create_player(1, {})
-
-func _report_extension(ext: MPExtension):
-	_extensions.append(ext)
-	
-	if ext is MPNetProtocolBase:
-		_net_protocol = ext
 
 ## Start swap mode
 func start_swap():
