@@ -18,7 +18,11 @@ signal player_connected(player: MPPlayer)
 ## Emit when player has disconnected from the server, Emit to all players in the server.
 signal player_disconnected(player: MPPlayer)
 ## Emit when client has connected to the server, Only emit locally.
-signal connected_to_server(localplayer: MPPlayer)
+signal connected_to_server()
+## Emit when local player node is ready, Only emit locally.
+signal localplayer_node_ready(local_player: MPPlayer)
+## Emit when local client node is ready, Only emit locally.
+signal localclient_node_ready(local_client: MPClient)
 ## Emit when client has disconnected from the server, Only emit locally.
 signal disconnected_from_server(reason: String)
 ## Emit when client faced connection error
@@ -26,7 +30,7 @@ signal connection_error(reason: ConnectionError)
 ## Emit when swap index has changed. Only emit in Swap Play mode
 signal swap_changed(to_index: int, old_index: int)
 
-## Methods to use for multiplayer game
+## Methods to use for multiplayer game/specific node
 enum PlayMode {
 	## Network enabled multiplayer
 	Online,
@@ -36,6 +40,24 @@ enum PlayMode {
 	Swap,
 	## Solo, self explanatory
 	Solo
+}
+
+## Input method to use for MPPlayer's individual controls
+enum InputType {
+	## Control via keyboard/gamepad. This is useful if you only want 1 player in the client.
+	All,
+	## Control via keyboard
+	Keyboard,
+	## Control via gamepad
+	Joypad,
+}
+
+## Session mode to use for multiplayer game
+enum SessionMode {
+	## Allow play modes to be mixed together in one session. (Swap is not supported in this mode)
+	Joinable,
+	## Fix to specific play mode only
+	Fixed,
 }
 
 ## List of connection errors
@@ -62,7 +84,9 @@ enum ConnectionError {
 ## Which port to use in online game host.
 @export_range(0, 65535) var port: int = 4200
 ## Max players for the game.
-@export var max_players: int = 2
+@export var max_players: int = 4
+## Max clients for the game.
+@export var max_clients: int = 4
 ## Time in milliseconds before timing out the user.
 @export var connect_timeout_ms: int = 50000
 
@@ -87,6 +111,8 @@ enum ConnectionError {
 @export_subgroup("Debug Options")
 ## Enable Debug UI
 @export var debug_gui_enabled: bool = true
+
+var _rng = RandomNumberGenerator.new()
 
 func _get_configuration_warnings():
 	var warns = []
@@ -121,19 +147,25 @@ var online_peer: MultiplayerPeer = null
 var online_connected: bool = false
 
 ## If player node is ready
-var player_node_ready: bool = false
+var player_client_ready: bool = false
 
 ## Players Collection
 var players: MPPlayersCollection
-var _plr_spawner: MultiplayerSpawner
+var _client_spawner: MultiplayerSpawner
 ## Determines if MultiPlay has started
 var started: bool = false
 ## Determines if MultiPlay is running as server
 var is_server: bool = false
-## The local player node
+## The first local player node
 var local_player: MPPlayer = null
+## The list of local players
+var local_players: Array = []
+## The local client node
+var local_client: MPClient = null
 ## Current player count
 var player_count: int = 0
+## Current client count
+var client_count: int = 0
 ## Current scene node
 var current_scene: Node = null
 
@@ -263,14 +295,15 @@ func start_one_screen():
 	_online_host()
 	
 	for i in range(0, max_players):
-		create_player(i, {})
+		#create_player(i, {})
+		pass
 
 ## Start solo mode
 func start_solo():
 	mode = PlayMode.Solo
 	_online_host()
 	
-	create_player(1, {})
+	#create_player(1, {})
 
 func _report_extension(ext: MPExtension):
 	_extensions.append(ext)
@@ -287,7 +320,8 @@ func start_swap():
 		MPIO.logwarn("swap_input_action currently not set. Please set it first in MultiplayCore Node")
 	
 	for i in range(0, max_players):
-		create_player(i, {})
+		#create_player(i, {})
+		pass
 
 func _unhandled_input(event):
 	if mode == PlayMode.Swap:
@@ -318,18 +352,33 @@ func swap_to(index):
 
 	swap_changed.emit(current_swap_index, old_index)
 
+func join_keyboard():
+	"""
+	_init_input({
+		input_type = InputType.Keyboard
+	})
+	"""
+
+func join_joypad(device_id: int):
+	"""
+	_init_input({
+		input_type = InputType.Joypad,
+		device_id = device_id
+	})
+	"""
+
 func _presetup_nodes():
 	players = MPPlayersCollection.new()
-	players.name = "Players"
+	players.name = "Clients"
 	add_child(players, true)
 	
-	_plr_spawner = MultiplayerSpawner.new()
-	_plr_spawner.name = "PlayerSpawner"
-	_plr_spawner.spawn_function = _player_spawned
-	add_child(_plr_spawner, true)
+	_client_spawner = MultiplayerSpawner.new()
+	_client_spawner.name = "ClientSpawner"
+	_client_spawner.spawn_function = _player_spawned
+	add_child(_client_spawner, true)
 
 func _setup_nodes():
-	_plr_spawner.spawn_path = players.get_path()
+	_client_spawner.spawn_path = players.get_path()
 
 ## Start online mode as host
 func start_online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
@@ -346,9 +395,11 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 	
 	debug_status_txt = "Server Started!"
 	
+	connected_to_server.emit()
+	
 	is_server = true
 	
-	online_peer = await _net_protocol.host(port, bind_address, max_players)
+	online_peer = await _net_protocol.host(port, bind_address, max_clients)
 	
 	MPIO.logdata("Starting server at port " + str(port))
 	
@@ -401,8 +452,17 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 	multiplayer.connection_failed.connect(_client_connect_failed)
 
 ## Create player node
-func create_player(player_id, handshake_data = {}):
-	_plr_spawner.spawn({player_id = player_id, handshake_data = handshake_data, pindex = player_count})
+func create_client(client_id, handshake_data = {}):
+	var assign_plrid = 0
+	
+	# Find available ID to assign
+	for i in range(0, max_players):
+		if players.get_player_by_index(i) == null:
+			assign_plrid = i
+			break
+	
+	_rng.randomize()
+	_client_spawner.spawn({client_id = client_id, handshake_data = handshake_data})
 
 @rpc("authority", "call_local", "reliable")
 func _net_broadcast_new_player(peer_id):
@@ -416,7 +476,7 @@ func _net_broadcast_remove_player(peer_id: int):
 	var target_plr = players.get_player_by_id(peer_id)
 	
 	if target_plr:
-		player_count = player_count - 1
+		client_count = client_count - 1
 		
 		if !is_server:
 			player_disconnected.emit(target_plr)
@@ -424,21 +484,32 @@ func _net_broadcast_remove_player(peer_id: int):
 
 func _player_spawned(data):
 	MPIO.plr_id = multiplayer.get_unique_id()
-	var player = preload("res://addons/MultiplayCore/scenes/multiplay_player.tscn").instantiate()
-	player.name = str(data.player_id)
-	player.player_id = data.player_id
-	player.handshake_data = data.handshake_data
-	player.player_index = data.pindex
-	player.is_local = false
-	player.mpc = self
+	var client = MPClient.new()
+	client.name = str(data.client_id)
+	client.client_id = data.client_id
+	client.handshake_data = data.handshake_data
+	#player.player_index = data.pindex
+	client.is_local = false
+	#player.device_id = 
+	client.mpc = self
 	
-	player_count = player_count + 1
+	# Check local join data and assign device
+	"""
+	if data.handshake_data.keys().has("_net_join_internal"):
+		if data.handshake_data._net_join_internal.local_joindata:
+			player.input_method = data.handshake_data._net_join_internal.local_joindata.input_type
+			
+			if data.handshake_data._net_join_internal.local_joindata.input_type == InputType.Joypad:
+				player.device_id = data.handshake_data._net_join_internal.local_joindata.device_id
+	"""
+	
+	client_count = client_count + 1
 	
 	# If is local player
-	if data.player_id == multiplayer.get_unique_id():
-		player.is_local = true
-		local_player = player
-		player._internal_peer = player
+	if data.client_id == multiplayer.get_unique_id():
+		client.is_local = true
+		local_client = client
+		client._internal_peer = client
 		
 		if mode == PlayMode.Online:
 			debug_status_txt = "Pinging..."
@@ -446,6 +517,7 @@ func _player_spawned(data):
 			debug_status_txt = "Ready!"
 	
 	# First time init
+	"""
 	if player_scene:
 		player.player_node_resource_path = player_scene.resource_path
 		
@@ -453,42 +525,46 @@ func _player_spawned(data):
 		player.add_child(pscene, true)
 		
 		player.player_node = pscene
+	"""
 
 	if assign_client_authority:
-		player.set_multiplayer_authority(data.player_id, true)
+		client.set_multiplayer_authority(data.client_id, true)
 	
-	players._internal_add_player(data.player_id, player)
+	players._internal_add_client(data.client_id, client)
 	
 	if is_server:
-		rpc("_net_broadcast_new_player", player.player_id)
+		rpc("_net_broadcast_new_player", client.client_id)
 	
-	return player
+	return client
 
-func _on_local_player_ready():
-	EngineDebugger.send_message("mpc:connected", [local_player.player_id])
+func _on_local_client_ready():
+	EngineDebugger.send_message("mpc:connected", [local_client.client_id])
 	
 	# Add node that tells what pid session is in scene session tab
 	var viewnode = Node.new()
 	if is_server:
 		viewnode.name = "Server Session"
 	else:
-		viewnode.name = "Client ID " + str(local_player.player_id)
+		viewnode.name = "Client ID " + str(local_client.client_id)
 	get_node("/root").add_child(viewnode, true)
 	
 	if _debug_bootui:
 		_debug_bootui.boot_close()
 	
-	connected_to_server.emit(local_player)
-	player_node_ready = true
+	localclient_node_ready.emit(local_client)
+	player_client_ready = true
 	debug_status_txt = "Connected!"
 
 func _network_player_connected(player_id):
+	pass
+	"""
 	await get_tree().create_timer(connect_timeout_ms / 1000).timeout
 	
 	var player_node = players.get_player_by_id(player_id)
 	
 	if !player_node:
 		_kick_player_handshake(player_id, ConnectionError.TIMEOUT)
+	"""
 
 func _find_key(dictionary, value):
 	var index = dictionary.values().find(value)
@@ -529,18 +605,40 @@ func _check_join_internal(handshake_data):
 	
 	return true
 
+## Get Joypad device ID which is currently not used.
+func get_available_joypad():
+	var joypads = Input.get_connected_joypads()
+	
+	var result_joypad = null
+	
+	for i in joypads:
+		var check_joypad = func(p: MPPlayer):
+			return p.device_id == i
+	
+		var plr = players.find_player(check_joypad)
+		
+		if plr == null:
+			result_joypad = i
+			break
+	
+	print("result_joypad: ", result_joypad)
+	
+	return result_joypad
+
 # Init player
 @rpc("any_peer", "call_local", "reliable")
 func _join_handshake(handshake_data: Dictionary, credentials_data):
 	var from_id = multiplayer.get_remote_sender_id()
 	
+	"""
 	var existing_plr = players.get_player_by_id(from_id)
 	
 	# Prevent existing player from init
 	if existing_plr:
 		return
+	"""
 	
-	if player_count >= max_players:
+	if client_count >= max_clients:
 		_kick_player_handshake(from_id, ConnectionError.SERVER_FULL)
 		return
 	
@@ -578,11 +676,9 @@ func _join_handshake(handshake_data: Dictionary, credentials_data):
 	
 	handshake_data._net_internal.auth_data = auth_data
 	
-	# Clear join internal, not going to be used anymore
-	handshake_data.erase("_net_join_internal")
-	
 	rpc_id(from_id, "_internal_recv_net_data", _net_data)
-	create_player(from_id, handshake_data)
+	
+	create_client(from_id, handshake_data)
 
 @rpc("any_peer", "call_local", "reliable")
 func _internal_recv_net_data(data):

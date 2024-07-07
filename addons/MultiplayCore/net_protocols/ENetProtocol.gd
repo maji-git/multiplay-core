@@ -29,7 +29,7 @@ func _ready():
 func _apply_peer_config(peer: ENetMultiplayerPeer, address: String):
 	peer.host.compress(compression_mode)
 	peer.host.bandwidth_limit(bandwidth_in_limit, bandwidth_out_limit)
-	
+	peer.host.set
 	if secure:
 		if role == "server":
 			# Server setup

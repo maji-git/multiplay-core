@@ -5,13 +5,16 @@ extends MPBase
 class_name MPPlayer
 
 ## Ping in ms
-@export var ping_ms: int
-## Handshake data
-@export var handshake_data = {}
-## Authentication Data
+var ping_ms: int
+## Handshake data (Client Data)
+var handshake_data = {}
+## User data (Player Data)
+var user_data = {}
+## Authentication Data (Client Auth Data)
 var auth_data = {}
-## ID of the player
-@export var player_id: int = 0
+## Peer ID of the player. Duplicates are possible. Can be used with Godot's built-in MP functions. ([code]rpc[/code]/[code]rpc_id[/code])
+var player_id: int = 0
+
 ## Get MultiPlayCore
 var mpc: MultiPlayCore
 ## The player node created from the template, see [member MultiPlayCore.player_scene]
@@ -29,6 +32,15 @@ var is_swap_focused: bool = false
 ## The resource path of the template player.
 var player_node_resource_path: String = ""
 
+## Play Mode method that this node uses.
+var playmode: MultiPlayCore.PlayMode
+
+## Input method that this node uses.
+var input_method: MultiPlayCore.InputType
+
+## Controller Device ID to use (for one-screen/joinable)
+var device_id: int = 0
+
 var _local_got_handshake = false
 
 ## On player ready. Only emit locally
@@ -42,7 +54,7 @@ signal swap_unfocused(new_swap: MPPlayer)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	if mpc.mode != mpc.PlayMode.Online:
+	if playmode != mpc.PlayMode.Online:
 		is_ready = true
 		player_ready.emit()
 		_send_handshake_data(handshake_data)
@@ -50,7 +62,7 @@ func _ready():
 	
 	mpc.swap_changed.connect(_on_swap_changed)
 	
-	if mpc.mode == mpc.PlayMode.Swap and mpc.current_swap_index == player_index:
+	if playmode == mpc.PlayMode.Swap and mpc.current_swap_index == player_index:
 		is_swap_focused = true
 		swap_focused.emit(null)
 
@@ -73,17 +85,17 @@ func _on_swap_changed(new, old):
 ## In Swap, if swap is active on this player, it'll return the same input action name. If not, it'll return the "empty" action.[br]
 ##
 func translate_action(origin_action: StringName) -> StringName:
-	if mpc.mode == mpc.PlayMode.Online:
+	if input_method == mpc.InputType.Keyboard:
 		if !is_local:
 			return "empty"
 		return origin_action
 	
-	if mpc.mode == mpc.PlayMode.Swap:
+	if playmode == mpc.PlayMode.Swap:
 		if mpc.current_swap_index == player_index:
 			return origin_action
 		return "empty"
 	
-	if mpc.mode == mpc.PlayMode.OneScreen:
+	if input_method == mpc.InputType.Joypad:
 		var action_name = origin_action + "_" + str(player_index)
 		
 		if !InputMap.has_action(action_name):
@@ -94,7 +106,7 @@ func translate_action(origin_action: StringName) -> StringName:
 					continue
 				
 				var nevent = e.duplicate(true)
-				nevent.device = player_index
+				nevent.device = device_id
 				
 				if !InputMap.has_action(action_name):
 					InputMap.add_action(action_name)
@@ -125,7 +137,7 @@ func _on_handshake_ready():
 	handshake_ready.emit(handshake_data)
 
 func _check_if_net_from_id(id):
-	if mpc.mode != mpc.PlayMode.Online:
+	if playmode != mpc.PlayMode.Online:
 		return true
 	return multiplayer.get_remote_sender_id() == id
 
@@ -230,7 +242,7 @@ func _net_spawn_node():
 		if is_local:
 			player_ready.emit()
 		
-		if mpc.mode == mpc.PlayMode.Swap:
+		if playmode == mpc.PlayMode.Swap:
 			mpc.swap_to(0)
 		
 		player_node = pscene

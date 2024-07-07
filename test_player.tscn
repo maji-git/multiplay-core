@@ -91,12 +91,19 @@ position = Vector2(0, -24)
 scale = Vector2(0.24, 0.24)
 texture = ExtResource("2_1ny8i")
 
-[node name="username" type="Label" parent="."]
-visible = false
+[node name="mpcPID" type="Label" parent="."]
 offset_left = -42.0
 offset_top = -89.0
 offset_right = 47.0
 offset_bottom = -66.0
+text = "username"
+horizontal_alignment = 1
+
+[node name="mpcPlrI" type="Label" parent="."]
+offset_left = -42.0
+offset_top = -73.0
+offset_right = 47.0
+offset_bottom = -50.0
 text = "username"
 horizontal_alignment = 1
 

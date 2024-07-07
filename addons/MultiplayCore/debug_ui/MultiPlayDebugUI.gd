@@ -7,6 +7,7 @@ var mpc: MultiPlayCore
 @export var boot_ui: Control
 @export var status_ui: Control
 @export var status_text: Label
+@export var input_ui: Control
 var join_address = "ws://localhost:4200"
 
 # Used to make frequent data update slower
@@ -36,6 +37,12 @@ func _ready():
 	
 	boot_ui.visible = true
 	status_ui.visible = false
+	input_ui.visible = false
+	
+	mpc.connected_to_server.connect(_on_connected)
+
+func _on_connected():
+	input_ui.visible = true
 
 func get_or_empty(data: Dictionary, field: String):
 	if data.keys().has(field):
@@ -62,7 +69,7 @@ func parse_json_or_none(data):
 	return {}
 
 func _on_host_pressed():
-	mpc.start_online_host(false, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
+	mpc.start_online_host(true, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
 	boot_close()
 
 func _on_host_act_pressed():
@@ -137,3 +144,17 @@ func boot_close():
 
 func _on_close_pressed():
 	visible = false
+
+
+func _join_controller():
+	var jid = mpc.get_available_joypad()
+	
+	if jid == null:
+		print("No Joypad available")
+		return
+	
+	mpc.join_joypad(jid)
+
+
+func _join_keyboard():
+	mpc.join_keyboard()
