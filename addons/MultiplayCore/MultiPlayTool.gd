@@ -83,11 +83,32 @@ func _on_project_opened():
 	debugger = preload("res://addons/MultiplayCore/editor/scripts/DebuggerPlugin.gd").new()
 	add_debugger_plugin(debugger)
 
-
 func _firstrun_restart_editor():
 	set_firstrun("0")
+	
 	EditorInterface.save_all_scenes()
-	EditorInterface.restart_editor()
+	
+	# Handle Plugin Saving
+	var config = ConfigFile.new()
+	var err = config.load("res://project.godot")
+
+	if err == OK:
+		var editor_plugins: PackedStringArray = config.get_value("editor_plugins", "enabled", PackedStringArray())
+		
+		if !editor_plugins.has("res://addons/MultiplayCore/plugin.cfg"):
+			editor_plugins.append("res://addons/MultiplayCore/plugin.cfg")
+			
+		var saveerr = config.save("res://project.godot")
+			
+		if saveerr == OK:
+			print("MPC Plugin Saved")
+		else:
+			print("MPC Plugin Save Failed")
+	
+	print("Restarting...")
+	await get_tree().create_timer(1).timeout
+	
+	EditorInterface.restart_editor(false)
 
 func _mprun_btn():
 	EditorInterface.save_all_scenes()
