@@ -48,6 +48,9 @@ func _internal_add_client(player_id, client: MPClient):
 func _internal_remove_client(player_id):
 	clients[player_id] = null
 
+func _get_unique_id():
+	return 
+
 func _get_player_peer_ids():
 	var p = multiplayer.get_peers()
 	p.append(1)

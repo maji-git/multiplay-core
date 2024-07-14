@@ -34,22 +34,65 @@ signal handshake_ready(handshake_data: Dictionary)
 var _player_spawner: MultiplayerSpawner
 
 func _ready():
-	client_ready.emit()
+	_setup_nodes()
+	
 	_send_handshake_data(handshake_data)
 	mpc.connected_to_server.emit()
-	
-	_setup_nodes()
+	client_ready.emit()
 
 func _setup_nodes():
 	_player_spawner = MultiplayerSpawner.new()
 	_player_spawner.name = "PlayerSpawner"
-	#_player_spawner.spawn_function = _player_spawned
+	_player_spawner.spawn_function = _player_spawned
+	_player_spawner.spawn_path = get_path_to(self)
+	_player_spawner.set_multiplayer_authority(client_id)
 	add_child(_player_spawner, true)
+
+func join_keyboard(user_data: Dictionary = {}):
+	_player_spawner.spawn({user_data = user_data, pindex = 0})
+
+func _player_spawned(data):
+	var player = MPPlayer.new()
+	player.name = str(client_id)
+	player.player_id = client_id
+	player.user_data = data.user_data
+	player.player_index = data.pindex
+	player.is_local = false
+	player.client = self
+	#player.device_id = 
+	player.mpc = mpc
+	
+	if client_id == multiplayer.get_unique_id():
+		player.is_local = true
+		mpc.local_player = player
+		mpc.local_players.append(player)
+		player._internal_peer = player
+	
+	if mpc.player_scene:
+		player.player_node_resource_path = mpc.player_scene.resource_path
+		
+		var pscene = mpc.player_scene.instantiate()
+		player.add_child(pscene, true)
+		
+		player.player_node = pscene
+	
+	if mpc.assign_client_authority:
+		player.set_multiplayer_authority(client_id, true)
+	
+	mpc.players._internal_add_player(data.pindex, player)
+	
+	if mpc.is_server:
+		mpc.rpc("_net_broadcast_new_player", data.pindex)
+	
+	return player
 
 @rpc("any_peer")
 func _get_handshake_data():
 	if is_local:
 		rpc_id(multiplayer.get_remote_sender_id(), "_recv_handshake_data", handshake_data)
+
+func _on_local_player_ready():
+	pass
 
 @rpc("any_peer")
 func _recv_handshake_data(hs):

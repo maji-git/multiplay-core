@@ -353,11 +353,7 @@ func swap_to(index):
 	swap_changed.emit(current_swap_index, old_index)
 
 func join_keyboard():
-	"""
-	_init_input({
-		input_type = InputType.Keyboard
-	})
-	"""
+	local_client.join_keyboard()
 
 func join_joypad(device_id: int):
 	"""
@@ -374,7 +370,7 @@ func _presetup_nodes():
 	
 	_client_spawner = MultiplayerSpawner.new()
 	_client_spawner.name = "ClientSpawner"
-	_client_spawner.spawn_function = _player_spawned
+	_client_spawner.spawn_function = _client_spawned
 	add_child(_client_spawner, true)
 
 func _setup_nodes():
@@ -482,7 +478,7 @@ func _net_broadcast_remove_player(peer_id: int):
 			player_disconnected.emit(target_plr)
 			players._internal_remove_player(peer_id)
 
-func _player_spawned(data):
+func _client_spawned(data):
 	MPIO.plr_id = multiplayer.get_unique_id()
 	var client = MPClient.new()
 	client.name = str(data.client_id)

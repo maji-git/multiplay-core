@@ -17,6 +17,8 @@ var player_id: int = 0
 
 ## Get MultiPlayCore
 var mpc: MultiPlayCore
+## Get Owner Client of this player node
+var client: MPClient
 ## The player node created from the template, see [member MultiPlayCore.player_scene]
 var player_node: Node
 ## Determines if this player is local
@@ -54,10 +56,14 @@ signal swap_unfocused(new_swap: MPPlayer)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	is_ready = true
+	player_ready.emit()
+			
+	client._on_local_player_ready()
+	"""
 	if playmode != mpc.PlayMode.Online:
 		is_ready = true
 		player_ready.emit()
-		_send_handshake_data(handshake_data)
 		mpc.connected_to_server.emit()
 	
 	mpc.swap_changed.connect(_on_swap_changed)
@@ -65,6 +71,7 @@ func _ready():
 	if playmode == mpc.PlayMode.Swap and mpc.current_swap_index == player_index:
 		is_swap_focused = true
 		swap_focused.emit(null)
+	"""
 
 func _on_swap_changed(new, old):
 	var new_focus = mpc.players.get_player_by_index(new)
@@ -141,36 +148,6 @@ func _check_if_net_from_id(id):
 		return true
 	return multiplayer.get_remote_sender_id() == id
 
-@rpc("authority", "call_local")
-func _send_handshake_data(data):
-	handshake_data = data
-	_on_handshake_ready()
-
-@rpc("any_peer", "call_local")
-func _internal_ping(server_time: float):
-	if !_check_if_net_from_id(1):
-		return
-	if !is_local:
-		if not _local_got_handshake:
-			_local_got_handshake = true
-			rpc("_get_handshake_data")
-		return
-	var current_time = Time.get_unix_time_from_system()
-	
-	ping_ms = int(round((current_time - server_time) * 1000))
-	
-	if not is_ready:
-		if _initcount < 1:
-			# Connnection Ready!
-			is_ready = true
-			player_ready.emit()
-			
-			mpc._on_local_player_ready()
-			
-			rpc("_send_handshake_data", handshake_data)
-		else:
-			_initcount = _initcount - 1
-
 ## Disconnect the player, this is intended for local use.
 func disconnect_player():
 	if _internal_peer:
@@ -237,7 +214,6 @@ func _net_spawn_node():
 		add_child(pscene, true)
 		
 		is_ready = true
-		_send_handshake_data(handshake_data)
 		
 		if is_local:
 			player_ready.emit()
