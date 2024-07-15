@@ -44,7 +44,7 @@ enum PlayMode {
 
 ## Input method to use for MPPlayer's individual controls
 enum InputType {
-	## Control via keyboard/gamepad. This is useful if you only want 1 player in the client.
+	## Control via keyboard/gamepad. This is useful if user were only allowed to create 1 client.
 	All,
 	## Control via keyboard
 	Keyboard,
