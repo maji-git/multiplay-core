@@ -94,6 +94,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+focus_mode = 0
 text = "Host"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Layout/BootUI/VBoxContainer/BootOptions"]
@@ -102,6 +103,7 @@ layout_mode = 2
 [node name="Connect" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer2"]
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
+focus_mode = 0
 text = "Connect"
 
 [node name="ConnectAddress" type="LineEdit" parent="Layout/BootUI/VBoxContainer/BootOptions/HBoxContainer2"]
@@ -156,6 +158,7 @@ text = "One Screen"
 
 [node name="OneScreen" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "Start One Screen"
 
 [node name="HSeparator3" type="HSeparator" parent="Layout/BootUI/VBoxContainer/BootOptions/VBoxContainer"]
@@ -169,6 +172,7 @@ text = "Swap"
 
 [node name="Swap" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "Start Swap"
 
 [node name="HSeparator4" type="HSeparator" parent="Layout/BootUI/VBoxContainer/BootOptions/VBoxContainer"]
@@ -182,6 +186,7 @@ text = "Solo"
 
 [node name="Solo" type="Button" parent="Layout/BootUI/VBoxContainer/BootOptions/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "Start Solo"
 
 [node name="InputMenu" type="VBoxContainer" parent="Layout/BootUI/VBoxContainer"]
@@ -195,13 +200,31 @@ text = "Input Menu"
 
 [node name="Solo3" type="Button" parent="Layout/BootUI/VBoxContainer/InputMenu"]
 layout_mode = 2
-focus_mode = 1
+focus_mode = 0
 text = "Join Keyboard"
 
 [node name="Solo2" type="Button" parent="Layout/BootUI/VBoxContainer/InputMenu"]
 layout_mode = 2
-focus_mode = 1
+focus_mode = 0
 text = "Join Joypad"
+
+[node name="HSeparator7" type="HSeparator" parent="Layout/BootUI/VBoxContainer/InputMenu"]
+layout_mode = 2
+
+[node name="Label5" type="Label" parent="Layout/BootUI/VBoxContainer/InputMenu"]
+modulate = Color(1, 1, 1, 0.596078)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Player Data"
+
+[node name="PlayerData" type="TextEdit" parent="Layout/BootUI/VBoxContainer/InputMenu"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "{
+
+}"
+placeholder_text = "JSON Data..."
+caret_blink = true
 
 [node name="HSeparator6" type="HSeparator" parent="Layout/BootUI/VBoxContainer/InputMenu"]
 layout_mode = 2
