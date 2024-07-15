@@ -33,7 +33,7 @@ func _on_handshake_ready(hs):
 	$mpcPlrI.text = str(mpp.player_index)
 
 func _physics_process(delta):
-	if !mpp.is_ready:
+	if !mpp.is_ready or !mpp.is_local:
 		return
 	
 	# Add the gravity.
