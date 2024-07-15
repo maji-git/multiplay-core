@@ -4,14 +4,20 @@ extends MPBase
 ## MultiPlay Player Node
 class_name MPPlayer
 
-## Ping in ms
-var ping_ms: int
-## Handshake data (Client Data)
-var handshake_data = {}
+## Ping in ms, returns client's ping. see [member MPClient.ping_ms]
+var ping_ms: int = 0 :
+	get:
+		return client.ping_ms
+## Handshake data (Client Data). see [member MPClient.handshake_data]
+var handshake_data = {} :
+	get:
+		return client.handshake_data
 ## User data (Player Data)
-var user_data = {}
-## Authentication Data (Client Auth Data)
-var auth_data = {}
+var player_data = {}
+## Authentication Data (Client Auth Data). see [member MPClient.auth_data]
+var auth_data = {}  :
+	get:
+		return client.auth_data
 ## Peer ID of the player. Duplicates are possible. Can be used with Godot's built-in MP functions. ([code]rpc[/code]/[code]rpc_id[/code])
 var player_id: int = 0
 
