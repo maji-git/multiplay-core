@@ -49,22 +49,20 @@ func _ready():
 	_net_scale = _parent.scale
 	
 	# Sync when new player joins
-	if should_sync() and check_send_permission():
-		MPIO.mpc.player_connected.connect(_on_player_connected)
+	if check_send_permission():
+		MPIO.mpc.client_connected.connect(_on_client_connected)
 
-func _on_player_connected(plr: MPPlayer):
+func _on_client_connected(c: MPClient):
 	if sync_position:
-		rpc_id(plr.player_id, "_recv_transform_reliable", "pos", _parent.position)
+		rpc_id(c.client_id, "_recv_transform_reliable", "pos", _parent.position)
 	
 	if sync_rotation:
-		rpc_id(plr.player_id, "_recv_transform_reliable", "rot", _parent.rotation)
+		rpc_id(c.client_id, "_recv_transform_reliable", "rot", _parent.rotation)
 	
 	if sync_scale:
-		rpc_id(plr.player_id, "_recv_transform_reliable", "scl", _parent.scale)
+		rpc_id(c.client_id, "_recv_transform_reliable", "scl", _parent.scale)
 
 func _physics_process(delta):
-	if !should_sync():
-		return
 	# Only watch for changes if is authority or server
 	if check_send_permission():
 		# Sync Position

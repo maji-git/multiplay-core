@@ -58,6 +58,3 @@ text = "Position Set Test"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Test"]
 shape = SubResource("RectangleShape2D_cfnk7")
 debug_color = Color(0.972549, 0, 0.431373, 0.419608)
-
-[connection signal="player_connected" from="MultiplayCore" to="test" method="_on_multiplay_core_player_connected"]
-[connection signal="player_disconnected" from="MultiplayCore" to="test" method="_on_multiplay_core_player_disconnected"]

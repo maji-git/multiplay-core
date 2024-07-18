@@ -38,13 +38,8 @@ var is_ready: bool = false
 var player_index: int = 0
 var _internal_peer: MultiplayerPeer
 var _initcount = 20
-## Determines if swap is focusing this player, Swap mode only.
-var is_swap_focused: bool = false
 ## The resource path of the template player.
 var player_node_resource_path: String = ""
-
-## Play Mode method that this node uses.
-var playmode: MultiPlayCore.PlayMode
 
 ## Input method that this node uses.
 var input_method: MultiPlayCore.InputType
@@ -60,10 +55,6 @@ var _ref_input_action_names: PackedStringArray = []
 signal player_ready
 ## On handshake data is ready. Emit to all players
 signal handshake_ready(handshake_data: Dictionary)
-## On swap focused, Swap mode only
-signal swap_focused(old_swap: MPPlayer)
-## On swap unfocused, Swap mode only
-signal swap_unfocused(new_swap: MPPlayer)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -84,23 +75,10 @@ func _ready():
 		swap_focused.emit(null)
 	"""
 
-func _on_swap_changed(new, old):
-	var new_focus = mpc.players.get_player_by_index(new)
-	var old_focus = mpc.players.get_player_by_index(old)
-	
-	if new == player_index:
-		is_swap_focused = true
-		swap_focused.emit(old_focus)
-	
-	if new != player_index and is_swap_focused == true:
-		is_swap_focused = false
-		swap_unfocused.emit(new_focus)
-
 ## Translate input action to the intended ones.
 ##
 ## In Online/Solo, it'll return the same input action name[br]
 ## In One Screen, it'll return new input action, each assigned to it's own device index.[br]
-## In Swap, if swap is active on this player, it'll return the same input action name. If not, it'll return the "empty" action.[br]
 ##
 func translate_action(origin_action: StringName) -> StringName:
 	
@@ -153,8 +131,6 @@ func _on_handshake_ready():
 	handshake_ready.emit(handshake_data)
 
 func _check_if_net_from_id(id):
-	if playmode != mpc.PlayMode.Online:
-		return true
 	return multiplayer.get_remote_sender_id() == id
 
 ## Disconnect the player, this is intended for local use.
@@ -226,9 +202,6 @@ func _net_spawn_node():
 		
 		if is_local:
 			player_ready.emit()
-		
-		if playmode == mpc.PlayMode.Swap:
-			mpc.swap_to(0)
 		
 		player_node = pscene
 

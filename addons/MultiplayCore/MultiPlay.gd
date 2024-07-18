@@ -13,10 +13,14 @@ const MP_VERSION_NAME = "Envelope Puppet"
 
 ## On network scene loaded
 signal scene_loaded
-## Emit when new player is connected to the server, Emit to all players in the server.
-signal player_connected(player: MPPlayer)
-## Emit when player has disconnected from the server, Emit to all players in the server.
-signal player_disconnected(player: MPPlayer)
+## Emit when new player has been added to the server, Emit to all players in the server.
+signal player_added(player: MPPlayer)
+## Emit when player has been removed from the server, Emit to all players in the server.
+signal player_removed(player: MPPlayer)
+## Emit when new client is connected to the server, Emit to all players in the server.
+signal client_connected(client: MPClient)
+## Emit when client has disconnected from the server, Emit to all players in the server.
+signal client_disconnected(client: MPClient)
 ## Emit when client has connected to the server, Only emit locally.
 signal connected_to_server()
 ## Emit when local player node is ready, Only emit locally.
@@ -29,18 +33,6 @@ signal disconnected_from_server(reason: String)
 signal connection_error(reason: ConnectionError)
 ## Emit when swap index has changed. Only emit in Swap Play mode
 signal swap_changed(to_index: int, old_index: int)
-
-## Methods to use for multiplayer game/specific node
-enum PlayMode {
-	## Network enabled multiplayer
-	Online,
-	## Single screen multiplayer. User can play with multiple controllers/devices.
-	OneScreen,
-	## Swap mode. Intended to be played with one player, user can switch to the peer they wanted to control.
-	Swap,
-	## Solo, self explanatory
-	Solo
-}
 
 ## Input method to use for MPPlayer's individual controls
 enum InputType {
@@ -140,8 +132,6 @@ var _net_data = {
 	current_scene_path = ""
 }
 
-## Current playmode
-var mode: PlayMode = PlayMode.Online
 ## MultiplayerPeer for the game
 var online_peer: MultiplayerPeer = null
 
@@ -288,12 +278,11 @@ func _init_data():
 	InputMap.add_action("empty")
 	_setup_nodes()
 	
-	if mode == PlayMode.Online and _net_protocol == null:
+	if _net_protocol == null:
 		assert(false, "NetProtocol is current not set.")
 
 ## Start one screen mode
 func start_one_screen():
-	mode = PlayMode.OneScreen
 	_online_host()
 	
 	for i in range(0, max_players):
@@ -302,7 +291,6 @@ func start_one_screen():
 
 ## Start solo mode
 func start_solo():
-	mode = PlayMode.Solo
 	_online_host()
 	
 	#create_player(1, {})
@@ -312,47 +300,6 @@ func _report_extension(ext: MPExtension):
 	
 	if ext is MPNetProtocolBase:
 		_net_protocol = ext
-
-## Start swap mode
-func start_swap():
-	mode = PlayMode.Swap
-	_online_host()
-	
-	if swap_input_action == "":
-		MPIO.logwarn("swap_input_action currently not set. Please set it first in MultiplayCore Node")
-	
-	for i in range(0, max_players):
-		#create_player(i, {})
-		pass
-
-func _unhandled_input(event):
-	if mode == PlayMode.Swap:
-		if event.is_action_pressed(swap_input_action):
-			swap_increment()
-
-## Swap control to player according to index. Swap mode only
-func swap_increment():
-	if mode != PlayMode.Swap:
-		MPIO.logwarn("swap_player: Not in swap mode")
-	
-	var old_index = current_swap_index
-	current_swap_index = current_swap_index + 1
-	if current_swap_index >= player_count:
-		current_swap_index = 0
-			
-	swap_changed.emit(current_swap_index, old_index)
-
-## Specifically Swap to index. Swap mode only
-func swap_to(index):
-	if mode != PlayMode.Swap:
-		MPIO.logwarn("swap_player: Not in swap mode")
-	
-	var old_index = current_swap_index
-	current_swap_index = index
-	if current_swap_index >= player_count or current_swap_index < 0:
-		current_swap_index = 0
-
-	swap_changed.emit(current_swap_index, old_index)
 
 func join_keyboard(player_data: Dictionary = {}):
 	local_client.join_keyboard(player_data)
@@ -375,12 +322,10 @@ func _setup_nodes():
 
 ## Start online mode as host
 func start_online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
-	mode = PlayMode.Online
 	_online_host(act_client, act_client_handshake_data, act_client_credentials_data)
 
 ## Start online mode as client
 func start_online_join(url: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
-	mode = PlayMode.Online
 	_online_join(url, handshake_data, credentials_data)
 
 func _online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
@@ -462,18 +407,36 @@ func _net_broadcast_new_player(peer_id):
 	var target_plr = players.get_player_by_id(peer_id)
 	
 	if target_plr:
-		player_connected.emit(target_plr)
+		player_added.emit(target_plr)
 
 @rpc("authority", "call_local", "reliable")
 func _net_broadcast_remove_player(peer_id: int):
 	var target_plr = players.get_player_by_id(peer_id)
 	
 	if target_plr:
+		player_count = player_count - 1
+		
+		if !is_server:
+			player_removed.emit(target_plr)
+			players._internal_remove_player(peer_id)
+
+@rpc("authority", "call_local", "reliable")
+func _net_broadcast_connected_client(peer_id):
+	var target_client = players.get_client_by_id(peer_id)
+	
+	if target_client:
+		client_connected.emit(target_client)
+
+@rpc("authority", "call_local", "reliable")
+func _net_broadcast_disconnected_client(peer_id):
+	var target_client = players.get_client_by_id(peer_id)
+	
+	if target_client:
 		client_count = client_count - 1
 		
 		if !is_server:
-			player_disconnected.emit(target_plr)
-			players._internal_remove_player(peer_id)
+			client_disconnected.emit(target_client)
+			players._internal_remove_client(peer_id)
 
 func _client_spawned(data):
 	MPIO.plr_id = multiplayer.get_unique_id()
@@ -486,16 +449,6 @@ func _client_spawned(data):
 	#player.device_id = 
 	client.mpc = self
 	
-	# Check local join data and assign device
-	"""
-	if data.handshake_data.keys().has("_net_join_internal"):
-		if data.handshake_data._net_join_internal.local_joindata:
-			player.input_method = data.handshake_data._net_join_internal.local_joindata.input_type
-			
-			if data.handshake_data._net_join_internal.local_joindata.input_type == InputType.Joypad:
-				player.device_id = data.handshake_data._net_join_internal.local_joindata.device_id
-	"""
-	
 	client_count = client_count + 1
 	
 	# If is local player
@@ -504,24 +457,9 @@ func _client_spawned(data):
 		local_client = client
 		client._internal_peer = client
 		
-		if mode == PlayMode.Online:
-			debug_status_txt = "Pinging..."
-		else:
-			debug_status_txt = "Ready!"
+		debug_status_txt = "Pinging..."
 	
-	# First time init
-	"""
-	if player_scene:
-		player.player_node_resource_path = player_scene.resource_path
-		
-		var pscene = player_scene.instantiate()
-		player.add_child(pscene, true)
-		
-		player.player_node = pscene
-	"""
-
-	if assign_client_authority:
-		client.set_multiplayer_authority(data.client_id, true)
+	client.set_multiplayer_authority(data.client_id, true)
 	
 	players._internal_add_client(data.client_id, client)
 	
@@ -550,14 +488,6 @@ func _on_local_client_ready():
 
 func _network_player_connected(player_id):
 	pass
-	"""
-	await get_tree().create_timer(connect_timeout_ms / 1000).timeout
-	
-	var player_node = players.get_player_by_id(player_id)
-	
-	if !player_node:
-		_kick_player_handshake(player_id, ConnectionError.TIMEOUT)
-	"""
 
 func _find_key(dictionary, value):
 	var index = dictionary.values().find(value)
@@ -585,7 +515,7 @@ func _network_player_disconnected(player_id):
 	
 	if target_plr:
 		rpc("_net_broadcast_remove_player", player_id)
-		player_disconnected.emit(target_plr)
+		player_removed.emit(target_plr)
 		target_plr.queue_free()
 
 # Validate network join internal data
@@ -717,8 +647,6 @@ func load_scene(scene_path: String, respawn_players = true):
 	rpc("_net_load_scene", scene_path, respawn_players)
 
 func _check_if_net_from_id(id):
-	if mode != PlayMode.Online:
-		return true
 	return multiplayer.get_remote_sender_id() == id
 
 @rpc("authority", "call_local", "reliable")

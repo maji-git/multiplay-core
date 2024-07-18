@@ -16,7 +16,7 @@ func _ready():
 		set_process(false)
 		return
 	
-	if should_sync() and check_send_permission():
+	if check_send_permission():
 		_parent.animation_started.connect(_on_animation_started)
 
 func _on_animation_started(new_anim):

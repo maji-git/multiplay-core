@@ -30,9 +30,6 @@ func _ready():
 			})
 
 func _physics_process(delta):
-	if !should_sync():
-		return
-	
 	# Only watch for changes if is authority or server
 	if check_send_permission():
 		for p in property_list:

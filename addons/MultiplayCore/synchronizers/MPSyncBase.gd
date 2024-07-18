@@ -6,9 +6,6 @@ class_name MPSyncBase
 func _ready():
 	pass
 
-func should_sync():
-	return MPIO.mpc.mode == MPIO.mpc.PlayMode.Online
-
 ## If this node is local to current multiplayer peer
 func check_is_local():
 	# currently use the same implementation as check_send_permission

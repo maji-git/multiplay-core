@@ -13,8 +13,6 @@ var on_ground = false
 func _ready():
 	mpp.player_ready.connect(_on_player_ready)
 	mpp.handshake_ready.connect(_on_handshake_ready)
-	mpp.swap_focused.connect(_on_swap_focused)
-	mpp.swap_unfocused.connect(_on_swap_unfocused)
 
 func _on_swap_focused():
 	$playingThis.visible = true
