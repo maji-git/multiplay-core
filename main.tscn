@@ -19,7 +19,6 @@ size = Vector2(200, 20)
 script = ExtResource("1_ubvtg")
 port = 3000
 max_players = 3
-max_players_per_client = null
 connect_timeout_ms = 10000
 player_scene = ExtResource("2_d01oj")
 swap_input_action = "swap"

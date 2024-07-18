@@ -31,8 +31,6 @@ signal localclient_node_ready(local_client: MPClient)
 signal disconnected_from_server(reason: String)
 ## Emit when client faced connection error
 signal connection_error(reason: ConnectionError)
-## Emit when swap index has changed. Only emit in Swap Play mode
-signal swap_changed(to_index: int, old_index: int)
 
 ## Input method to use for MPPlayer's individual controls
 enum InputType {
@@ -42,14 +40,6 @@ enum InputType {
 	Keyboard,
 	## Control via gamepad
 	Joypad,
-}
-
-## Session mode to use for multiplayer game
-enum SessionMode {
-	## Allow play modes to be mixed together in one session. (Swap is not supported in this mode)
-	Joinable,
-	## Fix to specific play mode only
-	Fixed,
 }
 
 ## List of connection errors
@@ -92,16 +82,6 @@ enum ConnectionError {
 ## Should Client authority be assigned automatically?
 @export var assign_client_authority: bool = true
 
-@export_subgroup("Inputs")
-## Which action key to use for swap mode.
-@export var swap_input_action: String:
-	get:
-		return swap_input_action
-	set(value):
-		swap_input_action = value
-		if Engine.is_editor_hint():
-			update_configuration_warnings()
-
 @export_subgroup("Debug Options")
 ## Enable Debug UI
 @export var debug_gui_enabled: bool = true
@@ -110,9 +90,7 @@ var _rng = RandomNumberGenerator.new()
 
 func _get_configuration_warnings():
 	var warns = []
-	if swap_input_action == "":
-		warns.append("Swap Input action currently not set.")
-	
+
 	var net_count = 0
 	for c in get_children():
 		if c is MPNetProtocolBase:
@@ -163,9 +141,6 @@ var current_scene: Node = null
 
 ## Debug Status
 var debug_status_txt = ""
-
-## Current swap index, Swap mode only.
-var current_swap_index: int = 0
 
 var _join_handshake_data = {}
 var _join_credentials_data = {}
