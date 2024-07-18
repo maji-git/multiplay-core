@@ -65,14 +65,16 @@ enum ConnectionError {
 @export var bind_address: String = "*"
 ## Which port to use in online game host.
 @export_range(0, 65535) var port: int = 4200
+## Time in milliseconds before timing out the user.
+@export var connect_timeout_ms: int = 50000
+
+@export_subgroup("Metadata")
+## Max clients for the game.
+@export var max_clients: int = 4
 ## Max players for the game.
 @export var max_players: int = 4
 ## Maximum player node that client can create
 @export var max_players_per_client: int = 2
-## Max clients for the game.
-@export var max_clients: int = 4
-## Time in milliseconds before timing out the user.
-@export var connect_timeout_ms: int = 50000
 
 @export_subgroup("Spawn Meta")
 ## Your own template player scene.
