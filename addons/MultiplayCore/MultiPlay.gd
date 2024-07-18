@@ -80,11 +80,13 @@ enum ConnectionError {
 
 @export_subgroup("Network")
 ## Which ip to bind on in online game host.
-@export var bind_address: String = "*"
+@export var bind_address: String = "*"	
 ## Which port to use in online game host.
 @export_range(0, 65535) var port: int = 4200
 ## Max players for the game.
 @export var max_players: int = 4
+## Maximum player node that client can create
+@export var max_players_per_client: int = 2
 ## Max clients for the game.
 @export var max_clients: int = 4
 ## Time in milliseconds before timing out the user.
@@ -621,13 +623,11 @@ func get_available_joypad():
 func _join_handshake(handshake_data: Dictionary, credentials_data):
 	var from_id = multiplayer.get_remote_sender_id()
 	
-	"""
-	var existing_plr = players.get_player_by_id(from_id)
+	var existing_client = players.get_client_by_id(from_id)
 	
-	# Prevent existing player from init
-	if existing_plr:
+	# Prevent existing client from init
+	if existing_client:
 		return
-	"""
 	
 	if client_count >= max_clients:
 		_kick_player_handshake(from_id, ConnectionError.SERVER_FULL)

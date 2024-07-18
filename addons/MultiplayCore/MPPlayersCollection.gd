@@ -17,6 +17,13 @@ func get_player_by_id(player_id: int) -> MPPlayer:
 			return players[player_id]
 	return null
 
+## Get client by ID
+func get_client_by_id(client_id: int) -> MPPlayer:
+	if clients.keys().has(client_id):
+		if is_instance_valid(players[client_id]):
+			return players[client_id]
+	return null
+
 ## Find player that matches the specific callable
 func find_player(callable: Callable) -> MPPlayer:
 	for p in players.values():

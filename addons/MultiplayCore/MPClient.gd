@@ -44,8 +44,8 @@ func _setup_nodes():
 	_player_spawner = MultiplayerSpawner.new()
 	_player_spawner.name = "PlayerSpawner"
 	_player_spawner.spawn_function = _player_spawned
-	_player_spawner.spawn_path = get_path_to(self)
-	_player_spawner.set_multiplayer_authority(client_id)
+	_player_spawner.spawn_path = get_path_to(self.get_parent())
+	_player_spawner.set_multiplayer_authority(1)
 	add_child(_player_spawner, true)
 
 func join_all(player_data: Dictionary = {}):
@@ -58,6 +58,21 @@ func join_joypad(player_data: Dictionary = {}, device_id: int = 0):
 	_join_pass(player_data, device_id, MultiPlayCore.InputType.Joypad)
 
 func _join_pass(player_data: Dictionary, device_id: int, input_type: MultiPlayCore.InputType):
+	rpc("_join_plr_process", player_data, device_id, input_type)
+
+@rpc("authority", "call_local", "reliable")
+func _join_plr_process(player_data: Dictionary, device_id: int, input_type: MultiPlayCore.InputType):
+	if multiplayer.get_remote_sender_id() != client_id:
+		return
+	
+	if mpps.size() >= mpc.max_players:
+		MPIO.logerr("Reached maximum players")
+		return
+	
+	if mpps.size() >= mpc.max_players_per_client:
+		MPIO.logerr("Reached maximum players that this client can create")
+		return
+	
 	_player_spawner.spawn({
 		player_data = player_data,
 		pindex = 0,
@@ -97,6 +112,7 @@ func _player_spawned(data):
 		player.set_multiplayer_authority(client_id, true)
 	
 	mpc.players._internal_add_player(data.pindex, player)
+	mpps.append(player)
 	
 	if mpc.is_server:
 		mpc.rpc("_net_broadcast_new_player", data.pindex)
