@@ -80,7 +80,7 @@ enum ConnectionError {
 
 @export_subgroup("Network")
 ## Which ip to bind on in online game host.
-@export var bind_address: String = "*"	
+@export var bind_address: String = "*"
 ## Which port to use in online game host.
 @export_range(0, 65535) var port: int = 4200
 ## Max players for the game.

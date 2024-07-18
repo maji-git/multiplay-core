@@ -85,3 +85,7 @@ func spawn_node_all():
 	for p in players.values():
 		if is_instance_valid(p):
 			p.spawn_node()
+
+# Create ID function for used in player IDs
+func _create_id():
+	return Time.get_ticks_msec()

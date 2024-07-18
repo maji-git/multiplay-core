@@ -218,7 +218,7 @@ func _net_spawn_node():
 		var pscene = packed_load.instantiate()
 		
 		if mpc.assign_client_authority:
-			pscene.set_multiplayer_authority(player_id, true)
+			pscene.set_multiplayer_authority(client_id, true)
 		
 		add_child(pscene, true)
 		

@@ -73,17 +73,20 @@ func _join_plr_process(player_data: Dictionary, device_id: int, input_type: Mult
 		MPIO.logerr("Reached maximum players that this client can create")
 		return
 	
+	var player_id = mpc.players._create_id()
+	
 	_player_spawner.spawn({
 		player_data = player_data,
 		pindex = 0,
 		device_id = device_id,
+		plr_id = player_id,
 		input_type = input_type
 	})
 
 func _player_spawned(data):
 	var player = MPPlayer.new()
-	player.name = str(client_id)
-	player.player_id = client_id
+	player.name = str(data.plr_id)
+	player.player_id = data.plr_id
 	player.client_id = client_id
 	player.player_data = data.player_data
 	player.player_index = data.pindex
@@ -111,11 +114,11 @@ func _player_spawned(data):
 	if mpc.assign_client_authority:
 		player.set_multiplayer_authority(client_id, true)
 	
-	mpc.players._internal_add_player(data.pindex, player)
+	mpc.players._internal_add_player(player.player_id, player)
 	mpps.append(player)
 	
 	if mpc.is_server:
-		mpc.rpc("_net_broadcast_new_player", data.pindex)
+		mpc.rpc("_net_broadcast_new_player", player.player_id)
 	
 	return player
 
