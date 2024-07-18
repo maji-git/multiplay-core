@@ -153,7 +153,7 @@ func _join_controller():
 		print("No Joypad available")
 		return
 	
-	mpc.join_joypad(jid)
+	mpc.join_joypad({}, jid)
 
 
 func _join_keyboard():

@@ -48,25 +48,42 @@ func _setup_nodes():
 	_player_spawner.set_multiplayer_authority(client_id)
 	add_child(_player_spawner, true)
 
-func join_keyboard(user_data: Dictionary = {}):
-	_player_spawner.spawn({user_data = user_data, pindex = 0})
+func join_all(player_data: Dictionary = {}):
+	_join_pass(player_data, 0, MultiPlayCore.InputType.All)
+
+func join_keyboard(player_data: Dictionary = {}):
+	_join_pass(player_data, -1, MultiPlayCore.InputType.Keyboard)
+
+func join_joypad(player_data: Dictionary = {}, device_id: int = 0):
+	_join_pass(player_data, device_id, MultiPlayCore.InputType.Joypad)
+
+func _join_pass(player_data: Dictionary, device_id: int, input_type: MultiPlayCore.InputType):
+	_player_spawner.spawn({
+		player_data = player_data,
+		pindex = 0,
+		device_id = device_id,
+		input_type = input_type
+	})
 
 func _player_spawned(data):
 	var player = MPPlayer.new()
 	player.name = str(client_id)
 	player.player_id = client_id
-	player.user_data = data.user_data
+	player.client_id = client_id
+	player.player_data = data.player_data
 	player.player_index = data.pindex
 	player.is_local = false
 	player.client = self
-	#player.device_id = 
 	player.mpc = mpc
 	
+	# If is local
 	if client_id == multiplayer.get_unique_id():
 		player.is_local = true
 		mpc.local_player = player
 		mpc.local_players.append(player)
 		player._internal_peer = player
+		player.input_method = data.input_type
+		player.device_id = data.device_id
 	
 	if mpc.player_scene:
 		player.player_node_resource_path = mpc.player_scene.resource_path

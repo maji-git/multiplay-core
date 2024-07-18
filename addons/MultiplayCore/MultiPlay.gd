@@ -352,16 +352,11 @@ func swap_to(index):
 
 	swap_changed.emit(current_swap_index, old_index)
 
-func join_keyboard():
-	local_client.join_keyboard()
+func join_keyboard(player_data: Dictionary = {}):
+	local_client.join_keyboard(player_data)
 
-func join_joypad(device_id: int):
-	"""
-	_init_input({
-		input_type = InputType.Joypad,
-		device_id = device_id
-	})
-	"""
+func join_joypad(player_data: Dictionary = {}, device_id: int = 0):
+	local_client.join_joypad(player_data, device_id)
 
 func _presetup_nodes():
 	players = MPPlayersCollection.new()

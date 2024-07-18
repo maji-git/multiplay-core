@@ -18,8 +18,11 @@ var player_data = {}
 var auth_data = {}  :
 	get:
 		return client.auth_data
-## Peer ID of the player. Duplicates are possible. Can be used with Godot's built-in MP functions. ([code]rpc[/code]/[code]rpc_id[/code])
+## ID associated with specific player node. Used to uniquely identify a player. Cannot be used with Godot's built-in MP.
 var player_id: int = 0
+
+## ID associated with specific client. Useable with Godot’s built-in MP (rpc/rpc_id)
+var client_id: int = 0
 
 ## Get MultiPlayCore
 var mpc: MultiPlayCore
@@ -47,9 +50,11 @@ var playmode: MultiPlayCore.PlayMode
 var input_method: MultiPlayCore.InputType
 
 ## Controller Device ID to use (for one-screen/joinable)
-var device_id: int = 0
+var device_id: int = -1
 
 var _local_got_handshake = false
+
+var _ref_input_action_names: PackedStringArray = []
 
 ## On player ready. Only emit locally
 signal player_ready
@@ -98,34 +103,32 @@ func _on_swap_changed(new, old):
 ## In Swap, if swap is active on this player, it'll return the same input action name. If not, it'll return the "empty" action.[br]
 ##
 func translate_action(origin_action: StringName) -> StringName:
-	if input_method == mpc.InputType.Keyboard:
-		if !is_local:
-			return "empty"
-		return origin_action
 	
-	if playmode == mpc.PlayMode.Swap:
-		if mpc.current_swap_index == player_index:
-			return origin_action
-		return "empty"
+	var action_name = origin_action + "_" + str(player_id)
 	
-	if input_method == mpc.InputType.Joypad:
-		var action_name = origin_action + "_" + str(player_index)
+	if !InputMap.has_action(action_name):
+		var events = InputMap.action_get_events(origin_action)
 		
-		if !InputMap.has_action(action_name):
-			var events = InputMap.action_get_events(origin_action)
-		
-			for e in events:
+		for e in events:
+			if input_method == mpc.InputType.Joypad:
 				if not (e is InputEventJoypadButton or e is InputEventJoypadMotion):
 					continue
+			
+			if input_method == mpc.InputType.Keyboard:
+				if not (e is InputEventKey):
+					continue
+			
+			var nevent = e.duplicate(true)
+			nevent.device = device_id
 				
-				var nevent = e.duplicate(true)
-				nevent.device = device_id
+			if !InputMap.has_action(action_name):
+				InputMap.add_action(action_name)
+				InputMap.action_add_event(action_name, nevent)
 				
-				if !InputMap.has_action(action_name):
-					InputMap.add_action(action_name)
-					InputMap.action_add_event(action_name, nevent)
+				_ref_input_action_names.append(action_name)
+				
 		
-		return action_name
+	return action_name
 	
 	return origin_action
 
