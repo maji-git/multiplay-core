@@ -58,10 +58,10 @@ func join_joypad(player_data: Dictionary = {}, device_id: int = 0):
 	_join_pass(player_data, device_id, MultiPlayCore.InputType.Joypad)
 
 func _join_pass(player_data: Dictionary, device_id: int, input_type: MultiPlayCore.InputType):
-	rpc("_join_plr_process", player_data, device_id, input_type)
+	rpc_id(1, "_net_join_plr", player_data, device_id, input_type)
 
 @rpc("authority", "call_local", "reliable")
-func _join_plr_process(player_data: Dictionary, device_id: int, input_type: MultiPlayCore.InputType):
+func _net_join_plr(player_data: Dictionary, device_id: int, input_type: MultiPlayCore.InputType):
 	if multiplayer.get_remote_sender_id() != client_id:
 		return
 	

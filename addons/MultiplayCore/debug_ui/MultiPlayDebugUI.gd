@@ -69,15 +69,15 @@ func parse_json_or_none(data):
 	return {}
 
 func _on_host_pressed():
-	mpc.start_online_host(true, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
+	mpc.start_host()
 	boot_close()
 
 func _on_host_act_pressed():
-	mpc.start_online_host(true, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
+	mpc.start_host(true)
 	boot_close()
 
 func _on_connect_pressed():
-	mpc.start_online_join(join_address, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
+	mpc.start_join_with_player(join_address, {}, parse_json_or_none(payload_input.text), parse_json_or_none(cert_input.text))
 	boot_close()
 
 func _on_connect_address_text_changed(new_text):

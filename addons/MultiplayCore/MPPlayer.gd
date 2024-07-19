@@ -88,13 +88,14 @@ func translate_action(origin_action: StringName) -> StringName:
 		var events = InputMap.action_get_events(origin_action)
 		
 		for e in events:
-			if input_method == mpc.InputType.Joypad:
-				if not (e is InputEventJoypadButton or e is InputEventJoypadMotion):
-					continue
+			if input_method != mpc.InputType.All:
+				if input_method == mpc.InputType.Joypad:
+					if not (e is InputEventJoypadButton or e is InputEventJoypadMotion):
+						continue
 			
-			if input_method == mpc.InputType.Keyboard:
-				if not (e is InputEventKey):
-					continue
+				if input_method == mpc.InputType.Keyboard:
+					if not (e is InputEventKey):
+						continue
 			
 			var nevent = e.duplicate(true)
 			nevent.device = device_id
@@ -107,8 +108,6 @@ func translate_action(origin_action: StringName) -> StringName:
 				
 		
 	return action_name
-	
-	return origin_action
 
 ## Just like translate_action, but in shorter format
 func ma(action_name: StringName):

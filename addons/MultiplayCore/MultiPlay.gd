@@ -88,7 +88,11 @@ enum ConnectionError {
 ## Enable Debug UI
 @export var debug_gui_enabled: bool = true
 
-var _rng = RandomNumberGenerator.new()
+# Data that'll be used after client has been created
+var _onready_data = {
+	create_player = false,
+	player_data = {}
+}
 
 func _get_configuration_warnings():
 	var warns = []
@@ -205,7 +209,7 @@ func _ready():
 		port = int(arguments.port)
 	
 	if arguments.has("server"):
-		_online_host(arguments.has("act-client"))
+		_online_host()
 	
 	if arguments.has("client"):
 		var client_url = ""
@@ -235,11 +239,11 @@ func _debugger_msg_capture(msg, data):
 					cred = JSON.parse_string(fp_data.debug_configs[str(session_id)].credentials)
 	
 		if msg == "start_server":
-			start_online_host(true, handsh, cred)
+			start_host(true)
 			if _debug_bootui:
 				_debug_bootui.boot_close()
 		if msg == "start_client":
-			start_online_join(_debug_join_address, handsh, cred)
+			start_join(_debug_join_address, handsh, cred)
 			if _debug_bootui:
 				_debug_bootui.boot_close()
 	return true
@@ -258,19 +262,11 @@ func _init_data():
 	if _net_protocol == null:
 		assert(false, "NetProtocol is current not set.")
 
-## Start one screen mode
-func start_one_screen():
-	_online_host()
-	
-	for i in range(0, max_players):
-		#create_player(i, {})
-		pass
-
 ## Start solo mode
 func start_solo():
-	_online_host()
+	await _online_host()
 	
-	#create_player(1, {})
+	local_client.join_all()
 
 func _report_extension(ext: MPExtension):
 	_extensions.append(ext)
@@ -298,14 +294,23 @@ func _setup_nodes():
 	_client_spawner.spawn_path = players.get_path()
 
 ## Start online mode as host
-func start_online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
-	_online_host(act_client, act_client_handshake_data, act_client_credentials_data)
+func start_host(act_client: bool = false, act_client_player_data: Dictionary = {}):
+	if act_client:
+		_onready_data.create_player = true
+		_onready_data.player_data = act_client_player_data
+	_online_host()
 
-## Start online mode as client
-func start_online_join(url: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
+## Join master
+func start_join(url: String, player_data: Dictionary = {}, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	_online_join(url, handshake_data, credentials_data)
 
-func _online_host(act_client: bool = false, act_client_handshake_data: Dictionary = {}, act_client_credentials_data: Dictionary = {}):
+## Join master and create player node automatically
+func start_join_with_player(url: String, player_data: Dictionary = {}, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
+	_onready_data.create_player = true
+	_onready_data.player_data = player_data
+	start_join(url, handshake_data, credentials_data)
+
+func _online_host():
 	_init_data()
 	
 	debug_status_txt = "Server Started!"
@@ -325,12 +330,8 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 	if first_scene:
 		load_scene(first_scene.resource_path)
 	
-	if act_client:
-		_join_handshake_data = act_client_handshake_data
-		_join_credentials_data = act_client_credentials_data
-		#create_player(1, act_client_handshake_data)
-		_network_player_connected(1)
-		_client_connected()
+	_network_player_connected(1)
+	_client_connected()
 
 func _online_join(address: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	_init_data()
@@ -376,7 +377,6 @@ func create_client(client_id, handshake_data = {}):
 			assign_plrid = i
 			break
 	
-	_rng.randomize()
 	_client_spawner.spawn({client_id = client_id, handshake_data = handshake_data})
 
 @rpc("authority", "call_local", "reliable")
@@ -447,6 +447,9 @@ func _client_spawned(data):
 
 func _on_local_client_ready():
 	EngineDebugger.send_message("mpc:connected", [local_client.client_id])
+	
+	if _onready_data.create_player:
+		local_client.join_all(_onready_data.player_data)
 	
 	# Add node that tells what pid session is in scene session tab
 	var viewnode = Node.new()
