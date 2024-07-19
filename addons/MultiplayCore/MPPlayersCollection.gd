@@ -47,13 +47,13 @@ func _internal_add_player(player_id, player: MPPlayer):
 	players[player_id] = player
 
 func _internal_remove_player(player_id):
-	players[player_id] = null
+	players.erase(player_id)
 
-func _internal_add_client(player_id, client: MPClient):
-	clients[player_id] = client
+func _internal_add_client(client_id, client: MPClient):
+	clients[client_id] = client
 
-func _internal_remove_client(player_id):
-	clients[player_id] = null
+func _internal_remove_client(client_id):
+	clients.erase(client_id)
 
 func _get_unique_id():
 	return 
