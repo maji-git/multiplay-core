@@ -29,9 +29,7 @@ func _on_player_ready():
 
 func _on_handshake_ready(hs):
 	print("HANDSHAKE: ", hs)
-	if hs.keys().has("username"):
-		$username.text = hs.username
-		$username.visible = true
+	$username.text = "P" + str(mpp.player_index + 1)
 
 func _physics_process(delta):
 	if !mpp.is_ready:

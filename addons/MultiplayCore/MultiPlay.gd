@@ -402,7 +402,15 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 
 ## Create player node
 func create_player(player_id, handshake_data = {}):
-	_plr_spawner.spawn({player_id = player_id, handshake_data = handshake_data, pindex = player_count})
+	var assign_plrid = 0
+
+	# Find available ID to assign
+	for i in range(0, max_players):
+		if players.get_player_by_index(i) == null:
+			assign_plrid = i
+			break
+	
+	_plr_spawner.spawn({player_id = player_id, handshake_data = handshake_data, pindex = assign_plrid})
 
 @rpc("authority", "call_local", "reliable")
 func _net_broadcast_new_player(peer_id):
@@ -517,6 +525,7 @@ func _network_player_disconnected(player_id):
 	if target_plr:
 		rpc("_net_broadcast_remove_player", player_id)
 		player_disconnected.emit(target_plr)
+		players._internal_remove_player(player_id)
 		target_plr.queue_free()
 
 # Validate network join internal data

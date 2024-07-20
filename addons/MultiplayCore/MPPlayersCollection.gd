@@ -16,7 +16,7 @@ func get_player_by_id(player_id: int) -> MPPlayer:
 ## Get player by index
 func get_player_by_index(player_index: int) -> MPPlayer:
 	for p in players.values():
-		if p and p.player_index == player_index:
+		if p and is_instance_valid(p) and p.player_index == player_index:
 			return p
 	
 	return null
@@ -29,9 +29,7 @@ func _internal_add_player(player_id, player: MPPlayer):
 	players[player_id] = player
 
 func _internal_remove_player(player_id):
-	players[player_id] = null
-	
-	print(players)
+	players.erase(player_id)
 
 func _get_player_peer_ids():
 	var p = multiplayer.get_peers()
