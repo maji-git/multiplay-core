@@ -69,10 +69,16 @@ enum ConnectionError {
 @export var connect_timeout_ms: int = 50000
 
 @export_subgroup("Metadata")
+## Determines if client limit should be the same as player limit
+@export var same_maximum_clients: bool = true
 ## Max clients for the game.
 @export var max_clients: int = 4
 ## Max players for the game.
-@export var max_players: int = 4
+@export var max_players: int = 4 :
+	set(value):
+		if same_maximum_clients:
+			max_clients = value
+		max_players = value
 ## Maximum player node that client can create
 @export var max_players_per_client: int = 2
 
