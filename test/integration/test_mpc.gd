@@ -11,6 +11,7 @@ func before_all():
 	
 	mpc = mpcenv.instantiate()
 	get_node("/root").add_child(mpc, true)
+	MPIO.mpc = mpc
 	
 	viewport_3d = mpc.get_node("3dv/v")
 	#await delay(0.3)
@@ -26,7 +27,8 @@ func delay(sec):
 
 func join_host():
 	mpc.start_online_join("127.0.0.1:" + str(mpc.port))
-	await delay(0.3)
+	#await mpc.connected_to_server
+	await delay(1)
 
 func disconnect_from_host():
 	if is_instance_valid(mpc) and mpc.local_player and is_instance_valid(mpc.local_player):
@@ -47,12 +49,13 @@ func test_connectivity():
 	
 	assert_eq(mpc.online_connected, true, "Online Connected")
 	assert_ne(mpc.local_player, null, "local_player not null")
+	assert_ne(mpc.local_player._internal_peer, null, "_internal_peer not null")
+	assert_ne(mpc.online_peer, null, "online_peer not null")
 
 func test_disconnect():
 	if DebugBridge.role != "client":
 		pass_test("client only test")
 		return
-	print("mpc.local_player ", mpc.local_player)
 	#assert_ne(mpc.local_player._internal_peer, null, "internal peer not null")
 	await join_host()
 	await delay(1)
@@ -94,4 +97,79 @@ func test_transformsync_spawn_sync_3d():
 		assert_eq(round(test_transform.position.y), 1.0, "3D Position Spawn Check")
 		assert_eq(round(test_transform.rotation_degrees.x), 5.0, "3D Rotation Spawn Check")
 		assert_eq(round(test_transform.scale.x), 2.0, "3D Scale Spawn Check")
-		pass_test("okie")
+
+func test_animsync_oneshot():
+	var test_animplay = preload("res://test/resources/test_anim_play.tscn").instantiate()
+	test_animplay.set_multiplayer_authority(1)
+	add_child_autofree(test_animplay, true)
+	
+	var anim: AnimationPlayer = test_animplay.get_node("AnimationPlayer")
+	
+	await delay(1)
+	
+	if DebugBridge.role == "server":
+		await delay(0.5)
+		
+		anim.play("anim_oneshot")
+		pass_test("done")
+	else:
+		await join_host()
+		await delay(0.3)
+		
+		assert_eq(anim.current_animation, "anim_oneshot", "Animation Oneshot")
+
+func test_animsync_loop():
+	var test_animplay = preload("res://test/resources/test_anim_play.tscn").instantiate()
+	test_animplay.set_multiplayer_authority(1)
+	add_child_autofree(test_animplay, true)
+	
+	var anim: AnimationPlayer = test_animplay.get_node("AnimationPlayer")
+	
+	await delay(1)
+	
+	if DebugBridge.role == "server":
+		await delay(0.5)
+		
+		anim.play("anim_loop")
+		pass_test("done")
+	else:
+		await join_host()
+		await delay(0.4)
+		
+		assert_eq(anim.current_animation, "anim_loop", "Animation Looped")
+
+func test_animtree_sync():
+	var test_animtree = preload("res://test/resources/test_animtree.tscn").instantiate()
+	test_animtree.set_multiplayer_authority(1, true)
+	mpc.add_child(test_animtree, true)
+	
+	var anim: AnimationTree = test_animtree.get_node("AnimationTree")
+	
+	await delay(1)
+	
+	if DebugBridge.role == "server":
+		await delay(0.5)
+		
+		anim.set("parameters/Add2/add_amount", 1)
+		anim.set("parameters/Add3/add_amount", 1)
+		anim.set("parameters/Blend2/blend_amount", 1)
+		anim.set("parameters/Blend3/blend_amount", 1)
+		anim.set("parameters/BlendSpace1D/blend_position", 1)
+		anim.set("parameters/BlendSpace2D/blend_position", Vector2(1,1))
+		anim.set("parameters/StateMachine/conditions/sync1", true)
+		anim.set("parameters/TimeScale/scale", 2)
+		anim.set("parameters/TimeSeek/seek_request", 1)
+		pass_test("done")
+	else:
+		await join_host()
+		await delay(0.4)
+		
+		assert_eq(anim.get("parameters/Add2/add_amount"), 1, "Add2")
+		assert_eq(anim.get("parameters/Add3/add_amount"), 1, "Add3")
+		assert_eq(anim.get("parameters/Blend2/blend_amount"), 1, "Blend2")
+		assert_eq(anim.get("parameters/Blend3/blend_amount"), 1, "Blend3")
+		assert_eq(anim.get("parameters/BlendSpace1D/blend_position"), 1, "BlendSpace1D")
+		assert_eq(anim.get("parameters/BlendSpace2D/blend_position"), Vector2(1,1), "BlendSpace2D")
+		assert_eq(anim.get("parameters/StateMachine/conditions/sync1"), true, "State Machine")
+		assert_eq(anim.get("parameters/TimeScale/scale"), 2, "TimeScale")
+		assert_eq(anim.get("parameters/TimeSeek/seek_request"), 1, "TimeSeek")

@@ -18,10 +18,10 @@ func _capture(message, data, session_id):
 	if message == "mpc_test:session_complete":
 		ready_i = ready_i + 1
 		
-		if ready_i == 2:
+		if ready_i == get_sessions().size():
 			
 			print("********")
-			print("ready_i: ", ready_i)
+			print_rich("[b]ready_i: ", ready_i)
 			
 			ready_i = 0
 			

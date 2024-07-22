@@ -491,9 +491,6 @@ func _on_local_player_ready():
 	debug_status_txt = "Connected!"
 
 func _network_player_connected(player_id):
-	print("netplr")
-	print(get_tree())
-	print(get_parent().name)
 	"""
 	await get_tree().create_timer(connect_timeout_ms / 1000).timeout
 	
