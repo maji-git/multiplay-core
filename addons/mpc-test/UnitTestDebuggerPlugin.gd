@@ -19,6 +19,10 @@ func _capture(message, data, session_id):
 		ready_i = ready_i + 1
 		
 		if ready_i == 2:
+			
+			print("********")
+			print("ready_i: ", ready_i)
+			
 			ready_i = 0
 			
 			for s in get_sessions():

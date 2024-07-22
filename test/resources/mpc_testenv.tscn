@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://c5654181j8yru"]
+[gd_scene load_steps=4 format=3 uid="uid://c5654181j8yru"]
 
 [ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_tg30c"]
 [ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="2_7xejk"]
-[ext_resource type="PackedScene" uid="uid://lw18orwsroqc" path="res://test_player.tscn" id="2_otu01"]
 
 [sub_resource type="Environment" id="Environment_1pm5l"]
 background_mode = 1
@@ -10,7 +9,6 @@ background_color = Color(0.349552, 0.487496, 0.569987, 1)
 
 [node name="MultiPlayCore" type="Node"]
 script = ExtResource("1_tg30c")
-player_scene = ExtResource("2_otu01")
 
 [node name="ENetProtocol" type="Node" parent="."]
 script = ExtResource("2_7xejk")

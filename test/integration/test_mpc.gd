@@ -61,35 +61,37 @@ func test_disconnect():
 
 func test_transformsync_spawn_sync_2d():
 	var test_transform = preload("res://test/resources/test_transform_2d.tscn").instantiate()
+	test_transform.set_multiplayer_authority(1)
 	mpc.add_child(test_transform, true)
 	
 	if DebugBridge.role == "server":
 		test_transform.position = Vector2(200, 0)
 		test_transform.rotation = 45
-		test_transform.scale = Vector2(1.2, 1.2)
+		test_transform.scale = Vector2(2, 2)
 		pass_test("done")
 	else:
 		await delay(0.5)
 		await join_host()
 		await delay(1)
-		assert_eq(round(test_transform.position.x), 200, "2D Position Spawn Check")
-		assert_eq(round(test_transform.rotation), 45, "2D Rotation Spawn Check")
-		assert_eq(round(test_transform.scale.x), 1.2, "2D Scale Spawn Check")
+		assert_eq(round(test_transform.position.x), 200.0, "2D Position Spawn Check")
+		assert_eq(round(test_transform.rotation), 45.0, "2D Rotation Spawn Check")
+		assert_eq(round(test_transform.scale.x), 2.0, "2D Scale Spawn Check")
 
 func test_transformsync_spawn_sync_3d():
 	var test_transform = preload("res://test/resources/test_transform_3d.tscn").instantiate()
+	test_transform.set_multiplayer_authority(1)
 	viewport_3d.add_child(test_transform, true)
 	
 	if DebugBridge.role == "server":
 		test_transform.position = Vector3(0, 1, 0)
 		test_transform.rotation_degrees = Vector3(5, 5, 5)
-		test_transform.scale = Vector3(1.2, 1.2, 1.2)
+		test_transform.scale = Vector3(2, 2, 2)
 		pass_test("done")
 	else:
 		await delay(0.5)
 		await join_host()
 		await delay(1)
-		assert_eq(round(test_transform.position.y), 1, "3D Position Spawn Check")
-		assert_eq(round(test_transform.rotation_degrees.x), 45, "3D Rotation Spawn Check")
-		assert_eq(round(test_transform.scale.x), 1.2, "3D Scale Spawn Check")
+		assert_eq(round(test_transform.position.y), 1.0, "3D Position Spawn Check")
+		assert_eq(round(test_transform.rotation_degrees.x), 5.0, "3D Rotation Spawn Check")
+		assert_eq(round(test_transform.scale.x), 2.0, "3D Scale Spawn Check")
 		pass_test("okie")
