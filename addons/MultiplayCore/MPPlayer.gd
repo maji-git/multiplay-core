@@ -48,6 +48,10 @@ func _ready():
 		_send_handshake_data(handshake_data)
 		mpc.connected_to_server.emit()
 	
+	_internal_peer = multiplayer.multiplayer_peer
+	print("_internal_peer: ", _internal_peer)
+	#_internal_peer = multiplayer.multiplayer_peer
+	
 	mpc.swap_changed.connect(_on_swap_changed)
 	
 	if mpc.mode == mpc.PlayMode.Swap and mpc.current_swap_index == player_index:

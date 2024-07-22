@@ -13,7 +13,7 @@ func _capture(message, data, session_id):
 	if message == "mpc:connected":
 		var pid = data[0]
 	
-	if message == "mpc:session_ready" and send_start_auto:
+	if (message == "mpc:session_ready" and send_start_auto) or message == "mpc:debug_session_ready":
 		start_auto_i = start_auto_i + 1
 		if session_id == 0:
 			session.send_message("mpc:start_server", [session_id])
