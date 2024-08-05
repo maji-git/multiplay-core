@@ -18,10 +18,11 @@ config/icon="res://icon.svg"
 [autoload]
 
 MPIO="*res://addons/MultiplayCore/MPIO.gd"
+DebugBridge="*res://addons/mpc-test/DebugBridge.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/MultiplayCore/plugin.cfg")
+enabled=PackedStringArray("res://addons/MultiplayCore/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/mpc-test/plugin.cfg")
 
 [input]
 

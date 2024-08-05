@@ -16,6 +16,8 @@ func check_is_local():
 
 ## Check network send permission
 func check_send_permission():
+	if !MPIO.mpc.online_connected:
+		return
 	return multiplayer.get_unique_id() == get_multiplayer_authority()
 
 ## Check receive permission

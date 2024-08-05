@@ -54,8 +54,6 @@ func host(port, bind_ip, max_players) -> MultiplayerPeer:
 
 func join(address, port) -> MultiplayerPeer:
 	role = "client"
-	print(address)
-	print(port)
 	var peer = ENetMultiplayerPeer.new()
 	var err = peer.create_client(address, port)
 	

@@ -1,0 +1,95 @@
+[gd_scene load_steps=18 format=3 uid="uid://yuwref8qwbg4"]
+
+[ext_resource type="Texture2D" uid="uid://of2r0vvc2uo0" path="res://tests/assets/player-sprite.png" id="1_5gl5k"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPAnimTreeSync.gd" id="2_ahjsa"]
+
+[sub_resource type="Animation" id="Animation_03psh"]
+resource_name = "anim1"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8rdnj"]
+_data = {
+"anim1": SubResource("Animation_03psh")
+}
+
+[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_deb0d"]
+
+[sub_resource type="AnimationNodeAdd3" id="AnimationNodeAdd3_8xaey"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_bscdv"]
+
+[sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_q36jq"]
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_n1wbe"]
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_18nnn"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_0cw27"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_t6eq1"]
+animation = &"anim1"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_pnki3"]
+advance_mode = 2
+advance_condition = &"sync1"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_pilqq"]
+states/anim1/node = SubResource("AnimationNodeAnimation_t6eq1")
+states/anim1/position = Vector2(476, 112)
+transitions = ["Start", "anim1", SubResource("AnimationNodeStateMachineTransition_pnki3")]
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_xl7un"]
+
+[sub_resource type="AnimationNodeTimeSeek" id="AnimationNodeTimeSeek_mommi"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_mu8x6"]
+graph_offset = Vector2(-503.184, 133.926)
+nodes/Add2/node = SubResource("AnimationNodeAdd2_deb0d")
+nodes/Add2/position = Vector2(-431.874, 379.788)
+nodes/Add3/node = SubResource("AnimationNodeAdd3_8xaey")
+nodes/Add3/position = Vector2(-220, 480)
+nodes/Blend2/node = SubResource("AnimationNodeBlend2_bscdv")
+nodes/Blend2/position = Vector2(-20, 420)
+nodes/Blend3/node = SubResource("AnimationNodeBlend3_q36jq")
+nodes/Blend3/position = Vector2(160, 400)
+nodes/BlendSpace1D/node = SubResource("AnimationNodeBlendSpace1D_n1wbe")
+nodes/BlendSpace1D/position = Vector2(-240, 280)
+nodes/BlendSpace2D/node = SubResource("AnimationNodeBlendSpace2D_18nnn")
+nodes/BlendSpace2D/position = Vector2(-20, 220)
+nodes/OneShot/node = SubResource("AnimationNodeOneShot_0cw27")
+nodes/OneShot/position = Vector2(-619.974, 262.088)
+nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_pilqq")
+nodes/StateMachine/position = Vector2(-900, 200)
+nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_xl7un")
+nodes/TimeScale/position = Vector2(460, 400)
+nodes/TimeSeek/node = SubResource("AnimationNodeTimeSeek_mommi")
+nodes/TimeSeek/position = Vector2(320, 400)
+
+[node name="animtree" type="Node2D"]
+position = Vector2(170, 135)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_5gl5k")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_8rdnj")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeBlendTree_mu8x6")
+anim_player = NodePath("../AnimationPlayer")
+parameters/Add2/add_amount = 0
+parameters/Add3/add_amount = 0
+parameters/Blend2/blend_amount = 0
+parameters/Blend3/blend_amount = 0
+parameters/BlendSpace1D/blend_position = 0
+parameters/BlendSpace2D/blend_position = Vector2(0, 0)
+parameters/OneShot/active = false
+parameters/OneShot/internal_active = false
+parameters/OneShot/request = 0
+parameters/StateMachine/conditions/sync1 = false
+parameters/TimeScale/scale = 1.0
+parameters/TimeSeek/seek_request = -1.0
+
+[node name="MPAnimTreeSync" type="Node" parent="AnimationTree"]
+script = ExtResource("2_ahjsa")

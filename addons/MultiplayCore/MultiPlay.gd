@@ -169,7 +169,7 @@ func _ready():
 		
 		_debug_join_address = bind_address_url + ":" + str(port)
 	
-	if OS.is_debug_build():
+	if OS.is_debug_build() and _net_protocol:
 		var debug_override = _net_protocol._override_debug_url(bind_address, port)
 		
 		if !debug_override:
@@ -491,12 +491,14 @@ func _on_local_player_ready():
 	debug_status_txt = "Connected!"
 
 func _network_player_connected(player_id):
+	"""
 	await get_tree().create_timer(connect_timeout_ms / 1000).timeout
 	
 	var player_node = players.get_player_by_id(player_id)
 	
 	if !player_node:
 		_kick_player_handshake(player_id, ConnectionError.TIMEOUT)
+	"""
 
 func _find_key(dictionary, value):
 	var index = dictionary.values().find(value)
@@ -628,6 +630,7 @@ func _client_connect_failed():
 
 func _on_local_disconnected(reason):
 	debug_status_txt = "Disconnected: " + str(reason)
+	local_player = null
 
 # Ping player
 func _physics_process(delta):

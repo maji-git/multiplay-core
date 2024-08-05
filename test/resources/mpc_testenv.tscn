@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5654181j8yru"]
+
+[ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_tg30c"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="2_7xejk"]
+
+[sub_resource type="Environment" id="Environment_1pm5l"]
+background_mode = 1
+background_color = Color(0.349552, 0.487496, 0.569987, 1)
+
+[node name="MultiPlayCore" type="Node"]
+script = ExtResource("1_tg30c")
+
+[node name="ENetProtocol" type="Node" parent="."]
+script = ExtResource("2_7xejk")
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("..")
+
+[node name="3dv" type="SubViewportContainer" parent="."]
+offset_left = 25.0
+offset_top = 87.0
+offset_right = 639.0
+offset_bottom = 474.0
+stretch = true
+
+[node name="v" type="SubViewport" parent="3dv"]
+handle_input_locally = false
+size = Vector2i(614, 387)
+render_target_update_mode = 4
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="3dv/v"]
+environment = SubResource("Environment_1pm5l")
+
+[node name="Camera3D" type="Camera3D" parent="3dv/v"]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 1, 2)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="3dv/v"]
+transform = Transform3D(0.866025, 0.25, -0.433013, 0, 0.866025, 0.5, 0.5, -0.433013, 0.75, 0, 0, 0)

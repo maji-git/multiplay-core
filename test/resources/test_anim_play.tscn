@@ -1,0 +1,98 @@
+[gd_scene load_steps=7 format=3 uid="uid://gimiradi40oy"]
+
+[ext_resource type="Texture2D" uid="uid://of2r0vvc2uo0" path="res://tests/assets/player-sprite.png" id="1_kb31n"]
+[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPAnimationSync.gd" id="2_hhfek"]
+
+[sub_resource type="Animation" id="Animation_1luf5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.3, 0.3)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_ag4vb"]
+resource_name = "anim_loop"
+length = 0.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.3, 0.3), Vector2(0.4, 0.4), Vector2(0.3, 0.3)]
+}
+
+[sub_resource type="Animation" id="Animation_1w8l3"]
+resource_name = "anim_oneshot"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0.3, 0.3), Vector2(0.4, 0.4)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.482353)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bviuc"]
+_data = {
+"RESET": SubResource("Animation_1luf5"),
+"anim_loop": SubResource("Animation_ag4vb"),
+"anim_oneshot": SubResource("Animation_1w8l3")
+}
+
+[node name="anim_test" type="Node2D"]
+position = Vector2(56, 45)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_kb31n")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_bviuc")
+}
+
+[node name="MPAnimationSync" type="Node" parent="AnimationPlayer"]
+script = ExtResource("2_hhfek")
