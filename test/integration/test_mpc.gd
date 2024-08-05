@@ -169,3 +169,21 @@ func test_animtree_sync():
 		assert_eq(anim.get("parameters/BlendSpace1D/blend_position"), 1, "BlendSpace1D")
 		assert_eq(anim.get("parameters/BlendSpace2D/blend_position"), Vector2(1,1), "BlendSpace2D")
 		assert_eq(anim.get("parameters/StateMachine/conditions/sync1"), true, "State Machine")
+
+func test_server_close():
+	if DebugBridge.role == "server":
+		await delay(1.5)
+		mpc.close_server()
+		assert_eq(mpc.online_connected, false, "Online Disconnected")
+	elif DebugBridge.role == "client":
+		await join_host()
+		await delay(1)
+		assert_eq(mpc.online_connected, false, "Online Disconnected")
+	"""
+	await join_host()
+	
+	assert_eq(mpc.online_connected, true, "Online Connected")
+	assert_ne(mpc.local_player, null, "local_player not null")
+	assert_ne(mpc.local_player._internal_peer, null, "_internal_peer not null")
+	assert_ne(mpc.online_peer, null, "online_peer not null")
+	"""

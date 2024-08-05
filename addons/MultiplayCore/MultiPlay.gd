@@ -54,6 +54,8 @@ enum ConnectionError {
 	INVALID_HANDSHAKE,
 	## Client's Multiplay version is not compatible with the server
 	VERSION_MISMATCH,
+	## Server has been closed
+	SERVER_CLOSED,
 }
 
 @export_subgroup("Network")
@@ -289,6 +291,11 @@ func start_swap():
 	for i in range(0, max_players):
 		create_player(i, {})
 
+func close_server():
+	_kick_player_request_all(MultiPlayCore.ConnectionError.SERVER_CLOSED)
+	online_peer.close()
+	online_connected = false
+
 func _unhandled_input(event):
 	if mode == PlayMode.Swap:
 		if event.is_action_pressed(swap_input_action):
@@ -491,33 +498,36 @@ func _on_local_player_ready():
 	debug_status_txt = "Connected!"
 
 func _network_player_connected(player_id):
-	"""
 	await get_tree().create_timer(connect_timeout_ms / 1000).timeout
 	
 	var player_node = players.get_player_by_id(player_id)
 	
 	if !player_node:
-		_kick_player_handshake(player_id, ConnectionError.TIMEOUT)
-	"""
+		_kick_player_request(player_id, ConnectionError.TIMEOUT)
 
 func _find_key(dictionary, value):
 	var index = dictionary.values().find(value)
 	return dictionary.keys()[index]
 
-func _kick_player_handshake(plr_id: int, reason: ConnectionError):
+func _kick_player_request(plr_id: int, reason: ConnectionError):
 	var player_node = players.get_player_by_id(plr_id)
 	
 	if !player_node:
 		players._internal_remove_player(plr_id)
 		
-	rpc_id(plr_id, "_handshake_disconnect_peer", reason)
+	rpc_id(plr_id, "_request_disconnect_peer", reason)
 
-@rpc("authority", "call_local")
-func _handshake_disconnect_peer(reason: ConnectionError):
+func _kick_player_request_all( reason: ConnectionError):
+	players._internal_clear_all()
+	
+	rpc("_request_disconnect_peer", reason)
+
+@rpc("authority", "call_local", "reliable")
+func _request_disconnect_peer(reason: ConnectionError):
 	var reason_str = str(_find_key(ConnectionError, reason))
-	MPIO.logerr("Connection Error: " + reason_str)
-	online_connected = false
+	MPIO.logerr("Disconnected: " + reason_str)
 	connection_error.emit(reason)
+	online_connected = false
 	disconnected_from_server.emit(reason_str)
 	online_peer.close()
 
@@ -552,17 +562,17 @@ func _join_handshake(handshake_data: Dictionary, credentials_data):
 		return
 	
 	if player_count >= max_players:
-		_kick_player_handshake(from_id, ConnectionError.SERVER_FULL)
+		_kick_player_request(from_id, ConnectionError.SERVER_FULL)
 		return
 	
 	# Kick if no join data present
 	if !_check_join_internal(handshake_data):
-		_kick_player_handshake(from_id, ConnectionError.INVALID_HANDSHAKE)
+		_kick_player_request(from_id, ConnectionError.INVALID_HANDSHAKE)
 		return
 	
 	# Check Multiplay version, kick if mismatch
 	if handshake_data._net_join_internal.mp_version != MP_VERSION:
-		_kick_player_handshake(from_id, ConnectionError.VERSION_MISMATCH)
+		_kick_player_request(from_id, ConnectionError.VERSION_MISMATCH)
 		return
 	
 	var auth_data = {}
@@ -580,7 +590,7 @@ func _join_handshake(handshake_data: Dictionary, credentials_data):
 		if ext is MPAuth:
 			var auth_result = await ext.authenticate(from_id, credentials_data, handshake_data)
 			if typeof(auth_result) == TYPE_BOOL and auth_result == false:
-				_kick_player_handshake(from_id, ConnectionError.AUTH_FAILED)
+				_kick_player_request(from_id, ConnectionError.AUTH_FAILED)
 				return
 				
 			auth_data = auth_result
@@ -630,6 +640,7 @@ func _client_connect_failed():
 
 func _on_local_disconnected(reason):
 	debug_status_txt = "Disconnected: " + str(reason)
+	online_connected = false
 	local_player = null
 
 # Ping player

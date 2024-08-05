@@ -31,6 +31,9 @@ func _internal_add_player(player_id, player: MPPlayer):
 func _internal_remove_player(player_id):
 	players.erase(player_id)
 
+func _internal_clear_all():
+	players.clear()
+
 func _get_player_peer_ids():
 	var p = multiplayer.get_peers()
 	p.append(1)
