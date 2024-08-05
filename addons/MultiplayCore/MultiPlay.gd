@@ -58,6 +58,24 @@ enum ConnectionError {
 	SERVER_CLOSED,
 }
 
+## List of network connection states
+enum ConnectionState {
+	## Connection had never been active before
+	IDLE,
+	## Connecting to the server
+	CONNECTING,
+	## Client and server is now exchanging data. Authentication also happens here.
+	HANDSHAKING,
+	## Client is waiting the server to send the player node back
+	AWAIT_PLR_NODE,
+	## Client's pinging the server. and is doing first time initialization.
+	PINGING,
+	## Connected and ready to go!
+	CONNECTED,
+	## Connection no longer active, whatever if it's disconnection, kicked, or server close.
+	CONNECTION_CLOSED,
+}
+
 @export_subgroup("Network")
 ## Which ip to bind on in online game host.
 @export var bind_address: String = "*"
@@ -138,6 +156,8 @@ var local_player: MPPlayer = null
 var player_count: int = 0
 ## Current scene node
 var current_scene: Node = null
+## Network connection state
+var connection_state: ConnectionState = ConnectionState.IDLE
 
 ## Debug Status
 var debug_status_txt = ""
@@ -352,6 +372,7 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 	_init_data()
 	
 	debug_status_txt = "Server Started!"
+	connection_state = ConnectionState.CONNECTED
 	
 	is_server = true
 	
@@ -377,6 +398,7 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 	_init_data()
 	
 	debug_status_txt = "Connecting to " + address + "..."
+	connection_state = ConnectionState.CONNECTING
 	
 	_join_handshake_data = handshake_data
 	_join_credentials_data = credentials_data
@@ -457,8 +479,10 @@ func _player_spawned(data):
 		
 		if mode == PlayMode.Online:
 			debug_status_txt = "Pinging..."
+			connection_state = ConnectionState.PINGING
 		else:
 			debug_status_txt = "Ready!"
+			connection_state = ConnectionState.CONNECTED
 	
 	# First time init
 	if player_scene:
@@ -496,6 +520,7 @@ func _on_local_player_ready():
 	connected_to_server.emit(local_player)
 	player_node_ready = true
 	debug_status_txt = "Connected!"
+	connection_state = ConnectionState.CONNECTED
 
 func _network_player_connected(player_id):
 	await get_tree().create_timer(connect_timeout_ms / 1000).timeout
@@ -608,15 +633,18 @@ func _join_handshake(handshake_data: Dictionary, credentials_data):
 @rpc("any_peer", "call_local", "reliable")
 func _internal_recv_net_data(data):
 	debug_status_txt = "Waiting for player node..."
+	connection_state = ConnectionState.AWAIT_PLR_NODE
 	
 	MPIO.plr_id = multiplayer.get_unique_id()
 	
 	_net_data = data
+	# Load current scene in the network
 	if _net_data.current_scene_path != "" and is_server == false:
 		_net_load_scene(_net_data.current_scene_path)
 
 func _client_connected():
 	debug_status_txt = "Awaiting server data..."
+	connection_state = ConnectionState.HANDSHAKING
 	online_connected = true
 	
 	# Clear net join internals, this is reserved
@@ -639,6 +667,7 @@ func _client_connect_failed():
 	connection_error.emit(ConnectionError.CONNECTION_FAILURE)
 
 func _on_local_disconnected(reason):
+	connection_state = ConnectionState.CONNECTION_CLOSED
 	debug_status_txt = "Disconnected: " + str(reason)
 	online_connected = false
 	local_player = null
