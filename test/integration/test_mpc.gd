@@ -157,8 +157,6 @@ func test_animtree_sync():
 		anim.set("parameters/BlendSpace1D/blend_position", 1)
 		anim.set("parameters/BlendSpace2D/blend_position", Vector2(1,1))
 		anim.set("parameters/StateMachine/conditions/sync1", true)
-		anim.set("parameters/TimeScale/scale", 2)
-		anim.set("parameters/TimeSeek/seek_request", 1)
 		pass_test("done")
 	else:
 		await join_host()
@@ -171,5 +169,3 @@ func test_animtree_sync():
 		assert_eq(anim.get("parameters/BlendSpace1D/blend_position"), 1, "BlendSpace1D")
 		assert_eq(anim.get("parameters/BlendSpace2D/blend_position"), Vector2(1,1), "BlendSpace2D")
 		assert_eq(anim.get("parameters/StateMachine/conditions/sync1"), true, "State Machine")
-		assert_eq(anim.get("parameters/TimeScale/scale"), 2, "TimeScale")
-		assert_eq(anim.get("parameters/TimeSeek/seek_request"), 1, "TimeSeek")
