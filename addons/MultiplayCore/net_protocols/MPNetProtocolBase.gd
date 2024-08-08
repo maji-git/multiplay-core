@@ -6,6 +6,10 @@ class_name MPNetProtocolBase
 
 var net_protocols = []
 
+func _ready():
+	super()
+	mpc.register_net_extension(self)
+
 ## Debug URL Override
 func _override_debug_url(bind_ip: String, port: int):
 	return null

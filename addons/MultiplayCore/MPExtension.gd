@@ -11,7 +11,10 @@ var mpc: MultiPlayCore
 func _ready():
 	if get_parent() is MultiPlayCore:
 		mpc = get_parent()
-		mpc._report_extension(self)
+
+## Called by MultiPlay Core when it's ready
+func _mpc_ready():
+	pass
 
 func _enter_tree():
 	if Engine.is_editor_hint():
