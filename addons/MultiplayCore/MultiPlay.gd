@@ -491,7 +491,7 @@ func _player_spawned(data):
 	if data.player_id == multiplayer.get_unique_id():
 		player.is_local = true
 		local_player = player
-		player._internal_peer = player
+		player._internal_peer = player.multiplayer
 		
 		if mode == PlayMode.Online:
 			debug_status_txt = "Pinging..."

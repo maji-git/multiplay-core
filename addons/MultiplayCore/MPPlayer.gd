@@ -237,4 +237,3 @@ func _net_spawn_node():
 			mpc.swap_to(0)
 		
 		player_node = pscene
-
