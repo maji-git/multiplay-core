@@ -93,6 +93,8 @@ enum ConnectionState {
 @export var first_scene: PackedScene
 ## Should Client authority be assigned automatically?
 @export var assign_client_authority: bool = true
+## Should the server automatically spawn the player scene?
+@export var auto_spawn_player_scene: bool = true
 
 @export_subgroup("Inputs")
 ## Which action key to use for swap mode.
@@ -501,7 +503,7 @@ func _player_spawned(data):
 			connection_state = ConnectionState.CONNECTED
 	
 	# First time init
-	if player_scene:
+	if player_scene and auto_spawn_player_scene:
 		player.player_node_resource_path = player_scene.resource_path
 		
 		var pscene = player_scene.instantiate()
