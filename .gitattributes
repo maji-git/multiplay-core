@@ -2,8 +2,11 @@
 * text=auto eol=lf
 
 /**        export-ignore
-/addons    export-ignore
-/addons/MultiplayCore !export-ignore
-/addons/MultiplayCore/** !export-ignore
+/addons    !export-ignore
+/addons/** !export-ignore
+/addons/gut export-ignore
+/addons/gut/** export-ignore
+/addons/mpc-test export-ignore
+/addons/mpc-test/** export-ignore
 /script_templates    !export-ignore
 /script_templates/** !export-ignore
