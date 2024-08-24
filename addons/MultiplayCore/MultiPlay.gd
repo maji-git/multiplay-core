@@ -6,10 +6,10 @@ extends MPBase
 class_name MultiPlayCore
 
 ## MultiPlay Core Version
-const MP_VERSION = "1.0.0-ext"
+const MP_VERSION = "1.1.0-beta1"
 
 ## MultiPlay Core Version Name
-const MP_VERSION_NAME = "Envelope Puppet"
+const MP_VERSION_NAME = "Packet Unit"
 
 ## On network scene loaded
 signal scene_loaded
