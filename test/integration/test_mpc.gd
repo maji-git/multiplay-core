@@ -20,7 +20,8 @@ func before_all():
 	if DebugBridge.role == "server":
 		mpc.start_online_host(true)
 	
-	await get_tree().create_timer(0.5).timeout
+	EngineDebugger.send_message("mpc_test:session_complete", [])
+	await DebugBridge.msgcap_ready
 
 func delay(sec):
 	await get_tree().create_timer(sec).timeout
@@ -169,6 +170,23 @@ func test_animtree_sync():
 		assert_eq(anim.get("parameters/BlendSpace1D/blend_position"), 1, "BlendSpace1D")
 		assert_eq(anim.get("parameters/BlendSpace2D/blend_position"), Vector2(1,1), "BlendSpace2D")
 		assert_eq(anim.get("parameters/StateMachine/conditions/sync1"), true, "State Machine")
+
+func test_signals():
+	
+	if DebugBridge.role == "server":
+		watch_signals(mpc)
+		await delay(1)
+		assert_signal_emitted(mpc, "player_connected", "Player Connected Signal")
+		await delay(1.6)
+		assert_signal_emitted(mpc, "player_disconnected", "Player Disconnected Signal")
+	elif DebugBridge.role == "client":
+		watch_signals(mpc)
+		await join_host()
+		await delay(1)
+		assert_signal_emitted(mpc, "connected_to_server", "Connected to server")
+		mpc.local_player.disconnect_player()
+		await delay(1)
+		assert_signal_emitted(mpc, "disconnected_from_server")
 
 func test_server_close():
 	if DebugBridge.role == "server":

@@ -10,3 +10,7 @@ func _enter_tree():
 
 func _exit_tree():
 	remove_debugger_plugin(debugger)
+
+func _build() -> bool:
+	debugger.ready_i = 0
+	return true
