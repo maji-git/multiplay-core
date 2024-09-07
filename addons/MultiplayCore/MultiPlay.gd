@@ -507,12 +507,15 @@ func _player_spawned(data):
 		player.player_node_resource_path = player_scene.resource_path
 		
 		var pscene = player_scene.instantiate()
+		
+		if assign_client_authority:
+			pscene.set_multiplayer_authority(data.player_id, true)
+		
 		player.add_child(pscene, true)
 		
 		player.player_node = pscene
-
-	if assign_client_authority:
-		player.set_multiplayer_authority(data.player_id, true)
+	
+	player.set_multiplayer_authority(data.player_id, false)
 	
 	players._internal_add_player(data.player_id, player)
 	
