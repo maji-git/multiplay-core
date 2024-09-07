@@ -460,22 +460,14 @@ func create_player(player_id, handshake_data = {}):
 	_plr_spawner.spawn({player_id = player_id, handshake_data = handshake_data, pindex = assign_plrid})
 
 @rpc("authority", "call_local", "reliable")
-func _net_broadcast_new_player(peer_id):
-	var target_plr = players.get_player_by_id(peer_id)
-	
-	if target_plr:
-		player_connected.emit(target_plr)
-
-@rpc("authority", "call_local", "reliable")
 func _net_broadcast_remove_player(peer_id: int):
 	var target_plr = players.get_player_by_id(peer_id)
 	
 	if target_plr:
 		player_count = player_count - 1
 		
-		if !is_server:
-			player_disconnected.emit(target_plr)
-			players._internal_remove_player(peer_id)
+		player_disconnected.emit(target_plr)
+		players._internal_remove_player(peer_id)
 
 func _player_spawned(data):
 	MPIO.plr_id = multiplayer.get_unique_id()
@@ -519,8 +511,8 @@ func _player_spawned(data):
 	
 	players._internal_add_player(data.player_id, player)
 	
-	if is_server:
-		rpc("_net_broadcast_new_player", player.player_id)
+	if connection_state == ConnectionState.CONNECTED:
+		player_connected.emit(player)
 	
 	return player
 
@@ -582,8 +574,6 @@ func _network_player_disconnected(player_id):
 	
 	if target_plr:
 		rpc("_net_broadcast_remove_player", player_id)
-		player_disconnected.emit(target_plr)
-		players._internal_remove_player(player_id)
 		target_plr.queue_free()
 
 # Validate network join internal data
