@@ -705,10 +705,9 @@ func _net_load_scene(scene_path: String, respawn_players = true):
 		current_scene.queue_free()
 		current_scene = null
 	
-	if !FileAccess.file_exists(scene_path):
-		if !FileAccess.file_exists(scene_path + ".remap"):
-			MPIO.logerr("Target scene doesn't exist")
-			return
+	if !ResourceLoader.exists(scene_path):
+		MPIO.logerr("Target scene doesn't exist")
+		return
 	
 	var scene_pack = load(scene_path)
 	var scene_node = scene_pack.instantiate()
