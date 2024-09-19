@@ -36,6 +36,8 @@ func _ready():
 	
 	boot_ui.visible = true
 	status_ui.visible = false
+	
+	mpc.connected_to_server.connect(mpc_started_entry)
 
 func get_or_empty(data: Dictionary, field: String):
 	if data.keys().has(field):
@@ -132,6 +134,10 @@ func _on_swap_pressed():
 
 func boot_close():
 	save_debug_cache()
+	boot_ui.visible = false
+	status_ui.visible = true
+
+func mpc_started_entry(player):
 	boot_ui.visible = false
 	status_ui.visible = true
 
