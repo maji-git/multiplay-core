@@ -28,7 +28,7 @@ func _on_player_ready():
 	print(mpp.translate_action("left"))
 
 func _on_handshake_ready(hs):
-	print("HANDSHAKE: ", hs)
+	MPIO.logdata("Handshake of " + str(mpp.player_id) + " Received")
 	$username.text = "P" + str(mpp.player_index + 1)
 
 func _physics_process(delta):
