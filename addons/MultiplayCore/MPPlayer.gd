@@ -48,7 +48,7 @@ func _ready():
 		is_ready = true
 		player_ready.emit()
 		_send_handshake_data(handshake_data)
-		mpc.connected_to_server.emit()
+		mpc.connected_to_server.emit(self)
 	
 	_internal_peer = multiplayer.multiplayer_peer
 	#_internal_peer = multiplayer.multiplayer_peer
