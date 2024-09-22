@@ -6,7 +6,7 @@ extends MPBase
 class_name MultiPlayCore
 
 ## MultiPlay Core Version
-const MP_VERSION = "1.1.0-beta1"
+const MP_VERSION = "1.1.0-beta2"
 
 ## MultiPlay Core Version Name
 const MP_VERSION_NAME = "Packet Unit"
