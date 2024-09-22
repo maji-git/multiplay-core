@@ -25,6 +25,10 @@ signal disconnected_from_server(reason: String)
 signal connection_error(reason: ConnectionError)
 ## Emit when swap index has changed. Only emit in Swap Play mode
 signal swap_changed(to_index: int, old_index: int)
+## On server started
+signal server_started
+## On server stopped
+signal server_stopped
 
 ## Methods to use for multiplayer game
 enum PlayMode {
@@ -333,6 +337,7 @@ func close_server():
 	_kick_player_request_all(MultiPlayCore.ConnectionError.SERVER_CLOSED)
 	online_peer.close()
 	online_connected = false
+	server_stopped.emit()
 
 func _unhandled_input(event):
 	if mode == PlayMode.Swap:
@@ -411,6 +416,8 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 		#create_player(1, act_client_handshake_data)
 		_network_player_connected(1)
 		_client_connected()
+	
+	server_started.emit()
 
 func _online_join(address: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
 	_init_data()
