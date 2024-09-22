@@ -140,6 +140,7 @@ func _check_if_net_from_id(id):
 @rpc("authority", "call_local")
 func _send_handshake_data(data):
 	handshake_data = data
+	_handshake_is_ready = false
 	_on_handshake_ready()
 
 @rpc("any_peer", "call_local")
