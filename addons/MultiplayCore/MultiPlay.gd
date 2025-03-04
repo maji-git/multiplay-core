@@ -417,6 +417,10 @@ func _online_host(act_client: bool = false, act_client_handshake_data: Dictionar
 		_network_player_connected(1)
 		_client_connected()
 	
+	# Update debug UI if exists
+	if _debug_bootui:
+		_debug_bootui.boot_close()
+	
 	server_started.emit()
 
 func _online_join(address: String, handshake_data: Dictionary = {}, credentials_data: Dictionary = {}):
@@ -448,6 +452,10 @@ func _online_join(address: String, handshake_data: Dictionary = {}, credentials_
 		port_num = int(portsplit[1])
 	
 	online_peer = await _net_protocol.join(real_hostname + url_path, port_num)
+	
+	# Update debug UI if exists
+	if _debug_bootui:
+		_debug_bootui.boot_close()
 	
 	multiplayer.multiplayer_peer = online_peer
 	multiplayer.connected_to_server.connect(_client_connected)
