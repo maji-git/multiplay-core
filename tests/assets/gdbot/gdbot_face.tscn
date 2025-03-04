@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://dvy2nao23i4rl"]
 
-[ext_resource type="Script" path="res://tests/assets/gdbot/gdbot_face.gd" id="1_g7fgr"]
+[ext_resource type="Script" uid="uid://bgygqronakbdd" path="res://tests/assets/gdbot/gdbot_face.gd" id="1_g7fgr"]
 [ext_resource type="Texture2D" uid="uid://cbp882a2a27qw" path="res://tests/assets/gdbot/texture/parts/eye_happy.png" id="2_fa0xy"]
 [ext_resource type="Texture2D" uid="uid://blacn6s3yc88h" path="res://tests/assets/gdbot/texture/parts/eye_open.png" id="2_qfyd4"]
 [ext_resource type="Texture2D" uid="uid://dt0veafbpw6ih" path="res://tests/assets/gdbot/texture/parts/eye_spiral.png" id="3_rdwvm"]
@@ -330,11 +330,11 @@ tracks/4/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_l5i24"]
 _data = {
-"RESET": SubResource("Animation_33is7"),
-"dizzy": SubResource("Animation_ne3is"),
-"happy": SubResource("Animation_ttnon"),
-"look_around": SubResource("Animation_rbq53"),
-"sleepy": SubResource("Animation_4tctg")
+&"RESET": SubResource("Animation_33is7"),
+&"dizzy": SubResource("Animation_ne3is"),
+&"happy": SubResource("Animation_ttnon"),
+&"look_around": SubResource("Animation_rbq53"),
+&"sleepy": SubResource("Animation_4tctg")
 }
 
 [node name="GDbotFace" type="Node2D"]

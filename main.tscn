@@ -1,11 +1,11 @@
 [gd_scene load_steps=9 format=3 uid="uid://yx2r3bxi0kfc"]
 
-[ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_ubvtg"]
+[ext_resource type="Script" uid="uid://d5xww8ib3j7p" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_ubvtg"]
 [ext_resource type="PackedScene" uid="uid://lw18orwsroqc" path="res://test_player.tscn" id="2_d01oj"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/auths/MPAuth.gd" id="3_ta4np"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="4_jxa1l"]
-[ext_resource type="Script" path="res://tests/TestScriptz.gd" id="6_kqkof"]
-[ext_resource type="Script" path="res://tests/TransformSetTest.gd" id="6_xx5hu"]
+[ext_resource type="Script" uid="uid://371kceg3enyp" path="res://addons/MultiplayCore/auths/MPAuth.gd" id="3_ta4np"]
+[ext_resource type="Script" uid="uid://dph2uywxp0nfc" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="4_jxa1l"]
+[ext_resource type="Script" uid="uid://cu0ftthhciiip" path="res://tests/TestScriptz.gd" id="6_kqkof"]
+[ext_resource type="Script" uid="uid://45us1mupyju0" path="res://tests/TransformSetTest.gd" id="6_xx5hu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0jls2"]
 size = Vector2(1174, 23)

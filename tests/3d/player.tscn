@@ -1,10 +1,10 @@
 [gd_scene load_steps=9 format=3 uid="uid://pe6us1xv4gji"]
 
-[ext_resource type="Script" path="res://tests/3d/PlayerController.gd" id="1_yelsh"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="2_4sy0r"]
+[ext_resource type="Script" uid="uid://ci615wbmvcguk" path="res://tests/3d/PlayerController.gd" id="1_yelsh"]
+[ext_resource type="Script" uid="uid://cdyy7lh0oi1cb" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="2_4sy0r"]
 [ext_resource type="PackedScene" uid="uid://bdyptm7smjixm" path="res://tests/assets/gdbot/gdbot_skin.tscn" id="3_7exuf"]
-[ext_resource type="Shader" path="res://tests/assets/shared/shaders/screen_shader.gdshader" id="5_a2cgk"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPAnimTreeSync.gd" id="8_b5dhu"]
+[ext_resource type="Shader" uid="uid://bqkypttrmrjqs" path="res://tests/assets/shared/shaders/screen_shader.gdshader" id="5_a2cgk"]
+[ext_resource type="Script" uid="uid://cmvwos8leaa6m" path="res://addons/MultiplayCore/synchronizers/MPAnimTreeSync.gd" id="8_b5dhu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5kmd0"]
 resource_local_to_scene = true
@@ -16,13 +16,13 @@ viewport_path = NodePath("SubViewport")
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_a2cgk")
+shader_parameter/face_texture = SubResource("ViewportTexture_pwnph")
 shader_parameter/intensity = 2.0
 shader_parameter/screen_color = Color(0.101961, 0.662745, 1, 0.0196078)
 shader_parameter/screen_red_offset = Vector2(0, 0)
 shader_parameter/screen_green_offset = Vector2(0, 0)
 shader_parameter/screen_blue_offset = Vector2(0, 0)
 shader_parameter/pixel_size = 32.0
-shader_parameter/face_texture = SubResource("ViewportTexture_pwnph")
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("gdbot")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)

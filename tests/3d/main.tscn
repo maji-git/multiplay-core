@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://pomh8jqv6rie"]
 
-[ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_m1jil"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="2_i3yor"]
+[ext_resource type="Script" uid="uid://d5xww8ib3j7p" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_m1jil"]
+[ext_resource type="Script" uid="uid://dph2uywxp0nfc" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="2_i3yor"]
 [ext_resource type="PackedScene" uid="uid://pe6us1xv4gji" path="res://tests/3d/player.tscn" id="2_xecj0"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_gfph1"]

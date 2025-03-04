@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://djdmom34ja7x0"]
 
-[ext_resource type="Script" path="res://addons/MultiplayCore/MPPlayer.gd" id="1_ba24x"]
+[ext_resource type="Script" uid="uid://q5otx3ol6dfo" path="res://addons/MultiplayCore/MPPlayer.gd" id="1_ba24x"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_a8er7"]
 properties/0/path = NodePath(".:ping_ms")

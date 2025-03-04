@@ -1,9 +1,9 @@
 [gd_scene load_steps=40 format=3 uid="uid://bdyptm7smjixm"]
 
-[ext_resource type="Script" path="res://tests/assets/gdbot/gdbot_skin.gd" id="1_dt082"]
+[ext_resource type="Script" uid="uid://coajk4wdkqftv" path="res://tests/assets/gdbot/gdbot_skin.gd" id="1_dt082"]
 [ext_resource type="PackedScene" uid="uid://c4fba1hyqkstw" path="res://tests/assets/gdbot/gdbot.glb" id="1_no8yw"]
 [ext_resource type="Material" uid="uid://cq6bdna8ieu87" path="res://tests/assets/gdbot/materials/heart_core_mat.tres" id="3_b5fb6"]
-[ext_resource type="Shader" path="res://tests/assets/shared/shaders/screen_shader.gdshader" id="3_johvk"]
+[ext_resource type="Shader" uid="uid://bqkypttrmrjqs" path="res://tests/assets/shared/shaders/screen_shader.gdshader" id="3_johvk"]
 [ext_resource type="Material" uid="uid://4ugdxr58llu8" path="res://tests/assets/gdbot/materials/glass_mat.tres" id="4_jt2os"]
 [ext_resource type="AnimationLibrary" uid="uid://dlohfyy3w0jbd" path="res://tests/assets/gdbot/custom_animations/custom_lib.res" id="6_dcd8b"]
 [ext_resource type="PackedScene" uid="uid://dvy2nao23i4rl" path="res://tests/assets/gdbot/gdbot_face.tscn" id="7_6dl0h"]
@@ -15,13 +15,13 @@ viewport_path = NodePath("SubViewport")
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("3_johvk")
+shader_parameter/face_texture = SubResource("ViewportTexture_0dla7")
 shader_parameter/intensity = 2.0
 shader_parameter/screen_color = Color(0.101961, 0.662745, 1, 0.0196078)
 shader_parameter/screen_red_offset = Vector2(0, 0)
 shader_parameter/screen_green_offset = Vector2(0, 0)
 shader_parameter/screen_blue_offset = Vector2(0, 0)
 shader_parameter/pixel_size = 32.0
-shader_parameter/face_texture = SubResource("ViewportTexture_0dla7")
 
 [sub_resource type="Animation" id="Animation_yp8jn"]
 resource_name = "Idle"
@@ -2557,13 +2557,13 @@ tracks/50/keys = PackedFloat32Array(0, 1, 8.27181e-25, 0, 1, 1.65436e-24, 0.0333
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_n4s66"]
 _data = {
-"Idle": SubResource("Animation_yp8jn"),
-"fall": SubResource("Animation_hfg8j"),
-"ground_impact": SubResource("Animation_ds1pe"),
-"jump": SubResource("Animation_h0s15"),
-"run": SubResource("Animation_16w2c"),
-"simple_punch": SubResource("Animation_orygp"),
-"walk": SubResource("Animation_e41s6")
+&"Idle": SubResource("Animation_yp8jn"),
+&"fall": SubResource("Animation_hfg8j"),
+&"ground_impact": SubResource("Animation_ds1pe"),
+&"jump": SubResource("Animation_h0s15"),
+&"run": SubResource("Animation_16w2c"),
+&"simple_punch": SubResource("Animation_orygp"),
+&"walk": SubResource("Animation_e41s6")
 }
 
 [sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_yodjs"]

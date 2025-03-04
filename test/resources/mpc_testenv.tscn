@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c5654181j8yru"]
 
-[ext_resource type="Script" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_tg30c"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="2_7xejk"]
+[ext_resource type="Script" uid="uid://d5xww8ib3j7p" path="res://addons/MultiplayCore/MultiPlay.gd" id="1_tg30c"]
+[ext_resource type="Script" uid="uid://dph2uywxp0nfc" path="res://addons/MultiplayCore/net_protocols/ENetProtocol.gd" id="2_7xejk"]
 
 [sub_resource type="Environment" id="Environment_1pm5l"]
 background_mode = 1

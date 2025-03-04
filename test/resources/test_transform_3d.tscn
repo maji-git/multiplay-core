@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ce783tfybucqr"]
 
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="1_jyini"]
+[ext_resource type="Script" uid="uid://cdyy7lh0oi1cb" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="1_jyini"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_mpuu6"]
 

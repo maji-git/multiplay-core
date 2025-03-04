@@ -1,9 +1,9 @@
 [gd_scene load_steps=11 format=3 uid="uid://lw18orwsroqc"]
 
-[ext_resource type="Script" path="res://tests/PlayerMovement.gd" id="1_n3fks"]
+[ext_resource type="Script" uid="uid://dp8sx7h6sb6g6" path="res://tests/PlayerMovement.gd" id="1_n3fks"]
 [ext_resource type="Texture2D" uid="uid://of2r0vvc2uo0" path="res://tests/assets/player-sprite.png" id="2_1ny8i"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="3_vurcr"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPAnimationSync.gd" id="4_5fvdv"]
+[ext_resource type="Script" uid="uid://cdyy7lh0oi1cb" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="3_vurcr"]
+[ext_resource type="Script" uid="uid://bpyh7u2rcvyvb" path="res://addons/MultiplayCore/synchronizers/MPAnimationSync.gd" id="4_5fvdv"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ff620"]
 height = 50.0
@@ -73,10 +73,10 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8j4qg"]
 _data = {
-"RESET": SubResource("Animation_igj01"),
-"jump": SubResource("Animation_vmq7s"),
-"jump_end": SubResource("Animation_jkwbn"),
-"walk": SubResource("Animation_ih7ro")
+&"RESET": SubResource("Animation_igj01"),
+&"jump": SubResource("Animation_vmq7s"),
+&"jump_end": SubResource("Animation_jkwbn"),
+&"walk": SubResource("Animation_ih7ro")
 }
 
 [node name="CharacterBody2D" type="CharacterBody2D" groups=["player"]]
@@ -118,7 +118,7 @@ lerp_speed = 50
 
 [node name="PlayerAnim" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_8j4qg")
+&"": SubResource("AnimationLibrary_8j4qg")
 }
 
 [node name="MPAnimationSync" type="Node" parent="PlayerAnim"]

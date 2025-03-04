@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dxnrjskmes7tf"]
 
-[ext_resource type="Script" path="res://addons/MultiplayCore/editor/scripts/UpdatePopup.gd" id="1_1e3dt"]
+[ext_resource type="Script" uid="uid://c1qjwmb5m2etu" path="res://addons/MultiplayCore/editor/scripts/UpdatePopup.gd" id="1_1e3dt"]
 [ext_resource type="Texture2D" uid="uid://caxuos5oe7cre" path="res://addons/MultiplayCore/editor/version_icon.png" id="2_smiai"]
 
 [sub_resource type="Animation" id="Animation_wrshe"]
@@ -36,8 +36,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_lxre1"]
 _data = {
-"RESET": SubResource("Animation_wrshe"),
-"slide": SubResource("Animation_fjliv")
+&"RESET": SubResource("Animation_wrshe"),
+&"slide": SubResource("Animation_fjliv")
 }
 
 [node name="UpdatePopup" type="Window" node_paths=PackedStringArray("http_request", "slidetxt_anim_play", "status_label", "main_title", "current_version", "update_btn", "update_progress_bar")]

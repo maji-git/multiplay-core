@@ -1,14 +1,14 @@
 [gd_scene load_steps=18 format=3 uid="uid://yuwref8qwbg4"]
 
 [ext_resource type="Texture2D" uid="uid://of2r0vvc2uo0" path="res://tests/assets/player-sprite.png" id="1_5gl5k"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPAnimTreeSync.gd" id="2_ahjsa"]
+[ext_resource type="Script" uid="uid://cmvwos8leaa6m" path="res://addons/MultiplayCore/synchronizers/MPAnimTreeSync.gd" id="2_ahjsa"]
 
 [sub_resource type="Animation" id="Animation_03psh"]
 resource_name = "anim1"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8rdnj"]
 _data = {
-"anim1": SubResource("Animation_03psh")
+&"anim1": SubResource("Animation_03psh")
 }
 
 [sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_deb0d"]

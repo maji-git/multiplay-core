@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dwuqgi8uj5n3j"]
 
-[ext_resource type="Script" path="res://addons/MultiplayCore/editor/scripts/PlayerDebugConfig.gd" id="1_154qf"]
+[ext_resource type="Script" uid="uid://csjc1jbro0glo" path="res://addons/MultiplayCore/editor/scripts/PlayerDebugConfig.gd" id="1_154qf"]
 [ext_resource type="FontFile" uid="uid://up2o2ylbi16n" path="res://addons/MultiplayCore/fonts/VictorMono-Medium.ttf" id="1_ix4xy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8ok7j"]

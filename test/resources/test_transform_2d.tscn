@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cobys1kdch8rx"]
 
 [ext_resource type="Texture2D" uid="uid://dupc3co7kupa3" path="res://addons/MultiplayCore/icons/MultiPlayCore.svg" id="1_f1e7b"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="2_6l1no"]
+[ext_resource type="Script" uid="uid://cdyy7lh0oi1cb" path="res://addons/MultiplayCore/synchronizers/MPTransformSync.gd" id="2_6l1no"]
 
 [node name="TestTransform" type="Node2D"]
 

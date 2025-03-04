@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://c86556b4br8c4"]
 
 [ext_resource type="FontFile" uid="uid://up2o2ylbi16n" path="res://addons/MultiplayCore/fonts/VictorMono-Medium.ttf" id="1_p1im6"]
-[ext_resource type="Script" path="res://addons/MultiplayCore/debug_ui/MultiPlayDebugUI.gd" id="2_wn6yf"]
+[ext_resource type="Script" uid="uid://daanln0f27l4m" path="res://addons/MultiplayCore/debug_ui/MultiPlayDebugUI.gd" id="2_wn6yf"]
 [ext_resource type="Texture2D" uid="uid://dupc3co7kupa3" path="res://addons/MultiplayCore/icons/MultiPlayCore.svg" id="3_vbxjx"]
 
 [sub_resource type="Theme" id="Theme_jkq4t"]
